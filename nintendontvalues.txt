@@ -1,0 +1,101 @@
+Nintendont Config Offsets
+(overlapping values seem to just be added together)
+
+09:
+01 = triforce mode
+02 = Wii Remote Rumble
+04 = skip ipl
+
+0A-0C: Options
+000000 = None
+000100 = Cheats
+000801 = Memcard Emu
+200000 = Memcard Multi (Requires Memcard Emu)
+001001 = Cheat Path
+002001 = Force Widescreen
+004003 = Force Progressive
+010004 = Unlock Read Speed
+020004 = OSReport
+800004 = WiiU Widescreen
+100012 = Log
+
+0D: Video
+00 = Auto
+01 = Force
+05 = Force (Deflicker)
+02 = None
+
+0F: Video Modes
+10 = None (When not using Force options)
+14 = NTSC
+18 = MPAL
+11 = PAL50
+12 = PAL60
+20 = Patch PAL50 (Add when mixed with a forced video mode)
+34 = Example: NTSC + Patch Pal50
+
+
+10-13: Language
+0000 = English
+0001 = German
+0002 = French
+0003 = Spanish
+0004 = Italian
+0005 = Dutch
+FFFF = Auto
+
+21C: Memcard Blocks
+00 = 59
+01 = 123
+02 = 251
+03 = 507 (Unstable)
+04 = 1019 (Unstable)
+05 = 2043 (Unstable)
+
+21D: Video Width
+00 = Auto
+28 = 640
+78 = 720
+
+21E: Video Offset (won't use)
+EC: -20
+ED: -19
+EE: -18
+EF: -17
+F0: -16
+F1: -15
+F2: -14
+F3: -13
+F4: -12
+F5: -11
+F6: -10
+F7: -09
+F8: -08
+F9: -07
+FA: -06
+FB: -05
+FC: -04
+FD: -03
+FE: -02
+FF: -01
+00: +00
+01: +01
+02: +02
+03: +03
+04: +04
+05: +05
+06: +06
+07: +07
+08: +08
+09: +09
+0A: +10
+0B: +11
+0C: +12
+0D: +13
+0E: +14
+0F: +15
+10: +16
+11: +17
+12: +18
+13: +19
+14: +20
