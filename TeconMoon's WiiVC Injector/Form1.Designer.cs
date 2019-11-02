@@ -33,6 +33,7 @@
             this.WiiRetail = new System.Windows.Forms.RadioButton();
             this.MainTabs = new System.Windows.Forms.TabControl();
             this.SourceFilesTab = new System.Windows.Forms.TabPage();
+            this.GenerateImage = new System.Windows.Forms.Button();
             this.RepoDownload = new System.Windows.Forms.Button();
             this.TitleIDLabel = new System.Windows.Forms.Label();
             this.GameNameLabel = new System.Windows.Forms.Label();
@@ -130,7 +131,6 @@
             this.OpenMainDol = new System.Windows.Forms.OpenFileDialog();
             this.OutputFolderSelect = new System.Windows.Forms.FolderBrowserDialog();
             this.OpenGC2 = new System.Windows.Forms.OpenFileDialog();
-            this.GenerateImage = new System.Windows.Forms.Button();
             this.MainTableLayout.SuspendLayout();
             this.MainTabs.SuspendLayout();
             this.SourceFilesTab.SuspendLayout();
@@ -221,6 +221,16 @@
             this.SourceFilesTab.Size = new System.Drawing.Size(471, 316);
             this.SourceFilesTab.TabIndex = 0;
             this.SourceFilesTab.Text = "Required Source Files";
+            // 
+            // GenerateImage
+            // 
+            this.GenerateImage.Location = new System.Drawing.Point(363, 86);
+            this.GenerateImage.Name = "GenerateImage";
+            this.GenerateImage.Size = new System.Drawing.Size(103, 40);
+            this.GenerateImage.TabIndex = 15;
+            this.GenerateImage.Text = "Generate images by game name";
+            this.GenerateImage.UseVisualStyleBackColor = false;
+            this.GenerateImage.Click += new System.EventHandler(this.GenerateImage_Click);
             // 
             // RepoDownload
             // 
@@ -1293,16 +1303,6 @@
             this.OpenGC2.Filter = "GameCube Disk 2 (*.gcm,*.iso)|*.gcm;*.iso";
             this.OpenGC2.Title = "Specify your GameCube game\'s 2nd disc";
             // 
-            // GenerateImage
-            // 
-            this.GenerateImage.Location = new System.Drawing.Point(363, 86);
-            this.GenerateImage.Name = "GenerateImage";
-            this.GenerateImage.Size = new System.Drawing.Size(103, 40);
-            this.GenerateImage.TabIndex = 15;
-            this.GenerateImage.Text = "Generate images by game name";
-            this.GenerateImage.UseVisualStyleBackColor = false;
-            this.GenerateImage.Click += new System.EventHandler(this.GenerateImage_Click);
-            // 
             // WiiVC_Injector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1314,7 +1314,8 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "WiiVC_Injector";
-            this.Text = "TeconMoon\'s WiiVC Injector - [3.0.1]";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "TeconMoon\'s WiiVC Injector - [3.0.1 mod 1]";
             this.MainTableLayout.ResumeLayout(false);
             this.MainTableLayout.PerformLayout();
             this.MainTabs.ResumeLayout(false);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -66,7 +67,6 @@ namespace TeconMoon_s_WiiVC_Injector
         string TitleIDHex;
         string TitleIDText;
         string InternalGameName;
-        string TempString = "";
         bool FlagWBFS;
         bool FlagGameSpecified;
         bool FlagGC2Specified;
@@ -86,7 +86,6 @@ namespace TeconMoon_s_WiiVC_Injector
         bool HideProcess = true;
         int TitleIDInt;
         long GameType;
-        char TempChar;
         string CucholixRepoID = "";
         string sSourceData;
         byte[] tmpSource;
@@ -197,6 +196,84 @@ namespace TeconMoon_s_WiiVC_Injector
                 LaunchProgram();
                 Environment.Exit(0);
             }
+        }
+
+        // Check if the input byte array is GB2312 encoded.
+        private bool IsGB2312EncodingArray(byte[] b)
+        {
+            int i = 0;
+            while (i < b.Length)
+            {
+                if (b[i] <= 127)
+                {
+                    ++i;
+                    continue;
+                }
+
+                if (b[i] >= 176 && b[i] <= 247)
+                {
+                    if (i == b.Length - 1)
+                    {
+                        return false;
+                    }
+                    ++i;
+
+                    if (b[i] < 160 || b[i] > 254)
+                    {
+                        return false;
+                    }
+
+                    ++i;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Get a probably encoding object for input array.
+        private Encoding GetArrayEncoding(byte[] b)
+        {
+            if (IsGB2312EncodingArray(b))
+            {
+                return Encoding.GetEncoding("GB2312");
+            }
+
+            // We assume it is utf8 by default.
+            return Encoding.UTF8;
+        }
+
+        // Read a string from a binary stream.
+        private string ReadStringFromBinaryStream(BinaryReader reader, long position, bool peek = false)
+        {
+            long oldPosition = 0;
+
+            if (peek)
+            {
+                oldPosition = reader.BaseStream.Position;
+            }
+
+            reader.BaseStream.Position = position;
+            ArrayList readBuffer = new ArrayList();
+            byte b;
+            while ((b = reader.ReadByte()) != 0)
+            {
+                readBuffer.Add(b);
+            }
+
+            if (peek)
+            {
+                reader.BaseStream.Position = oldPosition;
+            }
+
+            byte[] readBytes = readBuffer.OfType<byte>().ToArray();
+            return Encoding.Default.GetString(Encoding.Convert(
+                GetArrayEncoding(readBytes),
+                Encoding.Default,
+                readBytes));
         }
 
         //Cleanup when program is closed
@@ -639,14 +716,8 @@ namespace TeconMoon_s_WiiVC_Injector
                         TitleIDInt = reader.ReadInt32();
                         reader.BaseStream.Position = 0x218;
                         GameType = reader.ReadInt64();
-                        TempString = "";
-                        reader.BaseStream.Position = 0x220;
-                        while ((int)(TempChar = reader.ReadChar()) != 0) TempString = TempString + TempChar;
-                        InternalGameName = TempString;
-                        TempString = "";
-                        reader.BaseStream.Position = 0x200;
-                        while ((int)(TempChar = reader.ReadChar()) != 0) TempString = TempString + TempChar;
-                        CucholixRepoID = TempString;
+                        InternalGameName = ReadStringFromBinaryStream(reader, 0x220);
+                        CucholixRepoID = ReadStringFromBinaryStream(reader, 0x200);
                     }
                     else
                     {
@@ -661,14 +732,8 @@ namespace TeconMoon_s_WiiVC_Injector
                             FlagWBFS = false;
                             reader.BaseStream.Position = 0x18;
                             GameType = reader.ReadInt64();
-                            TempString = "";
-                            reader.BaseStream.Position = 0x20;
-                            while ((int)(TempChar = reader.ReadChar()) != 0) TempString = TempString + TempChar;
-                            InternalGameName = TempString;
-                            TempString = "";
-                            reader.BaseStream.Position = 0x00;
-                            while ((int)(TempChar = reader.ReadChar()) != 0) TempString = TempString + TempChar;
-                            CucholixRepoID = TempString;
+                            InternalGameName = ReadStringFromBinaryStream(reader, 0x20);
+                            CucholixRepoID = ReadStringFromBinaryStream(reader, 0x00);
                         }
                     }
                 }
