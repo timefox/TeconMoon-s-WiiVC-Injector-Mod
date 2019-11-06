@@ -121,4 +121,10 @@
   <data name="TOOLDIR" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TOOLDIR.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="universal_Wii_WiiWare_template_bootTvTex" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\universal_Wii_WiiWare_template_bootTvTex.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="universal_Wii_WiiWare_template_iconTex" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\universal_Wii_WiiWare_template_iconTex.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -2062,9 +2062,80 @@ namespace TeconMoon_s_WiiVC_Injector
             /////
         }
 
+        // Modified from MSDN: https://msdn.microsoft.com/en-us/library/bb986765.aspx
+        private Font GetAdjustedFont(
+            Graphics g, 
+            string graphicString, 
+            Font originalFont, 
+            int containerWidth,
+            int containerHeight,
+            int maxFontSize, 
+            int minFontSize, 
+            bool smallestOnFail
+            )
+        {
+            Font testFont = null;
+            // We utilize MeasureString which we get via a control instance           
+            for (int adjustedSize = maxFontSize; adjustedSize >= minFontSize; adjustedSize--)
+            {
+                testFont = new Font(originalFont.Name, adjustedSize, originalFont.Style);
+
+                // Test the string with the new size
+                SizeF adjustedSizeNew = g.MeasureString(graphicString, testFont, containerWidth);
+
+                if (containerWidth  > Convert.ToInt32(adjustedSizeNew.Width) &&
+                    containerHeight > Convert.ToInt32(adjustedSizeNew.Height))
+                {
+                    // Good font, return it
+                    return testFont;
+                }
+            }
+
+            // If you get here there was no fontsize that worked
+            // return minimumSize or original?
+            if (smallestOnFail)
+            {
+                return testFont;
+            }
+            else
+            {
+                return originalFont;
+            }
+        }
+
         private void GenerateImage_Click(object sender, EventArgs e)
         {
+            Bitmap bootTv = Properties.Resources.universal_Wii_WiiWare_template_bootTvTex;
 
+            GameNameLabel.Text = "Another R";
+            using (Graphics graphics = Graphics.FromImage(bootTv))
+            {
+                Font arialFont = new Font("Arial", 10);
+
+                arialFont = GetAdjustedFont(
+                    graphics, GameNameLabel.Text, arialFont,
+                    820, 320, 100, 8, true);
+
+                SizeF sizeF = graphics.MeasureString(GameNameLabel.Text, arialFont, 820);
+
+                RectangleF rectF = new RectangleF(
+                    (bootTv.Width - sizeF.Width) / 2,
+                    210 + (320 - sizeF.Height) / 2,
+                    sizeF.Width,
+                    sizeF.Height);
+
+                StringFormat stringFormat = new StringFormat();
+                stringFormat.Alignment = StringAlignment.Center;
+
+                graphics.DrawString(
+                    GameNameLabel.Text, 
+                    arialFont, 
+                    Brushes.Black,
+                    rectF,
+                    stringFormat);
+
+                bootTv.Save("c:\\temp\\x.png");
+            }
         }
     }
 }

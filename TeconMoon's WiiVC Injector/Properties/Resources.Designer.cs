@@ -69,5 +69,25 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap universal_Wii_WiiWare_template_bootTvTex {
+            get {
+                object obj = ResourceManager.GetObject("universal_Wii_WiiWare_template_bootTvTex", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap universal_Wii_WiiWare_template_iconTex {
+            get {
+                object obj = ResourceManager.GetObject("universal_Wii_WiiWare_template_iconTex", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
