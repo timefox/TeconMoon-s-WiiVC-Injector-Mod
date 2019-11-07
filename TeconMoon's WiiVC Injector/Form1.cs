@@ -2256,7 +2256,11 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private void GenerateImage_Click(object sender, EventArgs e)
         {
-            GameNameLabel.Text = "Another R";
+            if (GameNameLabel.Text == "")
+            {
+                MessageBox.Show("Please select your game before using this option");
+                return;
+            }
 
             Font arialFont = new Font("Arial", 10);
 
