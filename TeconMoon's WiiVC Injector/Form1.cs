@@ -2063,7 +2063,7 @@ namespace TeconMoon_s_WiiVC_Injector
         }
 
         // Modified from MSDN: https://msdn.microsoft.com/en-us/library/bb986765.aspx
-        private Font GetAdjustedFont(
+        private Font GetGraphicAdjustedFont(
             Graphics g, 
             string graphicString, 
             Font originalFont, 
@@ -2071,6 +2071,7 @@ namespace TeconMoon_s_WiiVC_Injector
             int containerHeight,
             int maxFontSize, 
             int minFontSize, 
+            StringFormat stringFormat,
             bool smallestOnFail
             )
         {
@@ -2081,7 +2082,11 @@ namespace TeconMoon_s_WiiVC_Injector
                 testFont = new Font(originalFont.Name, adjustedSize, originalFont.Style);
 
                 // Test the string with the new size
-                SizeF adjustedSizeNew = g.MeasureString(graphicString, testFont, containerWidth);
+                SizeF adjustedSizeNew = g.MeasureString(
+                    graphicString, 
+                    testFont, 
+                    containerWidth,
+                    stringFormat);
 
                 if (containerWidth  > Convert.ToInt32(adjustedSizeNew.Width) &&
                     containerHeight > Convert.ToInt32(adjustedSizeNew.Height))
@@ -2103,39 +2108,251 @@ namespace TeconMoon_s_WiiVC_Injector
             }
         }
 
+        private Font GetTextRendererAdjustedFont(
+            Graphics g,
+            string text,
+            Font originalFont,
+            int containerWidth,
+            int containerHeight,
+            int maxFontSize,
+            int minFontSize,
+            TextFormatFlags flags,
+            bool smallestOnFail
+            )
+        {
+            Font testFont = null;
+            // We utilize MeasureString which we get via a control instance           
+            for (int adjustedSize = maxFontSize; adjustedSize >= minFontSize; adjustedSize--)
+            {
+                testFont = new Font(originalFont.Name, adjustedSize, originalFont.Style);
+
+                // Test the string with the new size
+                Size adjustedSizeNew = TextRenderer.MeasureText(
+                    g,
+                    text,
+                    testFont,
+                    new Size(containerWidth, containerHeight),
+                    flags);
+
+                if (containerWidth > adjustedSizeNew.Width &&
+                    containerHeight > adjustedSizeNew.Height)
+                {
+                    // Good font, return it
+                    return testFont;
+                }
+            }
+
+            // If you get here there was no fontsize that worked
+            // return minimumSize or original?
+            if (smallestOnFail)
+            {
+                return testFont;
+            }
+            else
+            {
+                return originalFont;
+            }
+        }
+
+        private void ImageDrawString(
+            ref Bitmap bitmap,
+            string s,
+            Rectangle rectangle,
+            Font font,
+            bool adjustedFontByTextRenderer,
+            bool drawStringByTextRenderer
+            )
+        {
+            StringFormat stringFormat = StringFormat.GenericDefault;
+
+            using (Graphics graphics = Graphics.FromImage(bitmap))
+            {
+                TextFormatFlags flags = TextFormatFlags.HorizontalCenter
+                    | TextFormatFlags.VerticalCenter
+                    | TextFormatFlags.WordBreak;
+
+                if (!adjustedFontByTextRenderer)
+                {
+                    font = GetGraphicAdjustedFont(
+                        graphics,
+                        s,
+                        font,
+                        rectangle.Width,
+                        rectangle.Height,
+                        100, 8,
+                        stringFormat,
+                        true);
+                }
+                else
+                {
+                    // Can't get the correct word break output
+                    // if we use GetGraphicAdjustedFont.
+                    // But it's really more slower than 
+                    // GetGraphicAdjustedFont.
+                    font = GetTextRendererAdjustedFont(
+                        graphics,
+                        GameNameLabel.Text,
+                        font,
+                        rectangle.Width,
+                        rectangle.Height,
+                        64, 8,
+                        flags,
+                        true);
+                }
+
+                if (!drawStringByTextRenderer)
+                {
+                    SizeF sizeF = graphics.MeasureString(s, font, rectangle.Width);
+
+                    RectangleF rectF = new RectangleF(
+                        rectangle.X + (rectangle.Width - sizeF.Width) / 2,
+                        rectangle.Y + (rectangle.Height - sizeF.Height) / 2,
+                        sizeF.Width,
+                        sizeF.Height);
+
+                    graphics.DrawString(
+                        s,
+                        font,
+                        Brushes.Black,
+                        rectF,
+                        stringFormat);
+                }
+                else
+                {
+                    // Poor draw performance, both for speed and output result.
+                    Size size = TextRenderer.MeasureText(
+                        graphics,
+                        s,
+                        font,
+                        new Size(rectangle.Width, rectangle.Height),
+                        flags);
+
+                    TextRenderer.DrawText(
+                        graphics,
+                        GameNameLabel.Text,
+                        font,
+                        new Rectangle(
+                            rectangle.X + (rectangle.Width - size.Width) / 2,
+                            rectangle.Y + (rectangle.Height - size.Height) / 2,
+                            size.Width,
+                            size.Height),
+                        Color.Black,
+                        flags);
+                }
+            }
+        }
+
+        struct WiiVcGenerateImage
+        {
+            public Bitmap bitmap;
+            public Rectangle rectangle;
+            public string s;
+            public string savePath;
+            public string dirControlName;
+            public string previewControlName;
+            public bool adjustedFontByTextRenderer;
+            public bool drawStringByTextRenderer;
+        };
+
         private void GenerateImage_Click(object sender, EventArgs e)
         {
-            Bitmap bootTv = Properties.Resources.universal_Wii_WiiWare_template_bootTvTex;
-
             GameNameLabel.Text = "Another R";
-            using (Graphics graphics = Graphics.FromImage(bootTv))
+
+            Font arialFont = new Font("Arial", 10);
+
+            Bitmap bitmapGamePadBar = new Bitmap(854, 480);
+            using (Graphics graphics = Graphics.FromImage(bitmapGamePadBar))
             {
-                Font arialFont = new Font("Arial", 10);
-
-                arialFont = GetAdjustedFont(
-                    graphics, GameNameLabel.Text, arialFont,
-                    820, 320, 100, 8, true);
-
-                SizeF sizeF = graphics.MeasureString(GameNameLabel.Text, arialFont, 820);
-
-                RectangleF rectF = new RectangleF(
-                    (bootTv.Width - sizeF.Width) / 2,
-                    210 + (320 - sizeF.Height) / 2,
-                    sizeF.Width,
-                    sizeF.Height);
-
-                StringFormat stringFormat = new StringFormat();
-                stringFormat.Alignment = StringAlignment.Center;
-
-                graphics.DrawString(
-                    GameNameLabel.Text, 
-                    arialFont, 
-                    Brushes.Black,
-                    rectF,
-                    stringFormat);
-
-                bootTv.Save("c:\\temp\\x.png");
+                graphics.DrawImage(
+                    Properties.Resources.universal_Wii_WiiWare_template_bootTvTex,
+                    new Rectangle(0, 0, bitmapGamePadBar.Width, bitmapGamePadBar.Height),
+                    new Rectangle(
+                        0, 0,
+                        Properties.Resources.universal_Wii_WiiWare_template_bootTvTex.Width,
+                        Properties.Resources.universal_Wii_WiiWare_template_bootTvTex.Height),
+                    GraphicsUnit.Pixel);
             }
+
+            Bitmap bitmapBootLogo = new Bitmap(170, 42);
+            using (Graphics graphics = Graphics.FromImage(bitmapBootLogo))
+            {
+                graphics.FillRectangle(
+                    Brushes.White, 
+                    new Rectangle(0, 0, bitmapBootLogo.Width, bitmapBootLogo.Height));
+            }
+
+            string saveDir = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\";
+
+            WiiVcGenerateImage[] images = new WiiVcGenerateImage[]
+            {
+                new WiiVcGenerateImage {
+                    bitmap = Properties.Resources.universal_Wii_WiiWare_template_iconTex,
+                    rectangle = new Rectangle(0, 23, 128, 94),
+                    s = GameNameLabel.Text,
+                    savePath = saveDir + "iconTex.png",
+                    dirControlName = "IconSourceDirectory",
+                    previewControlName = "IconPreviewBox",
+                    adjustedFontByTextRenderer = true,
+                    drawStringByTextRenderer = false,
+                },
+                new WiiVcGenerateImage {
+                    bitmap = Properties.Resources.universal_Wii_WiiWare_template_bootTvTex,
+                    rectangle = new Rectangle(224, 210, 820, 320),
+                    s = GameNameLabel.Text,
+                    savePath = saveDir + "bootTvTex.png",
+                    dirControlName = "BannerSourceDirectory",
+                    previewControlName = "BannerPreviewBox",
+                    adjustedFontByTextRenderer = false,
+                    drawStringByTextRenderer = false,
+                },
+                new WiiVcGenerateImage {
+                    bitmap = bitmapGamePadBar,
+                    rectangle = new Rectangle(148, 138, 556, 212),
+                    s = GameNameLabel.Text,
+                    savePath = saveDir + "bootDrcTex.png",
+                    dirControlName = "DrcSourceDirectory",
+                    previewControlName = "DrcPreviewBox",
+                    adjustedFontByTextRenderer = false,
+                    drawStringByTextRenderer = false,
+                },
+                new WiiVcGenerateImage {
+                    bitmap = bitmapBootLogo,
+                    rectangle = new Rectangle(0, 0, 170, 42),
+                    s = "WiiWare",
+                    savePath = saveDir + "bootLogoTex.png",
+                    dirControlName = "LogoSourceDirectory",
+                    previewControlName = "LogoPreviewBox",
+                    adjustedFontByTextRenderer = true,
+                    drawStringByTextRenderer = false,
+                },
+            };
+
+            for (int i = 0; i < images.Length; ++i)
+            {
+                ImageDrawString(
+                    ref images[i].bitmap,
+                    images[i].s,
+                    images[i].rectangle,
+                    arialFont,
+                    images[i].adjustedFontByTextRenderer,
+                    images[i].drawStringByTextRenderer);
+                images[i].bitmap.Save(images[i].savePath);
+
+                FileStream tempstream = new FileStream(images[i].savePath, FileMode.Open);
+                var tempimage = Image.FromStream(tempstream);
+                PictureBox previewBox = this.Controls.Find(images[i].previewControlName, true).FirstOrDefault() as PictureBox;
+                previewBox.Image = tempimage;
+                tempstream.Close();
+                Label sourceDirectory = this.Controls.Find(images[i].dirControlName, true).FirstOrDefault() as Label;
+                sourceDirectory.Text = "Auto generated.";
+                sourceDirectory.ForeColor = Color.Green;
+            }
+
+            FlagIconSpecified = true;
+            FlagBannerSpecified = true;
+            FlagDrcSpecified = true;
+            FlagLogoSpecified = true;
+            FlagRepo = false;
         }
     }
 }
