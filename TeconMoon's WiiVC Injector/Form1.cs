@@ -693,8 +693,22 @@ namespace TeconMoon_s_WiiVC_Injector
                     MessageBox.Show("This is not a GameCube image. It will not be loaded.");
                     goto EndOfGameSelection;
                 }
+
+                // Setup game name labels.
                 GameNameLabel.Text = InternalGameName;
-                PackedTitleLine1.Text = InternalGameName;
+
+                // Try to convert simplified Chinese string to traditional Chinese string
+                // which will avoid probably missing chars at wii consolo.
+                if (!StringEx.IsGB2312EncodingArray(InternalGameName.OfType<byte>().ToArray()))
+                {
+                    PackedTitleLine1.Text = InternalGameName;
+                }
+                else
+                {
+                    PackedTitleLine1.Text = Microsoft.VisualBasic.Strings.StrConv(
+                        InternalGameName, Microsoft.VisualBasic.VbStrConv.TraditionalChinese, 0);
+                }
+
                 //Convert pulled Title ID Int to Hex for use with Wii U Title ID
                 TitleIDHex = TitleIDInt.ToString("X");
                 TitleIDHex = TitleIDHex.Substring(6, 2) + TitleIDHex.Substring(4, 2) + TitleIDHex.Substring(2, 2) + TitleIDHex.Substring(0, 2);
