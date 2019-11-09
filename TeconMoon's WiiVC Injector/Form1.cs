@@ -43,12 +43,20 @@ namespace TeconMoon_s_WiiVC_Injector
             Directory.CreateDirectory(TempSourcePath);
             Directory.CreateDirectory(TempBuildPath);
 
+            /*
             TranslationTemplate translationTemplate = TranslationTemplate.CreateTemplate(
                 @"c:\temp\t.ini",
                 "TeconMoon-s-WiiVC-Injector-Mod-Language",
                 "English(en-us)",
                 "3.0.0.1mod2");
-            translationTemplate.AppendTemplateForForm(this);
+            translationTemplate.AppendFormTranslation(this);
+            */
+
+            
+            TranslationTemplate translationTemplate = TranslationTemplate.LoadTemplate(
+                @"c:\temp\t.ini");
+            translationTemplate.LoadFormTranslation(this);
+            
         }
 
         //Testing

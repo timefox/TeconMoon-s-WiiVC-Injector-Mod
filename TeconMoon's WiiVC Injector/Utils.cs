@@ -306,6 +306,11 @@ namespace TeconMoon_s_WiiVC_Injector
                 TemplateFile = new IniFile(templateFile);
             }
 
+            static public TranslationTemplate LoadTemplate(string templateFilePath)
+            {
+                return new TranslationTemplate(templateFilePath);
+            }
+
             static public TranslationTemplate CreateTemplate(
                 string templateFilePath,
                 string appName,
@@ -321,24 +326,60 @@ namespace TeconMoon_s_WiiVC_Injector
                 return template;
             }
 
-            public void AppendTemplateForForm(Form form)
+            public void AppendFormTranslation(Form form)
             {
                 TemplateFile.CurrentSection = form.Name;
                 TemplateFile.WriteStringValue("@Title", form.Text);
 
                 foreach (Control control in form.Controls)
                 {
-                    AppendTemplateForControl(control);
+                    AppendControlTranslation(control);
                 }
             }
 
-            private void AppendTemplateForControl(Control control)
+            private void AppendControlTranslation(Control control)
             {
                 TemplateFile.WriteStringValue(control.Name, control.Text);
 
                 foreach (Control subControl in control.Controls)
                 {
-                    AppendTemplateForControl(subControl);
+                    AppendControlTranslation(subControl);
+                }
+            }
+
+            public void LoadFormTranslation(Form form)
+            {
+                TemplateFile.CurrentSection = form.Name;
+                TranslateControl(form, "@Title");
+
+                foreach (Control control in form.Controls)
+                {
+                    LoadControlTranslation(control);
+                }
+            }
+
+            private void LoadControlTranslation(Control control)
+            {
+                TranslateControl(control);
+
+                foreach (Control subControl in control.Controls)
+                {
+                    LoadControlTranslation(subControl);
+                }
+            }
+
+            private void TranslateControl(Control control)
+            {
+                TranslateControl(control, control.Name);
+            }
+
+            private void TranslateControl(Control control, string id)
+            {
+                string translation = TemplateFile.ReadStringValue(id, 1024);
+
+                if (!String.IsNullOrEmpty(translation))
+                {
+                    control.Text = translation;
                 }
             }
         }
@@ -369,7 +410,8 @@ namespace TeconMoon_s_WiiVC_Injector
 
             public bool WriteStringValue(string section, string key, string value)
             {
-                return Win32Native.WritePrivateProfileString(section, key, value, FileName);
+                return Win32Native.WritePrivateProfileString(
+                    section, key, value.Replace("\r\n", "\\r\\n"), FileName);
             }
 
             public string ReadStringValue(string key, int maxLength, string defaultValue = "")
@@ -379,7 +421,9 @@ namespace TeconMoon_s_WiiVC_Injector
 
             public string ReadStringValue(string section, string key, int maxLength, string defaultValue = "")
             {
-                string value = new StringBuilder(maxLength).ToString(0, maxLength);
+                StringBuilder buffer = new StringBuilder(maxLength);
+                buffer.Length = maxLength;
+                string value = buffer.ToString(0, maxLength);
                 int length = (int)Win32Native.GetPrivateProfileString(
                     section,
                     key,
@@ -387,7 +431,7 @@ namespace TeconMoon_s_WiiVC_Injector
                     value,
                     (uint)maxLength,
                     FileName);
-                return value.Substring(0, length);                
+                return value.Substring(0, length).Replace("\\r\\n", "\r\n");                
             }
 
             public string[] GetSections()
