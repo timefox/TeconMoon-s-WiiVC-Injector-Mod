@@ -1315,7 +1315,7 @@
             this.MaximizeBox = false;
             this.Name = "WiiVC_Injector";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TeconMoon\'s WiiVC Injector - [3.0.1 mod 1]";
+            this.Text = "TeconMoon\'s WiiVC Injector - [3.0.1 mod 2]";
             this.MainTableLayout.ResumeLayout(false);
             this.MainTableLayout.PerformLayout();
             this.MainTabs.ResumeLayout(false);

@@ -284,5 +284,128 @@ namespace TeconMoon_s_WiiVC_Injector
                     readBytes));
             }
         }
+
+        class TranslationTemplate
+        {
+            private IniFile TemplateFile
+            {
+                get;
+                set;
+            }
+
+            public string TemplateFileName
+            {
+                get
+                {
+                    return TemplateFile != null ? TemplateFile.FileName : "";
+                }
+            }
+
+            private TranslationTemplate(string templateFile)
+            {
+                TemplateFile = new IniFile(templateFile);
+            }
+
+            static public TranslationTemplate CreateTemplate(
+                string templateFilePath,
+                string appName,
+                string defaultLanguageName,
+                string version)
+            {
+                TranslationTemplate template = new TranslationTemplate(templateFilePath);
+
+                template.TemplateFile.CurrentSection = appName;
+                template.TemplateFile.WriteStringValue("language", defaultLanguageName);
+                template.TemplateFile.WriteStringValue("verion", version);
+
+                return template;
+            }
+
+            public void AppendTemplateForForm(Form form)
+            {
+                TemplateFile.CurrentSection = form.Name;
+                TemplateFile.WriteStringValue("@Title", form.Text);
+
+                foreach (Control control in form.Controls)
+                {
+                    AppendTemplateForControl(control);
+                }
+            }
+
+            private void AppendTemplateForControl(Control control)
+            {
+                TemplateFile.WriteStringValue(control.Name, control.Text);
+
+                foreach (Control subControl in control.Controls)
+                {
+                    AppendTemplateForControl(subControl);
+                }
+            }
+        }
+
+        class IniFile
+        {
+            public string FileName
+            {
+                get;
+                protected set;
+            }
+
+            public string CurrentSection
+            {
+                get;
+                set;
+            }
+
+            public IniFile(string iniFile)
+            {
+                FileName = iniFile;
+            }
+
+            public bool WriteStringValue(string key, string value)
+            {
+                return WriteStringValue(CurrentSection, key, value);
+            }
+
+            public bool WriteStringValue(string section, string key, string value)
+            {
+                return Win32Native.WritePrivateProfileString(section, key, value, FileName);
+            }
+
+            public string ReadStringValue(string key, int maxLength, string defaultValue = "")
+            {
+                return ReadStringValue(CurrentSection, key, maxLength, defaultValue);
+            }
+
+            public string ReadStringValue(string section, string key, int maxLength, string defaultValue = "")
+            {
+                string value = new StringBuilder(maxLength).ToString(0, maxLength);
+                int length = (int)Win32Native.GetPrivateProfileString(
+                    section,
+                    key,
+                    defaultValue,
+                    value,
+                    (uint)maxLength,
+                    FileName);
+                return value.Substring(0, length);                
+            }
+
+            public string[] GetSections()
+            {
+                string value = new StringBuilder(65535).ToString(0, 65535);
+                if (Win32Native.GetPrivateProfileString(null, null, "", value, 65535, FileName) != 0)
+                {
+                    return StringsFromMultiString(value);
+                }
+
+                return new string[0];
+            }
+
+            private static string[] StringsFromMultiString(string s)
+            {
+                string[] raw = s.Split('\0');
+                return raw.Take(raw.Length - 2).ToArray();
+             }
+        }
     }
 }
