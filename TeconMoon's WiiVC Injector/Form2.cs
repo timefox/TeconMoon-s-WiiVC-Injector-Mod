@@ -10,14 +10,23 @@ using System.Windows.Forms;
 using System.IO;
 using System.Net;
 using System.Diagnostics;
+using TeconMoon_s_WiiVC_Injector.Utils;
 
 namespace TeconMoon_s_WiiVC_Injector
 {
     public partial class SDCardMenu : Form
     {
+        private TranslationTemplate tr = TranslationTemplate.LoadTemplate(
+            Application.StartupPath + @"\language.lang");
+
         public SDCardMenu()
         {
             InitializeComponent();
+
+            if (tr.IsValidate)
+            {
+                tr.TranslationForm(this);
+            }
         }
         string SelectedDriveLetter;
         bool DriveSpecified;
@@ -71,7 +80,7 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 VideoWidth.Enabled = false;
                 VideoWidthText.Enabled = false;
-                WidthNumber.Text = "Auto";
+                WidthNumber.Text = tr.Tr("Auto");
             }
             else
             {
@@ -161,13 +170,15 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 if (CheckForInternetConnection() == false)
                 {
-                    DialogResult dialogResult = MessageBox.Show("Your internet connection could not be verified, do you wish to try and download Nintendont anyways?", "Internet Connection Verification Failed", MessageBoxButtons.YesNo);
+                    DialogResult dialogResult = MessageBox.Show(
+                        tr.Tr("Your internet connection could not be verified, do you wish to try and download Nintendont anyways?"),
+                        tr.Tr("Internet Connection Verification Failed"), MessageBoxButtons.YesNo);
                     if (dialogResult == DialogResult.No)
                     {
                         goto skipnintendontdownload;
                     }
                 }
-                ActionStatus.Text = "Downloading...";
+                ActionStatus.Text = tr.Tr("Downloading...");
                 ActionStatus.Refresh();
                 Directory.CreateDirectory(SelectedDriveLetter + "apps\\nintendont");
                 var client = new WebClient();
@@ -175,11 +186,11 @@ namespace TeconMoon_s_WiiVC_Injector
                 client.DownloadFile("https://raw.githubusercontent.com/FIX94/Nintendont/master/nintendont/meta.xml", SelectedDriveLetter + "apps\\nintendont\\meta.xml");
                 client.DownloadFile("https://raw.githubusercontent.com/FIX94/Nintendont/master/nintendont/icon.png", SelectedDriveLetter + "apps\\nintendont\\icon.png");
                 ActionStatus.Text = "";
-                MessageBox.Show("Download complete.");
+                MessageBox.Show(tr.Tr("Download complete."));
             }
             else
             {
-                MessageBox.Show("Drive not specified, nowhere to download contents");
+                MessageBox.Show(tr.Tr("Drive not specified, nowhere to download contents"));
             }
             skipnintendontdownload:;
         }
@@ -187,7 +198,7 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             if (DriveSpecified == false)
             {
-                MessageBox.Show("Drive not specified, nowhere to place generated config");
+                MessageBox.Show(tr.Tr("Drive not specified, nowhere to place generated config"));
                 goto SkipGeneration;
             }
             int DecOffset09 = 0;
@@ -437,7 +448,7 @@ namespace TeconMoon_s_WiiVC_Injector
             string config = "01070CF60000000800" + HexOffset09 + HexOffset0A_0C + HexOffset0D + "00" + HexOffset0F + HexOffset10_13 + "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" + HexOffset21C + HexOffset21D + "0000";
             File.WriteAllBytes(SelectedDriveLetter + "nincfg.bin", StringToByteArray(config));
 
-            MessageBox.Show("Config generation complete.");
+            MessageBox.Show(tr.Tr("Config generation complete."));
             SkipGeneration:;
         }
 

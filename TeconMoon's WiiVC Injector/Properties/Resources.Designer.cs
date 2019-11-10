@@ -61,6 +61,879 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .NET Framework 3.5 was not detected on your machine, which is required by programs used during the build process.\n\nYou should be able to enable this in &quot;Programs and Features&quot; under &quot;Turn Windows features on or off&quot;, or download it from Microsoft.\n\nClick OK to close the injector and open &quot;Programs and Features&quot;....
+        /// </summary>
+        internal static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to boot.dol.
+        /// </summary>
+        internal static string String10 {
+            get {
+                return ResourceManager.GetString("String10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DOL Files (*.dol)|*.dol.
+        /// </summary>
+        internal static string String11 {
+            get {
+                return ResourceManager.GetString("String11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TitleID....
+        /// </summary>
+        internal static string String12 {
+            get {
+                return ResourceManager.GetString("String12", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NULL.
+        /// </summary>
+        internal static string String13 {
+            get {
+                return ResourceManager.GetString("String13", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter your installed Wii Channel&apos;s 4-letter Title ID. If you don&apos;t know it, open a WAD for the channel in something like ShowMiiWads to view it..
+        /// </summary>
+        internal static string String14 {
+            get {
+                return ResourceManager.GetString("String14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter your WAD&apos;s Title ID.
+        /// </summary>
+        internal static string String15 {
+            get {
+                return ResourceManager.GetString("String15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XXXX.
+        /// </summary>
+        internal static string String16 {
+            get {
+                return ResourceManager.GetString("String16", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title ID specification cancelled, reselect vWii NAND Title Launcher to specify.
+        /// </summary>
+        internal static string String17 {
+            get {
+                return ResourceManager.GetString("String17", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to N/A.
+        /// </summary>
+        internal static string String18 {
+            get {
+                return ResourceManager.GetString("String18", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid Title ID.
+        /// </summary>
+        internal static string String19 {
+            get {
+                return ResourceManager.GetString("String19", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .NET Framework v3.5 not found....
+        /// </summary>
+        internal static string String2 {
+            get {
+                return ResourceManager.GetString("String2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only 4 characters can be used, try again. Example: The Star Fox 64 (USA) Channel&apos;s Title ID is NADE01, so you would specify NADE as the Title ID.
+        /// </summary>
+        internal static string String20 {
+            get {
+                return ResourceManager.GetString("String20", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GameCube Dumps (*.gcm,*.iso)|*.gcm;*.iso.
+        /// </summary>
+        internal static string String21 {
+            get {
+                return ResourceManager.GetString("String21", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is not a Wii image. It will not be loaded..
+        /// </summary>
+        internal static string String22 {
+            get {
+                return ResourceManager.GetString("String22", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is not a GameCube image. It will not be loaded..
+        /// </summary>
+        internal static string String23 {
+            get {
+                return ResourceManager.GetString("String23", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make sure your icon is 128x128 (1:1) to prevent distortion.
+        /// </summary>
+        internal static string String24 {
+            get {
+                return ResourceManager.GetString("String24", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Icon has not been specified.
+        /// </summary>
+        internal static string String25 {
+            get {
+                return ResourceManager.GetString("String25", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make sure your Banner is 1280x720 (16:9) to prevent distortion.
+        /// </summary>
+        internal static string String26 {
+            get {
+                return ResourceManager.GetString("String26", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Banner has not been specified.
+        /// </summary>
+        internal static string String27 {
+            get {
+                return ResourceManager.GetString("String27", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select your game before using this option.
+        /// </summary>
+        internal static string String28 {
+            get {
+                return ResourceManager.GetString("String28", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cucholix&apos;s Repo does not have assets for your game. You will need to provide your own. Would you like to visit the GBAtemp request thread?.
+        /// </summary>
+        internal static string String29 {
+            get {
+                return ResourceManager.GetString("String29", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to close?.
+        /// </summary>
+        internal static string String3 {
+            get {
+                return ResourceManager.GetString("String3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game not found on Repo.
+        /// </summary>
+        internal static string String30 {
+            get {
+                return ResourceManager.GetString("String30", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is not a GameCube image. It will not be loaded..
+        /// </summary>
+        internal static string String31 {
+            get {
+                return ResourceManager.GetString("String31", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make sure your GamePad Banner is 854x480 (16:9) to prevent distortion.
+        /// </summary>
+        internal static string String32 {
+            get {
+                return ResourceManager.GetString("String32", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GamePad Banner has not been specified.
+        /// </summary>
+        internal static string String33 {
+            get {
+                return ResourceManager.GetString("String33", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make sure your Logo is 170x42 to prevent distortion.
+        /// </summary>
+        internal static string String34 {
+            get {
+                return ResourceManager.GetString("String34", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your sound file will be cut off if it&apos;s longer than 6 seconds to prevent the Wii U from not loading it. When the Wii U plays the boot sound, it will fade out once it&apos;s done loading the game (usually after about 5 seconds). You can not change this..
+        /// </summary>
+        internal static string String35 {
+            get {
+                return ResourceManager.GetString("String35", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is not a valid WAV file. It will not be loaded. \nConsider converting it with something like Audacity..
+        /// </summary>
+        internal static string String36 {
+            get {
+                return ResourceManager.GetString("String36", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Boot Sound has not been specified.
+        /// </summary>
+        internal static string String37 {
+            get {
+                return ResourceManager.GetString("String37", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop Sound.
+        /// </summary>
+        internal static string String38 {
+            get {
+                return ResourceManager.GetString("String38", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play Sound.
+        /// </summary>
+        internal static string String39 {
+            get {
+                return ResourceManager.GetString("String39", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing.
+        /// </summary>
+        internal static string String4 {
+            get {
+                return ResourceManager.GetString("String4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Optional) Line 2.
+        /// </summary>
+        internal static string String40 {
+            get {
+                return ResourceManager.GetString("String40", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;- Specify custom main.dol file.
+        /// </summary>
+        internal static string String41 {
+            get {
+                return ResourceManager.GetString("String41", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Wii U Starbuck Ancast Key you have provided is incorrect\n(MD5 Hash verification failed).
+        /// </summary>
+        internal static string String42 {
+            get {
+                return ResourceManager.GetString("String42", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Wii U Common Key has been verified..
+        /// </summary>
+        internal static string String43 {
+            get {
+                return ResourceManager.GetString("String43", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Wii U Common Key you have provided is incorrect\n(MD5 Hash verification failed).
+        /// </summary>
+        internal static string String44 {
+            get {
+                return ResourceManager.GetString("String44", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Title Key has been verified..
+        /// </summary>
+        internal static string String45 {
+            get {
+                return ResourceManager.GetString("String45", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Title Key you have provided is incorrect\n(MD5 Hash verification failed).
+        /// </summary>
+        internal static string String46 {
+            get {
+                return ResourceManager.GetString("String46", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your hard drive may be low on space. The conversion process involves temporary files that can amount to more than double the size of your game. If you continue without clearing some hard drive space, the conversion may fail. Do you want to continue anyways?.
+        /// </summary>
+        internal static string String47 {
+            get {
+                return ResourceManager.GetString("String47", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check your hard drive space.
+        /// </summary>
+        internal static string String48 {
+            get {
+                return ResourceManager.GetString("String48", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Output folder selection has been cancelled, conversion will not continue..
+        /// </summary>
+        internal static string String49 {
+            get {
+                return ResourceManager.GetString("String49", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game....
+        /// </summary>
+        internal static string String5 {
+            get {
+                return ResourceManager.GetString("String5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your internet connection could not be verified, do you wish to try and download the necessary base files from Nintendo anyways? (This is a one-time download).
+        /// </summary>
+        internal static string String50 {
+            get {
+                return ResourceManager.GetString("String50", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internet Connection Verification Failed.
+        /// </summary>
+        internal static string String51 {
+            get {
+                return ResourceManager.GetString("String51", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo....
+        /// </summary>
+        internal static string String52 {
+            get {
+                return ResourceManager.GetString("String52", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (deint.txt).
+        /// </summary>
+        internal static string String53 {
+            get {
+                return ResourceManager.GetString("String53", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (font.bin).
+        /// </summary>
+        internal static string String54 {
+            get {
+                return ResourceManager.GetString("String54", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (c2w.img).
+        /// </summary>
+        internal static string String55 {
+            get {
+                return ResourceManager.GetString("String55", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (boot.bin).
+        /// </summary>
+        internal static string String56 {
+            get {
+                return ResourceManager.GetString("String56", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (dmcu.d.hex).
+        /// </summary>
+        internal static string String57 {
+            get {
+                return ResourceManager.GetString("String57", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (cos.xml).
+        /// </summary>
+        internal static string String58 {
+            get {
+                return ResourceManager.GetString("String58", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (frisbiiU.rpx).
+        /// </summary>
+        internal static string String59 {
+            get {
+                return ResourceManager.GetString("String59", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to game.
+        /// </summary>
+        internal static string String6 {
+            get {
+                return ResourceManager.GetString("String6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (fw.img).
+        /// </summary>
+        internal static string String60 {
+            get {
+                return ResourceManager.GetString("String60", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (fw.tmd).
+        /// </summary>
+        internal static string String61 {
+            get {
+                return ResourceManager.GetString("String61", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (htk.bin).
+        /// </summary>
+        internal static string String62 {
+            get {
+                return ResourceManager.GetString("String62", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (nn_hai_user.rpl).
+        /// </summary>
+        internal static string String63 {
+            get {
+                return ResourceManager.GetString("String63", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (banner.gsh / fade.gsh).
+        /// </summary>
+        internal static string String64 {
+            get {
+                return ResourceManager.GetString("String64", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (bootMovie.h264).
+        /// </summary>
+        internal static string String65 {
+            get {
+                return ResourceManager.GetString("String65", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (bootLogoTex.tga).
+        /// </summary>
+        internal static string String66 {
+            get {
+                return ResourceManager.GetString("String66", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (One-Time Download) Downloading base files from Nintendo... (bootSound.btsnd).
+        /// </summary>
+        internal static string String67 {
+            get {
+                return ResourceManager.GetString("String67", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saving files from Nintendo for future use....
+        /// </summary>
+        internal static string String68 {
+            get {
+                return ResourceManager.GetString("String68", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to download base files using JNUSTool, conversion will not continue.
+        /// </summary>
+        internal static string String69 {
+            get {
+                return ResourceManager.GetString("String69", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wii Dumps (*.iso,*.wbfs)|*.iso;*.wbfs.
+        /// </summary>
+        internal static string String7 {
+            get {
+                return ResourceManager.GetString("String7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copying base files to temporary build directory....
+        /// </summary>
+        internal static string String70 {
+            get {
+                return ResourceManager.GetString("String70", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generating app.xml and meta.xml.
+        /// </summary>
+        internal static string String71 {
+            get {
+                return ResourceManager.GetString("String71", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Converting all image sources to expected TGA specification....
+        /// </summary>
+        internal static string String72 {
+            get {
+                return ResourceManager.GetString("String72", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Converting user provided sound to btsnd format....
+        /// </summary>
+        internal static string String73 {
+            get {
+                return ResourceManager.GetString("String73", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing game for NFS Conversion....
+        /// </summary>
+        internal static string String74 {
+            get {
+                return ResourceManager.GetString("String74", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Wii Video Mode Changer will now be launched. I recommend using the Smart Patcher option. \n\nIf you&apos;re scared and don&apos;t know what you&apos;re doing, close the patcher window and nothing will be patched. \n\nClick OK to continue....
+        /// </summary>
+        internal static string String75 {
+            get {
+                return ResourceManager.GetString("String75", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conversion will now continue....
+        /// </summary>
+        internal static string String76 {
+            get {
+                return ResourceManager.GetString("String76", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Converting processed game to NFS format....
+        /// </summary>
+        internal static string String77 {
+            get {
+                return ResourceManager.GetString("String77", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encrypting contents into installable WUP Package....
+        /// </summary>
+        internal static string String78 {
+            get {
+                return ResourceManager.GetString("String78", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conversion complete....
+        /// </summary>
+        internal static string String79 {
+            get {
+                return ResourceManager.GetString("String79", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game file has not been specified.
+        /// </summary>
+        internal static string String8 {
+            get {
+                return ResourceManager.GetString("String8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conversion Complete! Your packed game can be found here:.
+        /// </summary>
+        internal static string String80 {
+            get {
+                return ResourceManager.GetString("String80", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .\n\nInstall your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.\n\n Click OK to continue....
+        /// </summary>
+        internal static string String81 {
+            get {
+                return ResourceManager.GetString("String81", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conversion Complete.
+        /// </summary>
+        internal static string String82 {
+            get {
+                return ResourceManager.GetString("String82", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading....
+        /// </summary>
+        internal static string String83 {
+            get {
+                return ResourceManager.GetString("String83", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download complete..
+        /// </summary>
+        internal static string String84 {
+            get {
+                return ResourceManager.GetString("String84", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drive not specified, nowhere to download contents.
+        /// </summary>
+        internal static string String85 {
+            get {
+                return ResourceManager.GetString("String85", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drive not specified, nowhere to place generated config.
+        /// </summary>
+        internal static string String86 {
+            get {
+                return ResourceManager.GetString("String86", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Config generation complete..
+        /// </summary>
+        internal static string String87 {
+            get {
+                return ResourceManager.GetString("String87", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to iconTex.png downloaded from Cucholix&apos;s Repo.
+        /// </summary>
+        internal static string String88 {
+            get {
+                return ResourceManager.GetString("String88", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to bootTvTex.png downloaded from Cucholix&apos;s Repo.
+        /// </summary>
+        internal static string String89 {
+            get {
+                return ResourceManager.GetString("String89", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2nd GameCube Disc Image has not been specified.
+        /// </summary>
+        internal static string String9 {
+            get {
+                return ResourceManager.GetString("String9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto.
+        /// </summary>
+        internal static string String90 {
+            get {
+                return ResourceManager.GetString("String90", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify your game file.
+        /// </summary>
+        internal static string String91 {
+            get {
+                return ResourceManager.GetString("String91", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your image will be converted to PNG (Lossless) to be later processed..
+        /// </summary>
+        internal static string String92 {
+            get {
+                return ResourceManager.GetString("String92", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify your boot sound.
+        /// </summary>
+        internal static string String93 {
+            get {
+                return ResourceManager.GetString("String93", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nintendont Forwarder (*.dol)|*.dol.
+        /// </summary>
+        internal static string String94 {
+            get {
+                return ResourceManager.GetString("String94", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify your replacement Nintendont Forwarder.
+        /// </summary>
+        internal static string String95 {
+            get {
+                return ResourceManager.GetString("String95", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GameCube Disk 2 (*.gcm,*.iso)|*.gcm;*.iso.
+        /// </summary>
+        internal static string String96 {
+            get {
+                return ResourceManager.GetString("String96", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Specify your GameCube game&apos;s 2nd disc.
+        /// </summary>
+        internal static string String97 {
+            get {
+                return ResourceManager.GetString("String97", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] TOOLDIR {

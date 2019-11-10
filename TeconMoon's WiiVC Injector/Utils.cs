@@ -6,6 +6,8 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Linq;
+using System.Resources;
+using System.Globalization;
 
 namespace TeconMoon_s_WiiVC_Injector
 {
@@ -287,10 +289,29 @@ namespace TeconMoon_s_WiiVC_Injector
 
         class TranslationTemplate
         {
+            protected const string SectionResource = "@Resource";
+            protected const string KeyFormTitle = "@Title";
+            protected const string KeyLanguage = "language";
+            protected const string KeyVerion = "verion";
+            protected const string KeyAuthor = "author";
+
             private IniFile TemplateFile
             {
                 get;
                 set;
+            }
+
+            public bool IsValidate
+            {
+                get
+                {
+                    if (String.IsNullOrWhiteSpace(TemplateFileName))
+                    {
+                        return false;
+                    }
+
+                    return File.Exists(TemplateFileName);
+                }
             }
 
             public string TemplateFileName
@@ -315,13 +336,16 @@ namespace TeconMoon_s_WiiVC_Injector
                 string templateFilePath,
                 string appName,
                 string defaultLanguageName,
-                string version)
+                string version,
+                string author
+                )
             {
                 TranslationTemplate template = new TranslationTemplate(templateFilePath);
 
                 template.TemplateFile.CurrentSection = appName;
-                template.TemplateFile.WriteStringValue("language", defaultLanguageName);
-                template.TemplateFile.WriteStringValue("verion", version);
+                template.TemplateFile.WriteStringValue(KeyLanguage, defaultLanguageName);
+                template.TemplateFile.WriteStringValue(KeyVerion, version);
+                template.TemplateFile.WriteStringValue(KeyAuthor, author);
 
                 return template;
             }
@@ -329,7 +353,7 @@ namespace TeconMoon_s_WiiVC_Injector
             public void AppendFormTranslation(Form form)
             {
                 TemplateFile.CurrentSection = form.Name;
-                TemplateFile.WriteStringValue("@Title", form.Text);
+                TemplateFile.WriteStringValue(KeyFormTitle, form.Text);
 
                 foreach (Control control in form.Controls)
                 {
@@ -339,7 +363,10 @@ namespace TeconMoon_s_WiiVC_Injector
 
             private void AppendControlTranslation(Control control)
             {
-                TemplateFile.WriteStringValue(control.Name, control.Text);
+                if (!String.IsNullOrEmpty(control.Text))
+                {
+                    TemplateFile.WriteStringValue(control.Name, control.Text);
+                }
 
                 foreach (Control subControl in control.Controls)
                 {
@@ -347,33 +374,48 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
             }
 
-            public void LoadFormTranslation(Form form)
+            public void AppendStringResourceTranslation(ResourceSet resourceSet)
             {
-                TemplateFile.CurrentSection = form.Name;
-                TranslateControl(form, "@Title");
+                TemplateFile.CurrentSection = SectionResource;
 
-                foreach (Control control in form.Controls)
+                foreach (DictionaryEntry dictionaryEntry in resourceSet)
                 {
-                    LoadControlTranslation(control);
+                    if (dictionaryEntry.Value is string)
+                    {
+                        TemplateFile.WriteStringValue(
+                            dictionaryEntry.Key.ToString(),
+                            dictionaryEntry.Value.ToString());
+                    }
                 }
             }
 
-            private void LoadControlTranslation(Control control)
+            public void TranslationForm(Form form)
             {
-                TranslateControl(control);
+                TemplateFile.CurrentSection = form.Name;
+                _TranslateControl(form, KeyFormTitle);
 
-                foreach (Control subControl in control.Controls)
+                foreach (Control control in form.Controls)
                 {
-                    LoadControlTranslation(subControl);
+                    TranslateControl(control);
                 }
             }
 
             private void TranslateControl(Control control)
             {
-                TranslateControl(control, control.Name);
+                _TranslateControl(control);
+
+                foreach (Control subControl in control.Controls)
+                {
+                    TranslateControl(subControl);
+                }
             }
 
-            private void TranslateControl(Control control, string id)
+            private void _TranslateControl(Control control)
+            {
+                _TranslateControl(control, control.Name);
+            }
+
+            private void _TranslateControl(Control control, string id)
             {
                 string translation = TemplateFile.ReadStringValue(id, 1024);
 
@@ -381,6 +423,41 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     control.Text = translation;
                 }
+            }
+
+            public string Tr(string s)
+            {
+                if (String.IsNullOrEmpty(s) || !IsValidate)
+                {
+                    return s;
+                }
+
+                foreach (DictionaryEntry dictionaryEntry 
+                    in Properties.Resources.ResourceManager.GetResourceSet(
+                        CultureInfo.CurrentCulture, false, false))
+                {
+                    if (dictionaryEntry.Value is string)
+                    {
+                        if (s.Equals(dictionaryEntry.Value))
+                        {
+                            return TrId(dictionaryEntry.Key.ToString());
+                        }
+                    }
+                }
+
+                return s;
+            }
+
+            public string TrId(string id)
+            {
+                string s = TemplateFile.ReadStringValue(SectionResource, id, 1024);
+
+                if (String.IsNullOrEmpty(s))
+                {
+                    return Properties.Resources.ResourceManager.GetString(id);
+                }
+
+                return s;
             }
         }
 
