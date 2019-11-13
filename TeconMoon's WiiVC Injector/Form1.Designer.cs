@@ -289,7 +289,7 @@
             this.IGNText.Location = new System.Drawing.Point(12, 143);
             this.IGNText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.IGNText.Name = "IGNText";
-            this.IGNText.Size = new System.Drawing.Size(170, 18);
+            this.IGNText.Size = new System.Drawing.Size(215, 25);
             this.IGNText.TabIndex = 10;
             this.IGNText.Text = "Internal Game Name:";
             this.IGNText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
