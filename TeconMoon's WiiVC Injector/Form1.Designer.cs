@@ -103,6 +103,9 @@
             this.AncastKey = new System.Windows.Forms.TextBox();
             this.AdvancedLabel1 = new System.Windows.Forms.Label();
             this.BuildTab = new System.Windows.Forms.TabPage();
+            this.BrowseOutputDir = new System.Windows.Forms.Button();
+            this.OutputDirectory = new System.Windows.Forms.TextBox();
+            this.OutputDirLabel = new System.Windows.Forms.Label();
             this.DebugButton = new System.Windows.Forms.Button();
             this.AdvanceCheck = new System.Windows.Forms.Label();
             this.BuildStatus = new System.Windows.Forms.Label();
@@ -147,6 +150,7 @@
             // 
             // MainTableLayout
             // 
+            this.MainTableLayout.AllowDrop = true;
             this.MainTableLayout.ColumnCount = 3;
             this.MainTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33332F));
             this.MainTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
@@ -166,6 +170,8 @@
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.MainTableLayout.Size = new System.Drawing.Size(581, 449);
             this.MainTableLayout.TabIndex = 0;
+            this.MainTableLayout.DragDrop += new System.Windows.Forms.DragEventHandler(this.GameFile_DragDrop);
+            this.MainTableLayout.DragEnter += new System.Windows.Forms.DragEventHandler(this.GameFile_DragEnter);
             // 
             // WiiRetail
             // 
@@ -201,6 +207,7 @@
             // 
             // SourceFilesTab
             // 
+            this.SourceFilesTab.AllowDrop = true;
             this.SourceFilesTab.BackColor = System.Drawing.Color.Gainsboro;
             this.SourceFilesTab.Controls.Add(this.GenerateImage);
             this.SourceFilesTab.Controls.Add(this.RepoDownload);
@@ -223,6 +230,8 @@
             this.SourceFilesTab.Size = new System.Drawing.Size(567, 357);
             this.SourceFilesTab.TabIndex = 0;
             this.SourceFilesTab.Text = "Required Source Files";
+            this.SourceFilesTab.DragDrop += new System.Windows.Forms.DragEventHandler(this.GameFile_DragDrop);
+            this.SourceFilesTab.DragEnter += new System.Windows.Forms.DragEventHandler(this.GameFile_DragEnter);
             // 
             // GenerateImage
             // 
@@ -418,9 +427,9 @@
             this.SourceFilesTab2.Controls.Add(this.DrcSourceButton);
             this.SourceFilesTab2.Controls.Add(this.BootSoundPreviewButton);
             this.SourceFilesTab2.Location = new System.Drawing.Point(4, 22);
-            this.SourceFilesTab2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SourceFilesTab2.Margin = new System.Windows.Forms.Padding(4);
             this.SourceFilesTab2.Name = "SourceFilesTab2";
-            this.SourceFilesTab2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SourceFilesTab2.Padding = new System.Windows.Forms.Padding(4);
             this.SourceFilesTab2.Size = new System.Drawing.Size(567, 357);
             this.SourceFilesTab2.TabIndex = 5;
             this.SourceFilesTab2.Text = "Optional Source Files";
@@ -612,9 +621,9 @@
             this.MetaTab.Controls.Add(this.PackedTitleLine1);
             this.MetaTab.Controls.Add(this.PackedTitleText);
             this.MetaTab.Location = new System.Drawing.Point(4, 22);
-            this.MetaTab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MetaTab.Margin = new System.Windows.Forms.Padding(4);
             this.MetaTab.Name = "MetaTab";
-            this.MetaTab.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MetaTab.Padding = new System.Windows.Forms.Padding(4);
             this.MetaTab.Size = new System.Drawing.Size(567, 357);
             this.MetaTab.TabIndex = 2;
             this.MetaTab.Text = "GamePad/Meta Options";
@@ -842,9 +851,9 @@
             this.AdvancedTab.Controls.Add(this.AncastKey);
             this.AdvancedTab.Controls.Add(this.AdvancedLabel1);
             this.AdvancedTab.Location = new System.Drawing.Point(4, 22);
-            this.AdvancedTab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AdvancedTab.Margin = new System.Windows.Forms.Padding(4);
             this.AdvancedTab.Name = "AdvancedTab";
-            this.AdvancedTab.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AdvancedTab.Padding = new System.Windows.Forms.Padding(4);
             this.AdvancedTab.Size = new System.Drawing.Size(567, 357);
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
@@ -1051,6 +1060,9 @@
             // BuildTab
             // 
             this.BuildTab.BackColor = System.Drawing.Color.Gainsboro;
+            this.BuildTab.Controls.Add(this.BrowseOutputDir);
+            this.BuildTab.Controls.Add(this.OutputDirectory);
+            this.BuildTab.Controls.Add(this.OutputDirLabel);
             this.BuildTab.Controls.Add(this.DebugButton);
             this.BuildTab.Controls.Add(this.AdvanceCheck);
             this.BuildTab.Controls.Add(this.BuildStatus);
@@ -1067,12 +1079,41 @@
             this.BuildTab.Controls.Add(this.CommonLabel);
             this.BuildTab.Controls.Add(this.WiiUCommonKey);
             this.BuildTab.Location = new System.Drawing.Point(4, 22);
-            this.BuildTab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BuildTab.Margin = new System.Windows.Forms.Padding(4);
             this.BuildTab.Name = "BuildTab";
-            this.BuildTab.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BuildTab.Padding = new System.Windows.Forms.Padding(4);
             this.BuildTab.Size = new System.Drawing.Size(567, 357);
             this.BuildTab.TabIndex = 4;
             this.BuildTab.Text = "Build Title";
+            // 
+            // BrowseOutputDir
+            // 
+            this.BrowseOutputDir.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.BrowseOutputDir.BackColor = System.Drawing.Color.Silver;
+            this.BrowseOutputDir.Location = new System.Drawing.Point(300, 115);
+            this.BrowseOutputDir.Name = "BrowseOutputDir";
+            this.BrowseOutputDir.Size = new System.Drawing.Size(90, 22);
+            this.BrowseOutputDir.TabIndex = 20;
+            this.BrowseOutputDir.Text = "Browse...";
+            this.BrowseOutputDir.UseVisualStyleBackColor = false;
+            this.BrowseOutputDir.Click += new System.EventHandler(this.BrowseOutputDir_Click);
+            // 
+            // OutputDirectory
+            // 
+            this.OutputDirectory.Location = new System.Drawing.Point(6, 115);
+            this.OutputDirectory.MaxLength = 32;
+            this.OutputDirectory.Name = "OutputDirectory";
+            this.OutputDirectory.Size = new System.Drawing.Size(288, 21);
+            this.OutputDirectory.TabIndex = 19;
+            // 
+            // OutputDirLabel
+            // 
+            this.OutputDirLabel.AutoSize = true;
+            this.OutputDirLabel.Location = new System.Drawing.Point(8, 99);
+            this.OutputDirLabel.Name = "OutputDirLabel";
+            this.OutputDirLabel.Size = new System.Drawing.Size(107, 12);
+            this.OutputDirLabel.TabIndex = 18;
+            this.OutputDirLabel.Text = "Output Directory:";
             // 
             // DebugButton
             // 
@@ -1092,7 +1133,7 @@
             this.AdvanceCheck.AutoSize = true;
             this.AdvanceCheck.BackColor = System.Drawing.Color.Transparent;
             this.AdvanceCheck.ForeColor = System.Drawing.Color.Red;
-            this.AdvanceCheck.Location = new System.Drawing.Point(8, 165);
+            this.AdvanceCheck.Location = new System.Drawing.Point(8, 184);
             this.AdvanceCheck.Name = "AdvanceCheck";
             this.AdvanceCheck.Size = new System.Drawing.Size(191, 12);
             this.AdvanceCheck.TabIndex = 16;
@@ -1101,29 +1142,28 @@
             // BuildStatus
             // 
             this.BuildStatus.BackColor = System.Drawing.Color.Gainsboro;
-            this.BuildStatus.Location = new System.Drawing.Point(6, 201);
+            this.BuildStatus.Location = new System.Drawing.Point(6, 214);
             this.BuildStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BuildStatus.Name = "BuildStatus";
-            this.BuildStatus.Size = new System.Drawing.Size(556, 26);
+            this.BuildStatus.Size = new System.Drawing.Size(556, 25);
             this.BuildStatus.TabIndex = 15;
             // 
             // BuildProgress
             // 
             this.BuildProgress.BackColor = System.Drawing.Color.Gainsboro;
-            this.BuildProgress.Location = new System.Drawing.Point(7, 231);
-            this.BuildProgress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BuildProgress.Location = new System.Drawing.Point(7, 243);
+            this.BuildProgress.Margin = new System.Windows.Forms.Padding(4);
             this.BuildProgress.Name = "BuildProgress";
             this.BuildProgress.Size = new System.Drawing.Size(557, 26);
             this.BuildProgress.TabIndex = 14;
             // 
             // SaveTitleKeyButton
             // 
-            this.SaveTitleKeyButton.AutoSize = true;
             this.SaveTitleKeyButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.SaveTitleKeyButton.BackColor = System.Drawing.Color.Silver;
-            this.SaveTitleKeyButton.Location = new System.Drawing.Point(300, 87);
+            this.SaveTitleKeyButton.Location = new System.Drawing.Point(300, 71);
             this.SaveTitleKeyButton.Name = "SaveTitleKeyButton";
-            this.SaveTitleKeyButton.Size = new System.Drawing.Size(63, 22);
+            this.SaveTitleKeyButton.Size = new System.Drawing.Size(90, 22);
             this.SaveTitleKeyButton.TabIndex = 13;
             this.SaveTitleKeyButton.Text = "Save Key";
             this.SaveTitleKeyButton.UseVisualStyleBackColor = false;
@@ -1131,12 +1171,11 @@
             // 
             // SaveCommonKeyButton
             // 
-            this.SaveCommonKeyButton.AutoSize = true;
             this.SaveCommonKeyButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.SaveCommonKeyButton.BackColor = System.Drawing.Color.Silver;
-            this.SaveCommonKeyButton.Location = new System.Drawing.Point(300, 26);
+            this.SaveCommonKeyButton.Location = new System.Drawing.Point(300, 23);
             this.SaveCommonKeyButton.Name = "SaveCommonKeyButton";
-            this.SaveCommonKeyButton.Size = new System.Drawing.Size(63, 22);
+            this.SaveCommonKeyButton.Size = new System.Drawing.Size(90, 22);
             this.SaveCommonKeyButton.TabIndex = 12;
             this.SaveCommonKeyButton.Text = "Save Key";
             this.SaveCommonKeyButton.UseVisualStyleBackColor = false;
@@ -1160,7 +1199,7 @@
             this.KeysCheck.AutoSize = true;
             this.KeysCheck.BackColor = System.Drawing.Color.Transparent;
             this.KeysCheck.ForeColor = System.Drawing.Color.Red;
-            this.KeysCheck.Location = new System.Drawing.Point(8, 179);
+            this.KeysCheck.Location = new System.Drawing.Point(8, 198);
             this.KeysCheck.Name = "KeysCheck";
             this.KeysCheck.Size = new System.Drawing.Size(221, 12);
             this.KeysCheck.TabIndex = 10;
@@ -1171,7 +1210,7 @@
             this.MetaCheck.AutoSize = true;
             this.MetaCheck.BackColor = System.Drawing.Color.Transparent;
             this.MetaCheck.ForeColor = System.Drawing.Color.Red;
-            this.MetaCheck.Location = new System.Drawing.Point(8, 152);
+            this.MetaCheck.Location = new System.Drawing.Point(8, 171);
             this.MetaCheck.Name = "MetaCheck";
             this.MetaCheck.Size = new System.Drawing.Size(137, 12);
             this.MetaCheck.TabIndex = 8;
@@ -1182,7 +1221,7 @@
             this.SourceCheck.AutoSize = true;
             this.SourceCheck.BackColor = System.Drawing.Color.Transparent;
             this.SourceCheck.ForeColor = System.Drawing.Color.Red;
-            this.SourceCheck.Location = new System.Drawing.Point(8, 139);
+            this.SourceCheck.Location = new System.Drawing.Point(8, 158);
             this.SourceCheck.Name = "SourceCheck";
             this.SourceCheck.Size = new System.Drawing.Size(215, 12);
             this.SourceCheck.TabIndex = 7;
@@ -1192,7 +1231,7 @@
             // 
             this.RequirementsLabel.AutoSize = true;
             this.RequirementsLabel.BackColor = System.Drawing.Color.Transparent;
-            this.RequirementsLabel.Location = new System.Drawing.Point(4, 121);
+            this.RequirementsLabel.Location = new System.Drawing.Point(4, 140);
             this.RequirementsLabel.Name = "RequirementsLabel";
             this.RequirementsLabel.Size = new System.Drawing.Size(251, 12);
             this.RequirementsLabel.TabIndex = 6;
@@ -1200,7 +1239,7 @@
             // 
             // TitleKey
             // 
-            this.TitleKey.Location = new System.Drawing.Point(6, 87);
+            this.TitleKey.Location = new System.Drawing.Point(6, 71);
             this.TitleKey.MaxLength = 32;
             this.TitleKey.Name = "TitleKey";
             this.TitleKey.Size = new System.Drawing.Size(288, 21);
@@ -1210,7 +1249,7 @@
             // 
             this.RHFKeyLabel.AutoSize = true;
             this.RHFKeyLabel.BackColor = System.Drawing.Color.Transparent;
-            this.RHFKeyLabel.Location = new System.Drawing.Point(6, 68);
+            this.RHFKeyLabel.Location = new System.Drawing.Point(6, 54);
             this.RHFKeyLabel.Name = "RHFKeyLabel";
             this.RHFKeyLabel.Size = new System.Drawing.Size(461, 12);
             this.RHFKeyLabel.TabIndex = 3;
@@ -1228,7 +1267,7 @@
             // 
             // WiiUCommonKey
             // 
-            this.WiiUCommonKey.Location = new System.Drawing.Point(6, 26);
+            this.WiiUCommonKey.Location = new System.Drawing.Point(6, 23);
             this.WiiUCommonKey.MaxLength = 32;
             this.WiiUCommonKey.Name = "WiiUCommonKey";
             this.WiiUCommonKey.Size = new System.Drawing.Size(288, 21);
@@ -1236,8 +1275,9 @@
             // 
             // SDCardStuff
             // 
-            this.SDCardStuff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
-            this.SDCardStuff.Location = new System.Drawing.Point(405, 32);
+            this.SDCardStuff.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.SDCardStuff.Location = new System.Drawing.Point(389, 32);
             this.SDCardStuff.Name = "SDCardStuff";
             this.SDCardStuff.Size = new System.Drawing.Size(157, 25);
             this.SDCardStuff.TabIndex = 5;
@@ -1341,7 +1381,7 @@
             this.Controls.Add(this.MainTableLayout);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "WiiVC_Injector";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1472,6 +1512,9 @@
         private System.Windows.Forms.Button DebugButton;
         private System.Windows.Forms.CheckBox WiiVMC;
         private System.Windows.Forms.Button GenerateImage;
+        private System.Windows.Forms.Button BrowseOutputDir;
+        private System.Windows.Forms.TextBox OutputDirectory;
+        private System.Windows.Forms.Label OutputDirLabel;
     }
 }
 

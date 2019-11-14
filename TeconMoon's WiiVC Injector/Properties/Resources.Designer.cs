@@ -934,6 +934,15 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t create the specified output directory, conversion will not continue.\nAdditional error information:.
+        /// </summary>
+        internal static string String98 {
+            get {
+                return ResourceManager.GetString("String98", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] TOOLDIR {

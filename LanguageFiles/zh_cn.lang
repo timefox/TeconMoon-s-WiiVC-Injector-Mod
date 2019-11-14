@@ -83,6 +83,8 @@ SDCardStuff=Nintendont SD卡菜单
 GCRetail=GC 游戏注入
 WiiNAND=vWii NAND 启动器
 WiiHomebrew=Wii 自制程序注入
+OutputDirLabel=输出目录
+BrowseOutputDir=浏览...
 [SDCardMenu]
 @Title=Nintendont SD卡菜单...
 Format=推荐的SD卡格式化工具
@@ -194,3 +196,4 @@ String95=指定替代的Nintendont Forwarder
 String94=Nintendont Forwarder (*.dol)|*.dol
 String97=指定游戏的第二张光盘镜像
 String96=GameCube游戏的第二张光盘镜像 (*.gcm,*.iso)|*.gcm;*.iso
+String98=无法创建指定的输出目录，转换过程无法继续。\n详细的错误信息：

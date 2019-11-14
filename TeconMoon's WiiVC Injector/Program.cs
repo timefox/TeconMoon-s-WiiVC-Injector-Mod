@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -24,8 +25,36 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             get
             {
-                return "3.0.1mod" + ModVersion;
+                return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + 
+                    "mod" + ModVersion;
             }
+        }
+
+        static private List<string> _AutoBuildList = new List<string>();
+
+        static public List<string> AutoBuildList
+        {
+            get
+            {
+                return _AutoBuildList;
+            }
+        }
+
+        static public bool AppendAutoBuildList(string item)
+        {
+            if (File.Exists(item))
+            {
+                string fileExtension = new FileInfo(item).Extension;
+
+                if (fileExtension.Equals(".iso", StringComparison.OrdinalIgnoreCase)
+                    || fileExtension.Equals(".wbfs", StringComparison.OrdinalIgnoreCase))
+                {
+                    AutoBuildList.Add(item);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -41,6 +70,7 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 if (!arg.StartsWith("-") && !arg.StartsWith("/"))
                 {
+                    AppendAutoBuildList(arg);
                     continue;
                 }
 

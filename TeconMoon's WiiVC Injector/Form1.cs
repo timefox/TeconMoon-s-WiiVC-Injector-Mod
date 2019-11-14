@@ -95,6 +95,46 @@ namespace TeconMoon_s_WiiVC_Injector
             this.OpenGC2.Filter = tr.Tr("GameCube Disk 2 (*.gcm,*.iso)|*.gcm;*.iso");
             this.OpenGC2.Title = tr.Tr("Specify your GameCube game\'s 2nd disc");
 
+            AutoBuildWiiRetail();
+        }
+
+        void AutoBuildWiiRetail()
+        {
+            if (Program.AutoBuildList.Count == 0)
+            {
+                return;
+            }
+
+            WiiRetail.PerformClick();
+
+            foreach (string game in Program.AutoBuildList)
+            {
+                if (SelectGameSource(game, true))
+                {
+                    BuildCurrentWiiRetail();
+                }
+            }
+
+            Program.AutoBuildList.Clear();
+        }
+
+        void BuildCurrentWiiRetail()
+        {
+            // Switch to Source Files Tab.
+            MainTabs.SelectedIndex = MainTabs.TabPages.IndexOfKey("SourceFilesTab");
+
+            // Auto generate images.
+            GenerateImage.PerformClick();
+
+            // Switch to Build Tab.
+            MainTabs.SelectedIndex = MainTabs.TabPages.IndexOfKey("BuildTab");
+
+            // Check if everything is ready.
+            if (TheBigOneTM.Enabled)
+            {
+                // Ready to rumble. :)
+                TheBigOneTM.PerformClick();
+            }
         }
 
         //Testing
@@ -672,9 +712,120 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     TheBigOneTM.Enabled = false;
                 }
-
-
             }
+        }
+
+        private bool SelectGameSource(string gameFilePath, bool silent)
+        {
+            GameSourceDirectory.Text = gameFilePath;
+            GameSourceDirectory.ForeColor = Color.Black;
+            FlagGameSpecified = true;
+            //Get values from game file
+            using (var reader = new BinaryReader(File.OpenRead(gameFilePath)))
+            {
+                reader.BaseStream.Position = 0x00;
+                TitleIDInt = reader.ReadInt32();
+                //WBFS Check
+                if (TitleIDInt == 1397113431 /*'SFBW'*/) //Performs actions if the header indicates a WBFS file
+                {
+                    FlagWBFS = true;
+                    reader.BaseStream.Position = 0x200;
+                    TitleIDInt = reader.ReadInt32();
+                    reader.BaseStream.Position = 0x218;
+                    GameType = reader.ReadInt64();
+                    InternalGameName = StringEx.ReadStringFromBinaryStream(reader, 0x220);
+                    CucholixRepoID = StringEx.ReadStringFromBinaryStream(reader, 0x200);
+                }
+                else
+                {
+                    if (TitleIDInt == 65536) //Performs actions if the header indicates a DOL file
+                    {
+                        reader.BaseStream.Position = 0x2A0;
+                        TitleIDInt = reader.ReadInt32();
+                        InternalGameName = tr.Tr("N/A");
+                    }
+                    else //Performs actions if the header indicates a normal Wii / GC iso
+                    {
+                        FlagWBFS = false;
+                        reader.BaseStream.Position = 0x18;
+                        GameType = reader.ReadInt64();
+                        InternalGameName = StringEx.ReadStringFromBinaryStream(reader, 0x20);
+                        CucholixRepoID = StringEx.ReadStringFromBinaryStream(reader, 0x00);
+                    }
+                }
+            }
+            //Flag if GameType Int doesn't match current SystemType
+            if (SystemType == "wii" && GameType != 2745048157)
+            {
+                GameSourceDirectory.Text = tr.Tr("Game file has not been specified");
+                GameSourceDirectory.ForeColor = Color.Red;
+                FlagGameSpecified = false;
+                GameNameLabel.Text = "";
+                TitleIDLabel.Text = "";
+                TitleIDInt = 0;
+                TitleIDHex = "";
+                GameType = 0;
+                CucholixRepoID = "";
+                PackedTitleLine1.Text = "";
+                PackedTitleIDLine.Text = "";
+                if (!silent)
+                {
+                    MessageBox.Show(tr.Tr("This is not a Wii image. It will not be loaded."));
+                }
+                return false;
+            }
+            if (SystemType == "gcn" && GameType != 4440324665927270400)
+            {
+                GameSourceDirectory.Text = tr.Tr("Game file has not been specified");
+                GameSourceDirectory.ForeColor = Color.Red;
+                FlagGameSpecified = false;
+                GameNameLabel.Text = "";
+                TitleIDLabel.Text = "";
+                TitleIDInt = 0;
+                TitleIDHex = "";
+                GameType = 0;
+                CucholixRepoID = "";
+                PackedTitleLine1.Text = "";
+                PackedTitleIDLine.Text = "";
+                if (!silent)
+                {
+                    MessageBox.Show(tr.Tr("This is not a GameCube image. It will not be loaded."));
+                }
+                return false;
+            }
+
+            // Setup game name labels.
+            GameNameLabel.Text = InternalGameName;
+
+            // Try to convert simplified Chinese string to traditional Chinese string
+            // which will avoid probably missing chars at wii consolo.
+            if (!StringEx.IsGB2312EncodingArray(InternalGameName.OfType<byte>().ToArray()))
+            {
+                PackedTitleLine1.Text = InternalGameName;
+            }
+            else
+            {
+                PackedTitleLine1.Text = Microsoft.VisualBasic.Strings.StrConv(
+                    InternalGameName, Microsoft.VisualBasic.VbStrConv.TraditionalChinese, 0);
+            }
+
+            //Convert pulled Title ID Int to Hex for use with Wii U Title ID
+            TitleIDHex = TitleIDInt.ToString("X");
+            TitleIDHex = TitleIDHex.Substring(6, 2) + TitleIDHex.Substring(4, 2) + TitleIDHex.Substring(2, 2) + TitleIDHex.Substring(0, 2);
+            if (SystemType == "dol")
+            {
+                TitleIDLabel.Text = TitleIDHex;
+                PackedTitleIDLine.Text = ("00050002" + TitleIDHex);
+                TitleIDText = "BOOT";
+            }
+            else
+            {
+                TitleIDText = string.Join("", System.Text.RegularExpressions.Regex.Split(TitleIDHex, "(?<=\\G..)(?!$)").Select(x => (char)Convert.ToByte(x, 16)));
+                TitleIDLabel.Text = (TitleIDText + " / " + TitleIDHex);
+                PackedTitleIDLine.Text = ("00050002" + TitleIDHex);
+            }
+
+            return true;
         }
 
         //Events for the "Required Source Files" Tab
@@ -682,107 +833,7 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             if (OpenGame.ShowDialog() == DialogResult.OK)
             {
-                GameSourceDirectory.Text = OpenGame.FileName;
-                GameSourceDirectory.ForeColor = Color.Black;
-                FlagGameSpecified = true;
-                //Get values from game file
-                using (var reader = new BinaryReader(File.OpenRead(OpenGame.FileName)))
-                {
-                    reader.BaseStream.Position = 0x00;
-                    TitleIDInt = reader.ReadInt32();
-                    //WBFS Check
-                    if (TitleIDInt == 1397113431 /*'SFBW'*/) //Performs actions if the header indicates a WBFS file
-                    {
-                        FlagWBFS = true;
-                        reader.BaseStream.Position = 0x200;
-                        TitleIDInt = reader.ReadInt32();
-                        reader.BaseStream.Position = 0x218;
-                        GameType = reader.ReadInt64();
-                        InternalGameName = StringEx.ReadStringFromBinaryStream(reader, 0x220);
-                        CucholixRepoID = StringEx.ReadStringFromBinaryStream(reader, 0x200);
-                    }
-                    else
-                    {
-                        if (TitleIDInt == 65536) //Performs actions if the header indicates a DOL file
-                        {
-                            reader.BaseStream.Position = 0x2A0;
-                            TitleIDInt = reader.ReadInt32();
-                            InternalGameName = tr.Tr("N/A");
-                        }
-                        else //Performs actions if the header indicates a normal Wii / GC iso
-                        {
-                            FlagWBFS = false;
-                            reader.BaseStream.Position = 0x18;
-                            GameType = reader.ReadInt64();
-                            InternalGameName = StringEx.ReadStringFromBinaryStream(reader, 0x20);
-                            CucholixRepoID = StringEx.ReadStringFromBinaryStream(reader, 0x00);
-                        }
-                    }
-                }
-                //Flag if GameType Int doesn't match current SystemType
-                if (SystemType == "wii" && GameType != 2745048157)
-                {
-                    GameSourceDirectory.Text = tr.Tr("Game file has not been specified");
-                    GameSourceDirectory.ForeColor = Color.Red;
-                    FlagGameSpecified = false;
-                    GameNameLabel.Text = "";
-                    TitleIDLabel.Text = "";
-                    TitleIDInt = 0;
-                    TitleIDHex = "";
-                    GameType = 0;
-                    CucholixRepoID = "";
-                    PackedTitleLine1.Text = "";
-                    PackedTitleIDLine.Text = "";
-                    MessageBox.Show(tr.Tr("This is not a Wii image. It will not be loaded."));
-                    goto EndOfGameSelection;
-                }
-                if (SystemType == "gcn" && GameType != 4440324665927270400)
-                {
-                    GameSourceDirectory.Text = tr.Tr("Game file has not been specified");
-                    GameSourceDirectory.ForeColor = Color.Red;
-                    FlagGameSpecified = false;
-                    GameNameLabel.Text = "";
-                    TitleIDLabel.Text = "";
-                    TitleIDInt = 0;
-                    TitleIDHex = "";
-                    GameType = 0;
-                    CucholixRepoID = "";
-                    PackedTitleLine1.Text = "";
-                    PackedTitleIDLine.Text = "";
-                    MessageBox.Show(tr.Tr("This is not a GameCube image. It will not be loaded."));
-                    goto EndOfGameSelection;
-                }
-
-                // Setup game name labels.
-                GameNameLabel.Text = InternalGameName;
-
-                // Try to convert simplified Chinese string to traditional Chinese string
-                // which will avoid probably missing chars at wii consolo.
-                if (!StringEx.IsGB2312EncodingArray(InternalGameName.OfType<byte>().ToArray()))
-                {
-                    PackedTitleLine1.Text = InternalGameName;
-                }
-                else
-                {
-                    PackedTitleLine1.Text = Microsoft.VisualBasic.Strings.StrConv(
-                        InternalGameName, Microsoft.VisualBasic.VbStrConv.TraditionalChinese, 0);
-                }
-
-                //Convert pulled Title ID Int to Hex for use with Wii U Title ID
-                TitleIDHex = TitleIDInt.ToString("X");
-                TitleIDHex = TitleIDHex.Substring(6, 2) + TitleIDHex.Substring(4, 2) + TitleIDHex.Substring(2, 2) + TitleIDHex.Substring(0, 2);
-                if (SystemType == "dol")
-                {
-                    TitleIDLabel.Text = TitleIDHex;
-                    PackedTitleIDLine.Text = ("00050002" + TitleIDHex);
-                    TitleIDText = "BOOT";
-                }
-                else
-                {
-                    TitleIDText = string.Join("", System.Text.RegularExpressions.Regex.Split(TitleIDHex, "(?<=\\G..)(?!$)").Select(x => (char)Convert.ToByte(x, 16)));
-                    TitleIDLabel.Text = (TitleIDText + " / " + TitleIDHex);
-                    PackedTitleIDLine.Text = ("00050002" + TitleIDHex);
-                }
+                SelectGameSource(OpenGame.FileName, false);
             }
             else
             {
@@ -797,10 +848,9 @@ namespace TeconMoon_s_WiiVC_Injector
                 CucholixRepoID = "";
                 PackedTitleLine1.Text = "";
                 PackedTitleIDLine.Text = "";
-                goto EndOfGameSelection;
             }
-            EndOfGameSelection:;
         }
+
         private void IconSourceButton_Click(object sender, EventArgs e)
         {
             if (FlagRepo)
@@ -1541,12 +1591,31 @@ namespace TeconMoon_s_WiiVC_Injector
                     }
                 }
             }
+
             //Specify Path Variables to be called later
-            if (OutputFolderSelect.ShowDialog() == DialogResult.Cancel)
+            if (String.IsNullOrWhiteSpace(OutputDirectory.Text))
             {
-                MessageBox.Show(tr.Tr("Output folder selection has been cancelled, conversion will not continue."));
-                MainTabs.Enabled = true;
-                goto BuildProcessFin;
+                if (OutputFolderSelect.ShowDialog() == DialogResult.Cancel)
+                {
+                    MessageBox.Show(tr.Tr("Output folder selection has been cancelled, conversion will not continue."));
+                    MainTabs.Enabled = true;
+                    goto BuildProcessFin;
+                }
+                OutputDirectory.Text = OutputFolderSelect.SelectedPath;
+            }
+            if (!Directory.Exists(OutputDirectory.Text))
+            {
+                try
+                {
+                    Directory.CreateDirectory(OutputDirectory.Text);
+                } catch (Exception _e) {
+                    MessageBox.Show(
+                        tr.Tr("Can't create the specified output directory, conversion will not continue.\nAdditional error information:") 
+                        + _e.Message);
+
+                    MainTabs.Enabled = true;
+                    goto BuildProcessFin;
+                }
             }
             BuildProgress.Value = 2;
             //////////////////////////
@@ -2045,7 +2114,7 @@ namespace TeconMoon_s_WiiVC_Injector
             BuildStatus.Refresh();
             Directory.SetCurrentDirectory(TempRootPath);
             LauncherExeFile = TempToolsPath + "JAR\\NUSPacker.exe";
-            LauncherExeArgs = "-in BUILDDIR -out \"" + OutputFolderSelect.SelectedPath + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text + "\" -encryptKeyWith " + WiiUCommonKey.Text;
+            LauncherExeArgs = "-in BUILDDIR -out \"" + OutputDirectory.Text + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text + "\" -encryptKeyWith " + WiiUCommonKey.Text;
             LaunchProgram();
             BuildProgress.Value = 100;
             /////////////////////////////////
@@ -2062,7 +2131,7 @@ namespace TeconMoon_s_WiiVC_Injector
             BuildStatus.Text = tr.Tr("Conversion complete...");
             BuildStatus.Refresh();
             MessageBox.Show(tr.Tr("Conversion Complete! Your packed game can be found here: ") 
-                + OutputFolderSelect.SelectedPath + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text 
+                + OutputDirectory.Text + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text 
                 + tr.Tr(".\n\nInstall your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.\n\n Click OK to continue..."), 
                 PackedTitleLine1.Text + tr.Tr(" Conversion Complete"));
             if (OGfilepath != null) { OpenGame.FileName = OGfilepath; }
@@ -2209,6 +2278,41 @@ namespace TeconMoon_s_WiiVC_Injector
             FlagDrcSpecified = true;
             FlagLogoSpecified = true;
             FlagRepo = false;
+        }
+
+        private void BrowseOutputDir_Click(object sender, EventArgs e)
+        {
+            if (OutputFolderSelect.ShowDialog() == DialogResult.OK)
+            {
+                OutputDirectory.Text = OutputFolderSelect.SelectedPath;
+            }
+        }
+
+        private void AutoBuildDragDrop(DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                String[] files = (String[])e.Data.GetData(DataFormats.FileDrop);
+                foreach (String s in files)
+                {
+                    Program.AppendAutoBuildList(s);
+                }
+            }
+
+            AutoBuildWiiRetail();
+        }
+
+        private void GameFile_DragDrop(object sender, DragEventArgs e)
+        {
+            AutoBuildDragDrop(e);
+        }
+
+        private void GameFile_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
         }
     }
 }
