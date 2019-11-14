@@ -48,6 +48,8 @@ namespace TeconMoon_s_WiiVC_Injector
                 tr.TranslationForm(this);
             }
 
+            this.Text += " - [" + Program.Version + "]";
+
             // 
             // OpenIcon
             // 
