@@ -79,14 +79,14 @@ SourceCheck=源文件已正确指定
 RequirementsLabel=构建条件: 红色 = 条件未满足 / 绿色 = 条件已满足
 RHFKeyLabel=大家的节奏天国 [美版] Title Key - (请在大家都懂的那个"title key 网站"找)
 CommonLabel=Wii U公匙 (Common Key) - (请百度或谷歌)
-SDCardStuff=Nintendont SD卡菜单
+SDCardStuff=Nintendont SD卡菜单...
 GCRetail=GC 游戏注入
 WiiNAND=vWii NAND 启动器
 WiiHomebrew=Wii 自制程序注入
 OutputDirLabel=输出目录
 BrowseOutputDir=浏览...
 [SDCardMenu]
-@Title=Nintendont SD卡菜单...
+@Title=Nintendont SD卡菜单
 Format=推荐的SD卡格式化工具
 MemcardMulti=记忆卡多语言支持
 MemcardText=记忆卡块数

@@ -575,17 +575,20 @@ namespace TeconMoon_s_WiiVC_Injector
             if (MainTabs.SelectedTab == BuildTab)
             {
                 //Initialize Registry values if they don't exist and pull values from them if they do
-                if (Registry.CurrentUser.CreateSubKey("WiiVCInjector").GetValue("WiiUCommonKey") == null)
+                RegistryKey appKey = Registry.CurrentUser.CreateSubKey("WiiVCInjector");
+                if (appKey.GetValue("WiiUCommonKey") == null)
                 {
-                    Registry.CurrentUser.CreateSubKey("WiiVCInjector").SetValue("WiiUCommonKey", "00000000000000000000000000000000");
+                    appKey.SetValue("WiiUCommonKey", "00000000000000000000000000000000");
                 }
-                WiiUCommonKey.Text = Registry.CurrentUser.OpenSubKey("WiiVCInjector").GetValue("WiiUCommonKey").ToString();
-                if (Registry.CurrentUser.CreateSubKey("WiiVCInjector").GetValue("TitleKey") == null)
+                WiiUCommonKey.Text = appKey.GetValue("WiiUCommonKey").ToString();
+                if (appKey.GetValue("TitleKey") == null)
                 {
-                    Registry.CurrentUser.CreateSubKey("WiiVCInjector").SetValue("TitleKey", "00000000000000000000000000000000");
+                    appKey.SetValue("TitleKey", "00000000000000000000000000000000");
                 }
-                TitleKey.Text = Registry.CurrentUser.OpenSubKey("WiiVCInjector").GetValue("TitleKey").ToString();
-                Registry.CurrentUser.OpenSubKey("WiiVCInjector").Close();
+                TitleKey.Text = appKey.GetValue("TitleKey").ToString();
+                OutputDirectory.Text = appKey.GetValue("OutputDirectory") as string;
+                appKey.Close();
+
                 //Generate MD5 hashes for loaded keys and check them
                 WiiUCommonKey.Text = WiiUCommonKey.Text.ToUpper();
                 sSourceData = WiiUCommonKey.Text;
@@ -1475,7 +1478,6 @@ namespace TeconMoon_s_WiiVC_Injector
             if (WiiUCommonKeyHash == "35-AC-59-94-97-22-79-33-1D-97-09-4F-A2-FB-97-FC")
             {
                 Registry.CurrentUser.CreateSubKey("WiiVCInjector").SetValue("WiiUCommonKey", WiiUCommonKey.Text);
-                Registry.CurrentUser.CreateSubKey("WiiVCInjector").Close();
                 MessageBox.Show(tr.Tr("The Wii U Common Key has been verified."));
                 MainTabs.SelectedTab = AdvancedTab;
                 MainTabs.SelectedTab = BuildTab;
@@ -1496,7 +1498,6 @@ namespace TeconMoon_s_WiiVC_Injector
             if (TitleKeyHash == "F9-4B-D8-8E-BB-7A-A9-38-67-E6-30-61-5F-27-1C-9F")
             {
                 Registry.CurrentUser.CreateSubKey("WiiVCInjector").SetValue("TitleKey", TitleKey.Text);
-                Registry.CurrentUser.CreateSubKey("WiiVCInjector").Close();
                 MessageBox.Show(tr.Tr("The Title Key has been verified."));
                 MainTabs.SelectedTab = AdvancedTab;
                 MainTabs.SelectedTab = BuildTab;
@@ -1613,10 +1614,16 @@ namespace TeconMoon_s_WiiVC_Injector
                         tr.Tr("Can't create the specified output directory, conversion will not continue.\nAdditional error information:") 
                         + _e.Message);
 
+                    OutputDirectory.Text = "";
+                    Registry.CurrentUser.CreateSubKey("WiiVCInjector")
+                        .DeleteValue("OutputDirectory");
                     MainTabs.Enabled = true;
                     goto BuildProcessFin;
                 }
             }
+            Registry.CurrentUser.CreateSubKey("WiiVCInjector")
+                .SetValue("OutputDirectory", OutputDirectory.Text);
+
             BuildProgress.Value = 2;
             //////////////////////////
 
@@ -2285,6 +2292,8 @@ namespace TeconMoon_s_WiiVC_Injector
             if (OutputFolderSelect.ShowDialog() == DialogResult.OK)
             {
                 OutputDirectory.Text = OutputFolderSelect.SelectedPath;
+                Registry.CurrentUser.CreateSubKey("WiiVCInjector")
+                    .SetValue("OutputDirectory", OutputDirectory.Text);
             }
         }
 
