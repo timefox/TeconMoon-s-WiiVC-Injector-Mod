@@ -126,6 +126,12 @@ namespace TeconMoon_s_WiiVC_Injector
             // Auto generate images.
             GenerateImage.PerformClick();
 
+            // Check disable trimming.
+            if (!DisableTrimming.Checked)
+            {
+                DisableTrimming.Checked = true;
+            }
+
             // Switch to Build Tab.
             MainTabs.SelectedIndex = MainTabs.TabPages.IndexOfKey("BuildTab");
 
@@ -146,6 +152,18 @@ namespace TeconMoon_s_WiiVC_Injector
             int n = GetShortPathName(pathtomakesafe, sb, 1000);
             if (n == 0) // check for errors
             {
+                if (Marshal.GetLastWin32Error() == 2)
+                {
+                    Directory.CreateDirectory(pathtomakesafe);
+                    n = GetShortPathName(pathtomakesafe, sb, 1000);
+                    Directory.Delete(pathtomakesafe);
+
+                    if (n > 0)
+                    {
+                        return sb.ToString();
+                    }
+                }
+
                 return Marshal.GetLastWin32Error().ToString();
             }
             else
@@ -720,6 +738,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private bool SelectGameSource(string gameFilePath, bool silent)
         {
+            OpenGame.FileName = gameFilePath;
             GameSourceDirectory.Text = gameFilePath;
             GameSourceDirectory.ForeColor = Color.Black;
             FlagGameSpecified = true;
