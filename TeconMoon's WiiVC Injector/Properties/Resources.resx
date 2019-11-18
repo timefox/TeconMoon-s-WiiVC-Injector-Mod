@@ -411,6 +411,9 @@
   <data name="String98" xml:space="preserve">
     <value>Can't create the specified output directory, conversion will not continue.\nAdditional error information:</value>
   </data>
+  <data name="String99" xml:space="preserve">
+    <value>All conversions have been completed.\nSucceed: {0}.\nFailed: {1}.</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="TOOLDIR" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TOOLDIR.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

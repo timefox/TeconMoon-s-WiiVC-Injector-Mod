@@ -943,6 +943,15 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All conversions have been completed.\nSucceed: {0}.\nFailed: {1}..
+        /// </summary>
+        internal static string String99 {
+            get {
+                return ResourceManager.GetString("String99", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] TOOLDIR {
