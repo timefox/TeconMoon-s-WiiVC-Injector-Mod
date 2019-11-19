@@ -269,7 +269,7 @@ namespace TeconMoon_s_WiiVC_Injector
         bool AncastKeyGood;
         bool FlagRepo;
         bool HideProcess = true;
-        bool BuildCancelled = false;
+        bool LastBuildCancelled = false;
         int TitleIDInt;
         long GameType;
         string CucholixRepoID = "";
@@ -298,6 +298,7 @@ namespace TeconMoon_s_WiiVC_Injector
         string TempLogoPath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootLogoTex.png";
         string TempSoundPath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootSound.wav";
         string OGfilepath;
+        Thread BuilderThread;
         TranslationTemplate tr = TranslationTemplate.LoadTemplate(
                 Application.StartupPath + @"\language.lang");
 
@@ -339,7 +340,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
                 while (!process.WaitForExit(500))
                 {
-                    if (BuildCancelled)
+                    if (LastBuildCancelled)
                     {
                         process.CloseMainWindow();
                         if (!process.WaitForExit(100))
@@ -1714,11 +1715,8 @@ namespace TeconMoon_s_WiiVC_Injector
         private void DebugButton_Click(object sender, EventArgs e)
         {
             // MessageBox.Show(ShortenPath(OpenGame.FileName));
-            // Thread t = new Thread(new ThreadStart(this.BuildThread));
-            // t.Start();
-            LauncherExeFile = @"C:\projects\outputs\tdcrs\Debug\Client\CrcsDiag.exe";
-            LauncherExeArgs = @"/?";
-            LaunchProgram();
+            Thread t = new Thread(new ThreadStart(this.BuildThread));
+            t.Start();
         }
         //Events for the actual "Build" Button
         private void TheBigOneTM_Click(object sender, EventArgs e)
@@ -1756,6 +1754,60 @@ namespace TeconMoon_s_WiiVC_Injector
                     break;
                 }
             }
+            bool buildSucceed = false;
+
+            BeginInvoke(new Action<bool>((Succeed) => {
+                this.BuildCompleted(Succeed);
+            }), buildSucceed);
+        }
+
+        private void ToggleBuild()
+        {
+
+        }
+
+        private bool BuildAnsync()
+        {
+            //
+            // Disable form elements so navigation can't be 
+            // attempted during build process
+            //
+            MainTabs.Enabled = false;
+
+            // 
+            // Reset build status ui indicators.
+            //
+            BuildStatus.Text = "";
+            BuildStatus.ForeColor = Color.Black;
+
+            LastBuildCancelled = false;
+            BuilderThread = new Thread(new ThreadStart(this.BuildThread));
+
+            try
+            {
+                BuilderThread.Start();
+            }
+            catch (Exception ex)
+            {
+                BuildCompleted(false);
+                BuildStatus.Text = ex.Message;
+                BuildStatus.ForeColor = Color.Red;
+                return false;
+            }           
+
+            return true;
+        }
+
+        private void BuildCompleted(bool succeed)
+        {
+            MainTabs.Enabled = true;
+            BuildStatus.Text = "";
+            BuildProgress.Value = 0;
+        }
+
+        private void CancelBuild()
+        {
+            LastBuildCancelled = true;
         }
 
         private void BuildPack(bool silent)
