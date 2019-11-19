@@ -86,6 +86,20 @@ namespace TeconMoon_s_WiiVC_Injector
             this.OpenGC2.Filter = tr.Tr("GameCube Disk 2 (*.gcm,*.iso)|*.gcm;*.iso");
             this.OpenGC2.Title = tr.Tr("Specify your GameCube game\'s 2nd disc");
 
+            // 
+            // Initlize actions for build thread.
+            //
+            ActBuildStatus = new Action<string>((s) =>
+            {
+                BuildStatus.Text = s;
+                BuildStatus.Refresh();
+            });
+
+            ActBuildProgress = new Action<int>((progress) =>
+            {
+                BuildProgress.Value = progress;
+            });
+
             AutoBuildWiiRetail();
         }
 
@@ -301,6 +315,9 @@ namespace TeconMoon_s_WiiVC_Injector
         Thread BuilderThread;
         TranslationTemplate tr = TranslationTemplate.LoadTemplate(
                 Application.StartupPath + @"\language.lang");
+        Action<string> ActBuildStatus;
+        Action<int> ActBuildProgress;
+
 
         //call options
         public bool LaunchProgram()
@@ -1810,6 +1827,299 @@ namespace TeconMoon_s_WiiVC_Injector
             LastBuildCancelled = true;
         }
 
+        private bool CheckFreeDiskSpaceForPack()
+        {
+            //
+            // Check for free space
+            //
+            Dictionary<string, long> requiredFreespace = new Dictionary<string, long>();
+            long gamesize = new FileInfo(GameSourceDirectory.Text).Length;
+            requiredFreespace.Add("wii", gamesize * 2 + 5000000000);
+            requiredFreespace.Add("dol", 6000000000);
+            requiredFreespace.Add("wiiware", 6000000000);
+            requiredFreespace.Add("gcn", gamesize * 2 + 6000000000);
+
+            var drive = new DriveInfo(TempRootPath);
+            long freeSpaceInBytes = drive.AvailableFreeSpace;
+
+            if (freeSpaceInBytes < requiredFreespace[SystemType])
+            {
+                DialogResult dialogResult = MessageBox.Show(
+                    tr.Tr("Your hard drive may be low on space. The conversion process involves temporary files that can amount to more than double the size of your game. If you continue without clearing some hard drive space, the conversion may fail. Do you want to continue anyways?"),
+                    tr.Tr("Check your hard drive space"), MessageBoxButtons.YesNo);
+                if (dialogResult != DialogResult.Yes)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool VerfiyJNUSStuffs()
+        {
+            //
+            // Check if JNUSTool exists?
+            //
+            if (!Directory.Exists(JNUSToolDownloads))
+            {
+                return false;
+            }
+
+            //
+            // Check required files. What's better? We can verify their SHA1 or MD5 btw.
+            //
+            string[] JNUSToolFiles =
+            {
+                "0005001010004000\\code\\deint.txt",
+                "0005001010004000\\code\\font.bin",
+                "0005001010004001\\code\\c2w.img",
+                "0005001010004001\\code\\boot.bin",
+                "0005001010004001\\code\\dmcu.d.hex",
+                "Rhythm Heaven Fever [VAKE01]\\code\\cos.xml",
+                "Rhythm Heaven Fever [VAKE01]\\code\\frisbiiU.rpx",
+                "Rhythm Heaven Fever [VAKE01]\\code\\fw.img",
+                "Rhythm Heaven Fever [VAKE01]\\code\\fw.tmd",
+                "Rhythm Heaven Fever [VAKE01]\\code\\htk.bin",
+                "Rhythm Heaven Fever [VAKE01]\\code\\nn_hai_user.rpl",
+                "Rhythm Heaven Fever [VAKE01]\\content\\assets\\shaders\\cafe\\banner.gsh",
+                "Rhythm Heaven Fever [VAKE01]\\content\\assets\\shaders\\cafe\\fade.gsh",
+                "Rhythm Heaven Fever [VAKE01]\\meta\\bootMovie.h264",
+                "Rhythm Heaven Fever [VAKE01]\\meta\\bootLogoTex.tga",
+                "Rhythm Heaven Fever [VAKE01]\\meta\\bootSound.btsnd",
+            };
+
+            foreach (string file in JNUSToolFiles)
+            {
+                if (!File.Exists(JNUSToolDownloads + file))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private struct JNUSStuffsDownloadItem
+        {
+            public string buildStatus;
+            public string exeArgs;
+            public int progress;
+        };
+
+        private bool DownloadJNUSStuffs()
+        {
+            //Download base files with JNUSTool, store them for future use
+            if (!CheckForInternetConnection())
+            {
+                DialogResult dialogResult = MessageBox.Show(
+                    tr.Tr("Your internet connection could not be verified, do you wish to try and download the necessary base files from Nintendo anyways? (This is a one-time download)"),
+                    tr.Tr("Internet Connection Verification Failed"), MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.No)
+                {
+                    return false;
+                }
+            }
+
+            if (LastBuildCancelled)
+            {
+                return false;
+            }
+
+            Invoke(
+                ActBuildStatus, 
+                tr.Tr("(One-Time Download) Downloading base files from Nintendo..."));
+
+            string[] JNUSToolConfig = { "http://ccs.cdn.wup.shop.nintendo.net/ccs/download", WiiUCommonKey.Text };
+            File.WriteAllLines(TempToolsPath + "JAR\\config", JNUSToolConfig);
+            Directory.SetCurrentDirectory(TempToolsPath + "JAR");
+
+            Invoke(ActBuildProgress, 10);
+
+            JNUSStuffsDownloadItem[] downloadItems = new JNUSStuffsDownloadItem[]{
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (deint.txt)"),
+                    exeArgs = "0005001010004000 -file /code/deint.txt",
+                    progress = 12,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (font.bin)"),
+                    exeArgs = "0005001010004000 -file /code/font.bin",
+                    progress = 15,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (c2w.img)"),
+                    exeArgs = "0005001010004001 -file /code/c2w.img",
+                    progress = 17,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (boot.bin)"),
+                    exeArgs = "0005001010004001 -file /code/boot.bin",
+                    progress = 20,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (dmcu.d.hex)"),
+                    exeArgs = "0005001010004001 -file /code/dmcu.d.hex",
+                    progress = 23,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (cos.xml)"),
+                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/cos.xml",
+                    progress = 25,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (frisbiiU.rpx)"),
+                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/frisbiiU.rpx",
+                    progress = 27,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (fw.img)"),
+                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/fw.img",
+                    progress = 30,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (fw.tmd)"),
+                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/fw.tmd",
+                    progress = 32,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (htk.bin)"),
+                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/htk.bin",
+                    progress = 35,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (nn_hai_user.rpl)"),
+                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/nn_hai_user.rpl",
+                    progress = 37,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (banner.gsh / fade.gsh)"),
+                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /content/assets/.*",
+                    progress = 40,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (bootMovie.h264)"),
+                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /meta/bootMovie.h264",
+                    progress = 42,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (bootLogoTex.tga)"),
+                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /meta/bootLogoTex.tga",
+                    progress = 45,
+                },
+                new JNUSStuffsDownloadItem {
+                    buildStatus = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (bootSound.btsnd)"),
+                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /meta/bootSound.btsnd",
+                    progress = 47,
+                },
+            };
+
+            LauncherExeFile = "JNUSTool.exe";
+
+            foreach (JNUSStuffsDownloadItem downloadItem in downloadItems)
+            {
+                Invoke(ActBuildStatus, downloadItem.buildStatus);
+                LauncherExeArgs = downloadItem.exeArgs;
+
+                if (LastBuildCancelled)
+                {
+                    break;
+                }
+
+                if (!LaunchProgram())
+                {
+                    break;
+                }
+
+                Invoke(ActBuildProgress, downloadItem.progress);
+            }
+
+            bool downloadCompleted = !LastBuildCancelled;
+
+            if (downloadCompleted)
+            {
+                try
+                {
+                    Directory.CreateDirectory(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]");
+                    Directory.CreateDirectory(JNUSToolDownloads + "0005001010004000");
+                    Directory.CreateDirectory(JNUSToolDownloads + "0005001010004001");
+                    FileSystem.CopyDirectory("Rhythm Heaven Fever [VAKE01]", JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]");
+                    FileSystem.CopyDirectory("0005001010004000", JNUSToolDownloads + "0005001010004000");
+                    FileSystem.CopyDirectory("0005001010004001", JNUSToolDownloads + "0005001010004001");
+                    Directory.Delete("Rhythm Heaven Fever [VAKE01]", true);
+                    Directory.Delete("0005001010004000", true);
+                    Directory.Delete("0005001010004001", true);
+                    File.Delete("config");
+                }
+                catch (Exception)
+                {
+
+                }
+
+                //Check if files exist after they were supposed to be downloaded
+                downloadCompleted = VerfiyJNUSStuffs();
+                if (!downloadCompleted)
+                {
+                    MessageBox.Show(tr.Tr("Failed to download base files using JNUSTool, conversion will not continue"));
+                }
+            }
+
+            //
+            // Cleanup all files and directories if downloading hasn't 
+            // been completed for any reasons.
+            //
+            if (!downloadCompleted)
+            {
+                try
+                {
+                    Directory.Delete(JNUSToolDownloads, true);
+                    Directory.Delete("Rhythm Heaven Fever [VAKE01]", true);
+                    Directory.Delete("0005001010004000", true);
+                    Directory.Delete("0005001010004001", true);
+                    File.Delete("config");
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+
+            return downloadCompleted;
+        }
+
+        private bool PrepareBasicFilesForPack()
+        {
+            //
+            // Copy downloaded files to the build directory
+            //
+            Invoke(ActBuildStatus, tr.Tr("Copying base files to temporary build directory..."));
+
+            Directory.SetCurrentDirectory(TempRootPath);
+            FileSystem.CopyDirectory(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]", TempBuildPath);
+
+            if (C2WPatchFlag.Checked)
+            {
+                FileSystem.CopyDirectory(JNUSToolDownloads + "0005001010004000", TempBuildPath);
+                FileSystem.CopyDirectory(JNUSToolDownloads + "0005001010004001", TempBuildPath);
+                string[] AncastKeyCopy = { AncastKey.Text };
+                File.WriteAllLines(TempToolsPath + "C2W\\starbuck_key.txt", AncastKeyCopy);
+                File.Copy(TempBuildPath + "code\\c2w.img", TempToolsPath + "C2W\\c2w.img");
+                Directory.SetCurrentDirectory(TempToolsPath + "C2W");
+                LauncherExeFile = "c2w_patcher.exe";
+                LauncherExeArgs = "-nc";
+                LaunchProgram();
+                File.Delete(TempBuildPath + "code\\c2w.img");
+                File.Copy(TempToolsPath + "C2W\\c2p.img", TempBuildPath + "code\\c2w.img", true);
+                File.Delete(TempToolsPath + "C2W\\c2p.img");
+                File.Delete(TempToolsPath + "C2W\\c2w.img");
+                File.Delete(TempToolsPath + "C2W\\starbuck_key.txt");
+            }
+
+            Invoke(ActBuildProgress, 50);
+
+            return true;
+        }
+
         private void BuildPack(bool silent)
         {
             //Initialize Build Process
@@ -1908,11 +2218,11 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     Directory.CreateDirectory(OutputDirectory.Text);
                 }
-                catch (Exception _e)
+                catch (Exception ex)
                 {
                     MessageBox.Show(
                         tr.Tr("Can't create the specified output directory, conversion will not continue.\nAdditional error information:")
-                        + _e.Message);
+                        + ex.Message);
 
                     OutputDirectory.Text = "";
                     Registry.CurrentUser.CreateSubKey("WiiVCInjector")
