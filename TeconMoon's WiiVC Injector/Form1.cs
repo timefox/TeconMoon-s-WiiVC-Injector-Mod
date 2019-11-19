@@ -19,6 +19,8 @@ using Microsoft.VisualBasic.FileIO;
 using System.Runtime.InteropServices;
 using TeconMoon_s_WiiVC_Injector.Utils;
 using System.Globalization;
+using System.Threading;
+using StackOverflow;
 
 namespace TeconMoon_s_WiiVC_Injector
 {
@@ -267,6 +269,7 @@ namespace TeconMoon_s_WiiVC_Injector
         bool AncastKeyGood;
         bool FlagRepo;
         bool HideProcess = true;
+        bool BuildCancelled = false;
         int TitleIDInt;
         long GameType;
         string CucholixRepoID = "";
@@ -299,7 +302,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 Application.StartupPath + @"\language.lang");
 
         //call options
-        public void LaunchProgram()
+        public bool LaunchProgram()
         {
             Launcher = new ProcessStartInfo(LauncherExeFile);
             Launcher.Arguments = LauncherExeArgs;
@@ -307,7 +310,56 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 Launcher.WindowStyle = ProcessWindowStyle.Hidden;
             }
-            Process.Start(Launcher).WaitForExit();
+
+            Launcher.RedirectStandardOutput = true;
+            Launcher.RedirectStandardError = true;
+            Launcher.UseShellExecute = false;
+
+            bool exitNormally = true;
+
+            try
+            {
+                Process process = Process.Start(Launcher);
+
+                AsyncStreamReader standardOutput = new AsyncStreamReader(process.StandardOutput);
+                AsyncStreamReader standardError = new AsyncStreamReader(process.StandardError);
+
+                standardOutput.DataReceived += (sender, data) =>
+                {
+                    Console.Write("standardOutput: " + data);
+                };
+
+                standardError.DataReceived += (sender, data) =>
+                {
+                    Console.Write("standardError: " + data);
+                };
+
+                standardOutput.Start();
+                standardError.Start();
+
+                while (!process.WaitForExit(500))
+                {
+                    if (BuildCancelled)
+                    {
+                        process.CloseMainWindow();
+                        if (!process.WaitForExit(100))
+                        {
+                            process.Kill();
+                        }
+
+                        exitNormally = false;
+                    }
+                }
+
+                process.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.Write("err(LaunchProgram): " + ex.Message);
+                return false;
+            }
+
+            return exitNormally;
         }
         public static bool CheckForInternetConnection()
         {
@@ -1661,7 +1713,12 @@ namespace TeconMoon_s_WiiVC_Injector
         }
         private void DebugButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(ShortenPath(OpenGame.FileName));
+            // MessageBox.Show(ShortenPath(OpenGame.FileName));
+            // Thread t = new Thread(new ThreadStart(this.BuildThread));
+            // t.Start();
+            LauncherExeFile = @"C:\projects\outputs\tdcrs\Debug\Client\CrcsDiag.exe";
+            LauncherExeArgs = @"/?";
+            LaunchProgram();
         }
         //Events for the actual "Build" Button
         private void TheBigOneTM_Click(object sender, EventArgs e)
@@ -1676,6 +1733,29 @@ namespace TeconMoon_s_WiiVC_Injector
             }
 
             CleanupBuildSourceTemp();
+        }
+
+        private void BuildThread()
+        {
+            Action<int> action = (progress) =>
+            {
+                this.BuildProgress.Value = progress;
+            };
+
+            Invoke(action, 0);
+
+            while (true)
+            {
+                Thread.Sleep(100);
+                Invoke(new Action(() => {
+                    ++this.BuildProgress.Value;
+                }));
+
+                if (BuildProgress.Value == 100)
+                {
+                    break;
+                }
+            }
         }
 
         private void BuildPack(bool silent)
