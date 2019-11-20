@@ -79,6 +79,24 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to BUILD.
+        /// </summary>
+        internal static string String100 {
+            get {
+                return ResourceManager.GetString("String100", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to STOP.
+        /// </summary>
+        internal static string String101 {
+            get {
+                return ResourceManager.GetString("String101", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DOL Files (*.dol)|*.dol.
         /// </summary>
         internal static string String11 {

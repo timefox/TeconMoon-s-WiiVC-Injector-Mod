@@ -123,6 +123,12 @@
   <data name="String10" xml:space="preserve">
     <value>boot.dol</value>
   </data>
+  <data name="String100" xml:space="preserve">
+    <value>BUILD</value>
+  </data>
+  <data name="String101" xml:space="preserve">
+    <value>STOP</value>
+  </data>
   <data name="String11" xml:space="preserve">
     <value>DOL Files (*.dol)|*.dol</value>
   </data>
