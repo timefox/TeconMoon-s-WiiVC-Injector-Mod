@@ -61,7 +61,11 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .NET Framework 3.5 was not detected on your machine, which is required by programs used during the build process.\n\nYou should be able to enable this in &quot;Programs and Features&quot; under &quot;Turn Windows features on or off&quot;, or download it from Microsoft.\n\nClick OK to close the injector and open &quot;Programs and Features&quot;....
+        ///   Looks up a localized string similar to .NET Framework 3.5 was not detected on your machine, which is required by programs used during the build process.
+        ///
+        ///You should be able to enable this in &quot;Programs and Features&quot; under &quot;Turn Windows features on or off&quot;, or download it from Microsoft.
+        ///
+        ///Click OK to close the injector and open &quot;Programs and Features&quot;....
         /// </summary>
         internal static string String1 {
             get {
@@ -340,7 +344,8 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is not a valid WAV file. It will not be loaded. \nConsider converting it with something like Audacity..
+        ///   Looks up a localized string similar to This is not a valid WAV file. It will not be loaded. 
+        ///Consider converting it with something like Audacity..
         /// </summary>
         internal static string String36 {
             get {
@@ -403,7 +408,8 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Wii U Starbuck Ancast Key you have provided is incorrect\n(MD5 Hash verification failed).
+        ///   Looks up a localized string similar to The Wii U Starbuck Ancast Key you have provided is incorrect
+        ///(MD5 Hash verification failed).
         /// </summary>
         internal static string String42 {
             get {
@@ -421,7 +427,8 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Wii U Common Key you have provided is incorrect\n(MD5 Hash verification failed).
+        ///   Looks up a localized string similar to The Wii U Common Key you have provided is incorrect
+        ///(MD5 Hash verification failed).
         /// </summary>
         internal static string String44 {
             get {
@@ -439,7 +446,8 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Title Key you have provided is incorrect\n(MD5 Hash verification failed).
+        ///   Looks up a localized string similar to The Title Key you have provided is incorrect
+        ///(MD5 Hash verification failed).
         /// </summary>
         internal static string String46 {
             get {
@@ -727,7 +735,11 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The Wii Video Mode Changer will now be launched. I recommend using the Smart Patcher option. \n\nIf you&apos;re scared and don&apos;t know what you&apos;re doing, close the patcher window and nothing will be patched. \n\nClick OK to continue....
+        ///   Looks up a localized string similar to The Wii Video Mode Changer will now be launched. I recommend using the Smart Patcher option. 
+        ///
+        ///If you&apos;re scared and don&apos;t know what you&apos;re doing, close the patcher window and nothing will be patched. 
+        ///
+        ///Click OK to continue....
         /// </summary>
         internal static string String75 {
             get {
@@ -763,7 +775,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Conversion complete....
+        ///   Looks up a localized string similar to  Conversion Complete....
         /// </summary>
         internal static string String79 {
             get {
@@ -781,7 +793,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Conversion Complete! Your packed game can be found here:.
+        ///   Looks up a localized string similar to Conversion Complete! Your packed game can be found here: .
         /// </summary>
         internal static string String80 {
             get {
@@ -790,7 +802,11 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .\n\nInstall your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.\n\n Click OK to continue....
+        ///   Looks up a localized string similar to .
+        ///
+        ///Install your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.
+        ///
+        /// Click OK to continue....
         /// </summary>
         internal static string String81 {
             get {
@@ -952,7 +968,8 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t create the specified output directory, conversion will not continue.\nAdditional error information:.
+        ///   Looks up a localized string similar to Can&apos;t create the specified output directory, conversion will not continue.
+        ///Additional error information:.
         /// </summary>
         internal static string String98 {
             get {
@@ -961,7 +978,9 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All conversions have been completed.\nSucceed: {0}.\nFailed: {1}..
+        ///   Looks up a localized string similar to All conversions have been completed.
+        ///Succeed: {0}.
+        ///Failed: {1}..
         /// </summary>
         internal static string String99 {
             get {

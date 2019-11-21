@@ -118,7 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="String1" xml:space="preserve">
-    <value>.NET Framework 3.5 was not detected on your machine, which is required by programs used during the build process.\n\nYou should be able to enable this in "Programs and Features" under "Turn Windows features on or off", or download it from Microsoft.\n\nClick OK to close the injector and open "Programs and Features"...</value>
+    <value>.NET Framework 3.5 was not detected on your machine, which is required by programs used during the build process.
+
+You should be able to enable this in "Programs and Features" under "Turn Windows features on or off", or download it from Microsoft.
+
+Click OK to close the injector and open "Programs and Features"...</value>
   </data>
   <data name="String10" xml:space="preserve">
     <value>boot.dol</value>
@@ -211,7 +215,8 @@
     <value>Your sound file will be cut off if it's longer than 6 seconds to prevent the Wii U from not loading it. When the Wii U plays the boot sound, it will fade out once it's done loading the game (usually after about 5 seconds). You can not change this.</value>
   </data>
   <data name="String36" xml:space="preserve">
-    <value>This is not a valid WAV file. It will not be loaded. \nConsider converting it with something like Audacity.</value>
+    <value>This is not a valid WAV file. It will not be loaded. 
+Consider converting it with something like Audacity.</value>
   </data>
   <data name="String37" xml:space="preserve">
     <value>Boot Sound has not been specified</value>
@@ -232,19 +237,22 @@
     <value>&lt;- Specify custom main.dol file</value>
   </data>
   <data name="String42" xml:space="preserve">
-    <value>The Wii U Starbuck Ancast Key you have provided is incorrect\n(MD5 Hash verification failed)</value>
+    <value>The Wii U Starbuck Ancast Key you have provided is incorrect
+(MD5 Hash verification failed)</value>
   </data>
   <data name="String43" xml:space="preserve">
     <value>The Wii U Common Key has been verified.</value>
   </data>
   <data name="String44" xml:space="preserve">
-    <value>The Wii U Common Key you have provided is incorrect\n(MD5 Hash verification failed)</value>
+    <value>The Wii U Common Key you have provided is incorrect
+(MD5 Hash verification failed)</value>
   </data>
   <data name="String45" xml:space="preserve">
     <value>The Title Key has been verified.</value>
   </data>
   <data name="String46" xml:space="preserve">
-    <value>The Title Key you have provided is incorrect\n(MD5 Hash verification failed)</value>
+    <value>The Title Key you have provided is incorrect
+(MD5 Hash verification failed)</value>
   </data>
   <data name="String47" xml:space="preserve">
     <value>Your hard drive may be low on space. The conversion process involves temporary files that can amount to more than double the size of your game. If you continue without clearing some hard drive space, the conversion may fail. Do you want to continue anyways?</value>
@@ -340,7 +348,11 @@
     <value>Processing game for NFS Conversion...</value>
   </data>
   <data name="String75" xml:space="preserve">
-    <value>The Wii Video Mode Changer will now be launched. I recommend using the Smart Patcher option. \n\nIf you're scared and don't know what you're doing, close the patcher window and nothing will be patched. \n\nClick OK to continue...</value>
+    <value>The Wii Video Mode Changer will now be launched. I recommend using the Smart Patcher option. 
+
+If you're scared and don't know what you're doing, close the patcher window and nothing will be patched. 
+
+Click OK to continue...</value>
   </data>
   <data name="String76" xml:space="preserve">
     <value>Conversion will now continue...</value>
@@ -352,16 +364,20 @@
     <value>Encrypting contents into installable WUP Package...</value>
   </data>
   <data name="String79" xml:space="preserve">
-    <value>Conversion complete...</value>
+    <value> Conversion Complete...</value>
   </data>
   <data name="String8" xml:space="preserve">
     <value>Game file has not been specified</value>
   </data>
   <data name="String80" xml:space="preserve">
-    <value>Conversion Complete! Your packed game can be found here:</value>
+    <value>Conversion Complete! Your packed game can be found here: </value>
   </data>
   <data name="String81" xml:space="preserve">
-    <value>.\n\nInstall your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.\n\n Click OK to continue...</value>
+    <value>.
+
+Install your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.
+
+ Click OK to continue...</value>
   </data>
   <data name="String82" xml:space="preserve">
     <value>Conversion Complete</value>
@@ -415,10 +431,13 @@
     <value>Specify your GameCube game's 2nd disc</value>
   </data>
   <data name="String98" xml:space="preserve">
-    <value>Can't create the specified output directory, conversion will not continue.\nAdditional error information:</value>
+    <value>Can't create the specified output directory, conversion will not continue.
+Additional error information:</value>
   </data>
   <data name="String99" xml:space="preserve">
-    <value>All conversions have been completed.\nSucceed: {0}.\nFailed: {1}.</value>
+    <value>All conversions have been completed.
+Succeed: {0}.
+Failed: {1}.</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="TOOLDIR" type="System.Resources.ResXFileRef, System.Windows.Forms">

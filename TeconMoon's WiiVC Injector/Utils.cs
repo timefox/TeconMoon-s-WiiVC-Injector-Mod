@@ -488,7 +488,10 @@ namespace TeconMoon_s_WiiVC_Injector
             public bool WriteStringValue(string section, string key, string value)
             {
                 return Win32Native.WritePrivateProfileString(
-                    section, key, value.Replace("\r\n", "\\r\\n"), FileName);
+                    section, 
+                    key, 
+                    value.Replace("\\r", "\r").Replace("\\n", "\n"), 
+                    FileName);
             }
 
             public string ReadStringValue(string key, int maxLength, string defaultValue = "")
@@ -508,7 +511,9 @@ namespace TeconMoon_s_WiiVC_Injector
                     value,
                     (uint)maxLength,
                     FileName);
-                return value.Substring(0, length).Replace("\\r\\n", "\r\n");                
+                return value.Substring(0, length)
+                    .Replace("\\r", "\r")
+                    .Replace("\\n", "\n");                
             }
 
             public string[] GetSections()

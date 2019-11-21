@@ -175,12 +175,12 @@ namespace TeconMoon_s_WiiVC_Injector
                 ControlEnabledStatus.Add(control.Name, control.Enabled);
             }
 
-            control.Enabled = enabled;
-
             foreach (Control subControl in control.Controls)
             {
                 EnableControl(subControl, enabled);
             }
+
+            control.Enabled = enabled;
         }
 
         private void RestoreContorlEnabled(Control control)
@@ -1799,8 +1799,7 @@ namespace TeconMoon_s_WiiVC_Injector
         private void DebugButton_Click(object sender, EventArgs e)
         {
             // MessageBox.Show(ShortenPath(OpenGame.FileName));
-            Thread t = new Thread(new ThreadStart(this.BuildThread));
-            t.Start();
+            LegacyBuild = true;
         }
         //Events for the actual "Build" Button
         private void TheBigOneTM_Click(object sender, EventArgs e)

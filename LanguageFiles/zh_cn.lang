@@ -1,8 +1,8 @@
 [TeconMoon-s-WiiVC-Injector-Mod-Language]
 language=简体中文(zh-cn)
-verion=3.0.1mod3
+verion=3.0.1mod4
 author=robin
-date=11/14/2019
+date=11/21/2019
 [WiiVC_Injector]
 @Title=TeconMoon's WiiVC 注入器
 WiiRetail=Wii 游戏注入
@@ -54,7 +54,7 @@ DisableGamePad=不要使用GamePad作为控制器(在游戏开始时不会弹出询问窗口)
 label2=Wii 游戏注入 / vWii NAND 启动器补丁
 SaveAncastKeyButton=保存Key
 DisableNintendontAutoboot=禁止自动启动
-DisableTrimming=不要截断游戏输出画面(仅适用于Wii游戏)
+DisableTrimming=不要对输出文件中的无效内容进行裁剪(仅适用于Wii游戏)
 Force43NAND=强制 4:3 (仅适用于vWii NAND程序)
 DisablePassthrough=禁用通过GamePad模式接入的Wii手柄控制器
 MainDolLabel=<- 指定自定义的main.dol文件
