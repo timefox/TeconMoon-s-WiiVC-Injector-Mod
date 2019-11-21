@@ -101,6 +101,24 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure to cancel the current build progress?.
+        /// </summary>
+        internal static string String102 {
+            get {
+                return ResourceManager.GetString("String102", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop building.
+        /// </summary>
+        internal static string String103 {
+            get {
+                return ResourceManager.GetString("String103", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DOL Files (*.dol)|*.dol.
         /// </summary>
         internal static string String11 {

@@ -133,6 +133,12 @@ Click OK to close the injector and open "Programs and Features"...</value>
   <data name="String101" xml:space="preserve">
     <value>STOP</value>
   </data>
+  <data name="String102" xml:space="preserve">
+    <value>Are you sure to cancel the current build progress?</value>
+  </data>
+  <data name="String103" xml:space="preserve">
+    <value>Stop building</value>
+  </data>
   <data name="String11" xml:space="preserve">
     <value>DOL Files (*.dol)|*.dol</value>
   </data>

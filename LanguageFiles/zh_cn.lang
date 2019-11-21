@@ -198,3 +198,7 @@ String97=指定游戏的第二张光盘镜像
 String96=GameCube游戏的第二张光盘镜像 (*.gcm,*.iso)|*.gcm;*.iso
 String98=无法创建指定的输出目录，转换过程无法继续。\n详细的错误信息：
 String99=所有转换都已完成。\n成功: {0}.\n失败: {1}.
+String100=生成
+String101=停止
+String102=您确定要停止当前的生成过程吗？
+String103=停止生成

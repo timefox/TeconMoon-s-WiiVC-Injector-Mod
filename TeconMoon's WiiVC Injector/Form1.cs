@@ -230,29 +230,60 @@ namespace TeconMoon_s_WiiVC_Injector
                 return;
             }
 
-            WiiRetail.PerformClick();
-
-            int buildOK = 0;
-
-            foreach (string game in Program.AutoBuildList)
+            if (IsBuilding)
             {
-                if (SelectGameSource(game, true))
-                {
-                    if (BuildCurrentWiiRetail())
-                    {
-                        ++buildOK;
-                    }
-                    CleanupBuildSourceTemp();
-                }
+                Program.AutoBuildList.Clear();
+                return;
             }
 
-            string s = String.Format(
-                tr.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}."),
-                buildOK, Program.AutoBuildList.Count - buildOK);
+            AutoBuildSucceedList.Clear();
+            AutoBuildFailedList.Clear();
 
-            MessageBox.Show(s);
+            BuildCompletedEx += WiiVC_Injector_BuildCompletedEx;
 
-            Program.AutoBuildList.Clear();
+            WiiRetail.PerformClick();
+
+            AutoBuildNext();           
+        }
+
+        void AutoBuildNext()
+        {
+            if (Program.AutoBuildList.Count() != 0)
+            {
+                string game = Program.AutoBuildList[0];
+
+                if (SelectGameSource(game, true))
+                {
+                    BuildCurrentWiiRetail();
+                }
+            }
+            else
+            {
+                BuildCompletedEx -= WiiVC_Injector_BuildCompletedEx;
+
+                string s = String.Format(
+                    tr.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}."),
+                    AutoBuildSucceedList.Count, 
+                    AutoBuildFailedList.Count);
+
+                MessageBox.Show(s);
+            }
+        }
+
+        private void WiiVC_Injector_BuildCompletedEx(object sender, bool e)
+        {
+            if (e)
+            {
+                AutoBuildSucceedList.Add(Program.AutoBuildList[0]);
+            }
+            else
+            {
+                AutoBuildFailedList.Add(Program.AutoBuildList[0]);
+            }
+
+            Program.AutoBuildList.RemoveAt(0);
+
+            AutoBuildNext();
         }
 
         bool BuildCurrentWiiRetail()
@@ -263,65 +294,22 @@ namespace TeconMoon_s_WiiVC_Injector
             // Auto generate images.
             GenerateImage.PerformClick();
 
-            // Check disable trimming.
-            if (!DisableTrimming.Checked)
-            {
-                DisableTrimming.Checked = true;
-            }
-
             // Switch to Build Tab.
             MainTabs.SelectedIndex = MainTabs.TabPages.IndexOfKey("BuildTab");
 
             // Check if everything is ready.
-            if (TheBigOneTM.Enabled)
+            if (TheBigOneTM.Enabled && !IsBuilding)
             {
                 // Ready to rumble. :)
-                try
-                {
-                    BuildPack(true);
-                }
-                catch (Exception)
-                {
-                    CleanupBuildSourceTemp();
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
+                return BuildAnsync();
             }
 
-            CleanupBuildSourceTemp();
-            return true;
+            return false;
         }
 
-        //Testing
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern int GetShortPathName(String pathName, StringBuilder shortName, int cbShortName);
-        public string ShortenPath(string pathtomakesafe)
+        public string NormalizeCmdlineArg(string arg)
         {
-            StringBuilder sb = new StringBuilder(1000);
-            int n = GetShortPathName(pathtomakesafe, sb, 1000);
-            if (n == 0) // check for errors
-            {
-                if (Marshal.GetLastWin32Error() == 2)
-                {
-                    Directory.CreateDirectory(pathtomakesafe);
-                    n = GetShortPathName(pathtomakesafe, sb, 1000);
-                    Directory.Delete(pathtomakesafe);
-
-                    if (n > 0)
-                    {
-                        return sb.ToString();
-                    }
-                }
-
-                return Marshal.GetLastWin32Error().ToString();
-            }
-            else
-            {
-                return sb.ToString();
-            }
+            return String.Format("\"{0}\"", arg);
         }
 
         //Specify public variables for later use (ASK ALAN)
@@ -376,7 +364,10 @@ namespace TeconMoon_s_WiiVC_Injector
         string TempLogoPath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootLogoTex.png";
         string TempSoundPath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootSound.wav";
         string OGfilepath;
+
         string GameIso;
+        List<string> AutoBuildSucceedList = new List<string>();
+        List<string> AutoBuildFailedList = new List<string>();
         Dictionary<String, bool> ControlEnabledStatus = new Dictionary<String, bool>();
         Thread BuilderThread;
         TranslationTemplate tr = TranslationTemplate.LoadTemplate(
@@ -384,7 +375,17 @@ namespace TeconMoon_s_WiiVC_Injector
         Action<string> ActBuildStatus;
         Action<int> ActBuildProgress;
 
-        private delegate bool BuildSetp();
+        private bool IsBuilding
+        {
+            get
+            {
+                return BuilderThread != null;
+            }
+        }
+
+        private delegate bool BuildStep();
+
+        private event EventHandler<bool> BuildCompletedEx;
 
         //call options
         public bool LaunchProgram()
@@ -1819,7 +1820,14 @@ namespace TeconMoon_s_WiiVC_Injector
                     MessageBox.Show(ex.Message);
                 }
 
-                CleanupBuildSourceTemp();
+                try
+                {
+                    CleanupBuildSourceTemp();
+                }
+                catch (Exception)
+                {
+                    
+                }                
             }
         }
 
@@ -1843,7 +1851,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private void ToggleBuild()
         {
-            if (BuilderThread != null)
+            if (IsBuilding)
             {
                 DialogResult dialogResult = MessageBox.Show(
                     tr.Tr("Are you sure to cancel the current build progress?"),
@@ -1852,7 +1860,6 @@ namespace TeconMoon_s_WiiVC_Injector
 
                 if (dialogResult == DialogResult.Yes)
                 {
-                    TheBigOneTM.Enabled = false;
                     CancelBuild();
                 }
             }
@@ -1902,7 +1909,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 MessageBox.Show(tr.Tr("Conversion Complete! Your packed game can be found here: ")
                     + OutputDirectory.Text + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text
                     + tr.Tr(".\n\nInstall your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.\n\n Click OK to continue..."),
-                    PackedTitleLine1.Text + tr.Tr(" Conversion Complete"));
+                    PackedTitleLine1.Text + tr.Tr(" Conversion Complete..."));
             }
 
             if (BuilderThread != null)
@@ -1924,10 +1931,16 @@ namespace TeconMoon_s_WiiVC_Injector
             TheBigOneTM.Text = tr.Tr("BUILD");
             BuildStatus.Text = "";
             BuildProgress.Value = 0;
+
+            if (BuildCompletedEx != null)
+            {
+                BuildCompletedEx(this, succeed);
+            }
         }
 
         private void CancelBuild()
         {
+            TheBigOneTM.Enabled = false;
             LastBuildCancelled = true;
         }
 
@@ -2536,7 +2549,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (!DisableTrimming.Checked)
                 {
                     LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                    LauncherExeArgs = "extract " + ShortenPath(GameIso) + " --DEST " + ShortenPath(TempSourcePath + "ISOEXTRACT") + " --psel data -vv1";
+                    LauncherExeArgs = "extract " + NormalizeCmdlineArg(GameIso) + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "ISOEXTRACT") + " --psel data -vv1";
                     LaunchProgram();
 
                     if (ForceCC.Checked)
@@ -2558,7 +2571,7 @@ namespace TeconMoon_s_WiiVC_Injector
                     }
 
                     LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                    LauncherExeArgs = "copy " + ShortenPath(TempSourcePath + "ISOEXTRACT") + " --DEST " + ShortenPath(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                    LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "ISOEXTRACT") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
                     LaunchProgram();
 
                     Directory.Delete(TempSourcePath + "ISOEXTRACT", true);
@@ -2576,7 +2589,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 FileSystem.CopyDirectory(TempToolsPath + "BASE", TempSourcePath + "TEMPISOBASE");
                 File.Copy(GameIso, TempSourcePath + "TEMPISOBASE\\sys\\main.dol");
                 LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + ShortenPath(TempSourcePath + "TEMPISOBASE") + " --DEST " + ShortenPath(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
                 LaunchProgram();
                 Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
                 GameIso = TempSourcePath + "game.iso";
@@ -2598,7 +2611,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 File.WriteAllLines(TempSourcePath + "TEMPISOBASE\\files\\title.txt", TitleTXT);
 
                 LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + ShortenPath(TempSourcePath + "TEMPISOBASE") + " --DEST " + ShortenPath(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
                 LaunchProgram();
 
                 Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
@@ -2634,7 +2647,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
 
                 LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + ShortenPath(TempSourcePath + "TEMPISOBASE") + " --DEST " + ShortenPath(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
                 LaunchProgram();
 
                 Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
@@ -2643,7 +2656,7 @@ namespace TeconMoon_s_WiiVC_Injector
             }
 
             LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-            LauncherExeArgs = "extract " + ShortenPath(GameIso) + " --psel data --files +tmd.bin --files +ticket.bin --dest " + ShortenPath(TempSourcePath + "TIKTEMP") + " -vv1";
+            LauncherExeArgs = "extract " + NormalizeCmdlineArg(GameIso) + " --psel data --files +tmd.bin --files +ticket.bin --dest " + NormalizeCmdlineArg(TempSourcePath + "TIKTEMP") + " -vv1";
             LaunchProgram();
 
             File.Copy(TempSourcePath + "TIKTEMP\\tmd.bin", TempBuildPath + "code\\rvlt.tmd");
@@ -2741,7 +2754,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private bool BuildPack()
         {
-            BuildSetp[] buildSetps = new BuildSetp[]
+            BuildStep[] buildSteps = new BuildStep[]
             {
                 CheckFreeDiskSpaceForPack,
                 PrepareOutputDirectory,
@@ -2757,7 +2770,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
             bool succeed = true;
 
-            foreach (BuildSetp buildSetp in buildSetps)
+            foreach (BuildStep buildStep in buildSteps)
             {
                 if (LastBuildCancelled)
                 {
@@ -2767,7 +2780,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
                 try
                 {
-                    if (!buildSetp())
+                    if (!buildStep())
                     {
                         succeed = false;
                         break;
@@ -2775,7 +2788,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
                 catch (Exception ex)
                 {
-                    Console.Write("buildSetp throws an exception: " + ex.Message);
+                    Console.Write("buildStep throws an exception: " + ex.Message);
                     succeed = false;
                     break;
                 }
@@ -3261,7 +3274,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (DisableTrimming.Checked == false)
                 {
                     LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                    LauncherExeArgs = "extract " + ShortenPath(OpenGame.FileName) + " --DEST " + ShortenPath(TempSourcePath + "ISOEXTRACT") + " --psel data -vv1";
+                    LauncherExeArgs = "extract " + NormalizeCmdlineArg(OpenGame.FileName) + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "ISOEXTRACT") + " --psel data -vv1";
                     LaunchProgram();
                     MessageBox.Show("");
                     if (ForceCC.Checked)
@@ -3281,7 +3294,7 @@ namespace TeconMoon_s_WiiVC_Injector
                         MessageBox.Show(tr.Tr("Conversion will now continue..."));
                     }
                     LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                    LauncherExeArgs = "copy " + ShortenPath(TempSourcePath + "ISOEXTRACT") + " --DEST " + ShortenPath(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                    LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "ISOEXTRACT") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
                     LaunchProgram();
                     Directory.Delete(TempSourcePath + "ISOEXTRACT", true);
                     if (File.Exists(TempSourcePath + "wbfsconvert.iso")) { File.Delete(TempSourcePath + "wbfsconvert.iso"); }
@@ -3294,7 +3307,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 FileSystem.CopyDirectory(TempToolsPath + "BASE", TempSourcePath + "TEMPISOBASE");
                 File.Copy(OpenGame.FileName, TempSourcePath + "TEMPISOBASE\\sys\\main.dol");
                 LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + ShortenPath(TempSourcePath + "TEMPISOBASE") + " --DEST " + ShortenPath(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
                 LaunchProgram();
                 Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
                 OpenGame.FileName = TempSourcePath + "game.iso";
@@ -3314,7 +3327,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 string[] TitleTXT = { GameSourceDirectory.Text };
                 File.WriteAllLines(TempSourcePath + "TEMPISOBASE\\files\\title.txt", TitleTXT);
                 LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + ShortenPath(TempSourcePath + "TEMPISOBASE") + " --DEST " + ShortenPath(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
                 LaunchProgram();
                 Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
                 OpenGame.FileName = TempSourcePath + "game.iso";
@@ -3342,14 +3355,14 @@ namespace TeconMoon_s_WiiVC_Injector
                 File.Copy(OpenGame.FileName, TempSourcePath + "TEMPISOBASE\\files\\game.iso");
                 if (FlagGC2Specified) { File.Copy(OpenGC2.FileName, TempSourcePath + "TEMPISOBASE\\files\\disc2.iso"); }
                 LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + ShortenPath(TempSourcePath + "TEMPISOBASE") + " --DEST " + ShortenPath(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
                 MessageBox.Show(LauncherExeArgs);
                 LaunchProgram();
                 Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
                 OpenGame.FileName = TempSourcePath + "game.iso";
             }
             LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-            LauncherExeArgs = "extract " + ShortenPath(OpenGame.FileName) + " --psel data --files +tmd.bin --files +ticket.bin --dest " + ShortenPath(TempSourcePath + "TIKTEMP") + " -vv1";
+            LauncherExeArgs = "extract " + NormalizeCmdlineArg(OpenGame.FileName) + " --psel data --files +tmd.bin --files +ticket.bin --dest " + NormalizeCmdlineArg(TempSourcePath + "TIKTEMP") + " -vv1";
             LaunchProgram();
             File.Copy(TempSourcePath + "TIKTEMP\\tmd.bin", TempBuildPath + "code\\rvlt.tmd");
             File.Copy(TempSourcePath + "TIKTEMP\\ticket.bin", TempBuildPath + "code\\rvlt.tik");
