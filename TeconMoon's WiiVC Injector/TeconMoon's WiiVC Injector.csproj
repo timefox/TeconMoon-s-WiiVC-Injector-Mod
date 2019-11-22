@@ -136,7 +136,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="favicon.ico" />
     <Content Include="Resources\universal_Wii_WiiWare_template_bootTvTex.png" />
     <Content Include="Resources\universal_Wii_WiiWare_template_iconTex.png" />
     <Content Include="WiiU.ico" />
