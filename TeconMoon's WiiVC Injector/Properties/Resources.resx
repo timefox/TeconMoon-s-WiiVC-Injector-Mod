@@ -139,6 +139,9 @@ Click OK to close the injector and open "Programs and Features"...</value>
   <data name="String103" xml:space="preserve">
     <value>Stop building</value>
   </data>
+  <data name="String104" xml:space="preserve">
+    <value>Conversion complete...</value>
+  </data>
   <data name="String11" xml:space="preserve">
     <value>DOL Files (*.dol)|*.dol</value>
   </data>

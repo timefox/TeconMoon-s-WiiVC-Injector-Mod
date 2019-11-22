@@ -119,6 +119,15 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Conversion complete....
+        /// </summary>
+        internal static string String104 {
+            get {
+                return ResourceManager.GetString("String104", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DOL Files (*.dol)|*.dol.
         /// </summary>
         internal static string String11 {

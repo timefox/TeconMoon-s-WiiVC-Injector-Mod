@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Media;
-using System.Windows.Forms;
-using System.IO;
+﻿using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
-using System.Security.Cryptography;
-using System.Net;
-using System.IO.Compression;
-using System.Diagnostics;
-using Microsoft.VisualBasic.FileIO;
-using System.Runtime.InteropServices;
-using TeconMoon_s_WiiVC_Injector.Utils;
-using System.Globalization;
-using System.Threading;
 using StackOverflow;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Media;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+using TeconMoon_s_WiiVC_Injector.Utils;
 
 namespace TeconMoon_s_WiiVC_Injector
 {
@@ -220,6 +215,8 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     RestoreContorlEnabled(control);
                 }
+
+                EnableSystemSelection(MainTabs.SelectedTab == SourceFilesTab);
             }
         }
 
@@ -243,6 +240,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
             WiiRetail.PerformClick();
 
+            PropmtForSucceed = false;
             AutoBuildNext();           
         }
 
@@ -261,12 +259,15 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 BuildCompletedEx -= WiiVC_Injector_BuildCompletedEx;
 
-                string s = String.Format(
-                    tr.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}."),
-                    AutoBuildSucceedList.Count, 
-                    AutoBuildFailedList.Count);
+                if (!InClosing)
+                {
+                    string s = String.Format(
+                        tr.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}."),
+                        AutoBuildSucceedList.Count,
+                        AutoBuildFailedList.Count);
 
-                MessageBox.Show(s);
+                    MessageBox.Show(s);
+                }
             }
         }
 
@@ -282,6 +283,11 @@ namespace TeconMoon_s_WiiVC_Injector
             }
 
             Program.AutoBuildList.RemoveAt(0);
+
+            if (LastBuildCancelled)
+            {
+                Program.AutoBuildList.Clear();
+            }
 
             AutoBuildNext();
         }
@@ -334,8 +340,11 @@ namespace TeconMoon_s_WiiVC_Injector
         bool AncastKeyGood;
         bool FlagRepo;
         bool HideProcess = true;
+        bool ThrowProcessException = false;
         bool LastBuildCancelled = false;
         bool LegacyBuild = false;
+        bool InClosing = false;
+        bool PropmtForSucceed = true;
         int TitleIDInt;
         long GameType;
         string CucholixRepoID = "";
@@ -390,10 +399,11 @@ namespace TeconMoon_s_WiiVC_Injector
         //call options
         public bool LaunchProgram()
         {
-            Launcher = new ProcessStartInfo(LauncherExeFile);
-            Launcher.Arguments = LauncherExeArgs;
+            Launcher = new ProcessStartInfo(LauncherExeFile, LauncherExeArgs);
+
             if (HideProcess)
             {
+                Launcher.CreateNoWindow = true;
                 Launcher.WindowStyle = ProcessWindowStyle.Hidden;
             }
 
@@ -412,12 +422,22 @@ namespace TeconMoon_s_WiiVC_Injector
 
                 standardOutput.DataReceived += (sender, data) =>
                 {
-                    Console.Write("standardOutput: " + data);
+                    if (String.IsNullOrEmpty(data))
+                    {
+                        return;
+                    }
+
+                    Console.Write("standardOutput: " + data.Replace("\0", ""));
                 };
 
                 standardError.DataReceived += (sender, data) =>
                 {
-                    Console.Write("standardError: " + data);
+                    if (String.IsNullOrEmpty(data))
+                    {
+                        return;
+                    }
+
+                    Console.Write("standardError: " + data.Replace("\0", ""));
                 };
 
                 standardOutput.Start();
@@ -442,7 +462,19 @@ namespace TeconMoon_s_WiiVC_Injector
             catch (Exception ex)
             {
                 Console.Write("err(LaunchProgram): " + ex.Message);
-                return false;
+
+                if (ThrowProcessException)
+                {
+                    throw ex;
+                }
+
+                exitNormally = false;
+            }
+
+            if (!exitNormally && ThrowProcessException)
+            {
+                throw new Exception(NormalizeCmdlineArg(LauncherExeFile) 
+                    + " does not exit normally.");
             }
 
             return exitNormally;
@@ -528,15 +560,87 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             base.OnFormClosing(e);
 
-            if (e.CloseReason == CloseReason.WindowsShutDown) { Directory.Delete(TempRootPath, true); return; }
+            if (InClosing)
+            {
+                return;
+            }
+
+            if (e.CloseReason == CloseReason.WindowsShutDown)
+            {
+                InClosing = true;
+
+                if (IsBuilding)
+                {
+                    BuildCompletedEx = null;
+                    BuildCompletedEx += ((s, a) =>
+                    {
+                        Directory.Delete(TempRootPath, true);
+                        Close();
+                    });
+
+                    CancelBuild();
+
+                    int nWaitLoop = 0;
+                    while (IsBuilding)
+                    {                       
+                        if (nWaitLoop++ < 10)
+                        {
+                            Thread.Sleep(100);
+                            continue;
+                        }
+
+                        try
+                        {
+                            BuilderThread.Abort();
+                            Directory.Delete(TempRootPath, true);
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+
+                        break;
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        Directory.Delete(TempRootPath, true);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+
+                return;
+            }
 
             // Confirm user wants to close
-            switch (MessageBox.Show(this, tr.Tr("Are you sure you want to close?"), tr.Tr("Closing"), MessageBoxButtons.YesNo))
+            switch (MessageBox.Show(this, tr.Tr("Are you sure you want to close?"), 
+                tr.Tr("Closing"), MessageBoxButtons.YesNo))
             {
                 case DialogResult.No:
                     e.Cancel = true;
                     break;
                 default:
+                    InClosing = true;
+
+                    if (IsBuilding)
+                    {
+                        BuildCompletedEx = null;
+                        BuildCompletedEx += ((s, a) =>
+                        {                           
+                            Directory.Delete(TempRootPath, true);
+                            InClosing = true;
+                            Close();
+                        });
+
+                        CancelBuild();
+                        e.Cancel = true;
+                        break;
+                    }
                     Directory.Delete(TempRootPath, true);
                     break;
             }
@@ -781,168 +885,171 @@ namespace TeconMoon_s_WiiVC_Injector
             new SDCardMenu().Show();
         }
 
-        //Performs actions when switching tabs
-        private void MainTabs_SelectedIndexChanged(object sender, EventArgs e)
+        void EnableSystemSelection(bool enabled)
         {
-            //Disables Radio buttons when switching away from the main tab
-            if (MainTabs.SelectedTab == SourceFilesTab)
+            WiiRetail.Enabled = enabled;
+            WiiHomebrew.Enabled = enabled;
+            WiiNAND.Enabled = enabled;
+            GCRetail.Enabled = enabled;
+        }
+
+        void CheckBuildRequirements()
+        {
+            //Initialize Registry values if they don't exist and pull values from them if they do
+            RegistryKey appKey = Registry.CurrentUser.CreateSubKey("WiiVCInjector");
+            if (appKey.GetValue("WiiUCommonKey") == null)
             {
-                WiiRetail.Enabled = true;
-                WiiHomebrew.Enabled = true;
-                WiiNAND.Enabled = true;
-                GCRetail.Enabled = true;
+                appKey.SetValue("WiiUCommonKey", "00000000000000000000000000000000");
+            }
+            WiiUCommonKey.Text = appKey.GetValue("WiiUCommonKey").ToString();
+            if (appKey.GetValue("TitleKey") == null)
+            {
+                appKey.SetValue("TitleKey", "00000000000000000000000000000000");
+            }
+            TitleKey.Text = appKey.GetValue("TitleKey").ToString();
+            OutputDirectory.Text = appKey.GetValue("OutputDirectory") as string;
+            appKey.Close();
+
+            //Generate MD5 hashes for loaded keys and check them
+            WiiUCommonKey.Text = WiiUCommonKey.Text.ToUpper();
+            sSourceData = WiiUCommonKey.Text;
+            tmpSource = ASCIIEncoding.ASCII.GetBytes(sSourceData);
+            tmpHash = new MD5CryptoServiceProvider().ComputeHash(tmpSource);
+            WiiUCommonKeyHash = BitConverter.ToString(tmpHash);
+            if (WiiUCommonKeyHash == "35-AC-59-94-97-22-79-33-1D-97-09-4F-A2-FB-97-FC")
+            {
+                CommonKeyGood = true;
+                WiiUCommonKey.ReadOnly = true;
+                WiiUCommonKey.BackColor = Color.Lime;
             }
             else
             {
-                WiiRetail.Enabled = false;
-                WiiHomebrew.Enabled = false;
-                WiiNAND.Enabled = false;
-                GCRetail.Enabled = false;
+                CommonKeyGood = false;
+                WiiUCommonKey.ReadOnly = false;
+                WiiUCommonKey.BackColor = Color.White;
             }
-            //Check for building requirements when switching to the Build tab
-            if (MainTabs.SelectedTab == BuildTab)
+            TitleKey.Text = TitleKey.Text.ToUpper();
+            sSourceData = TitleKey.Text;
+            tmpSource = ASCIIEncoding.ASCII.GetBytes(sSourceData);
+            tmpHash = new MD5CryptoServiceProvider().ComputeHash(tmpSource);
+            TitleKeyHash = BitConverter.ToString(tmpHash);
+            if (TitleKeyHash == "F9-4B-D8-8E-BB-7A-A9-38-67-E6-30-61-5F-27-1C-9F")
             {
-                //Initialize Registry values if they don't exist and pull values from them if they do
-                RegistryKey appKey = Registry.CurrentUser.CreateSubKey("WiiVCInjector");
-                if (appKey.GetValue("WiiUCommonKey") == null)
-                {
-                    appKey.SetValue("WiiUCommonKey", "00000000000000000000000000000000");
-                }
-                WiiUCommonKey.Text = appKey.GetValue("WiiUCommonKey").ToString();
-                if (appKey.GetValue("TitleKey") == null)
-                {
-                    appKey.SetValue("TitleKey", "00000000000000000000000000000000");
-                }
-                TitleKey.Text = appKey.GetValue("TitleKey").ToString();
-                OutputDirectory.Text = appKey.GetValue("OutputDirectory") as string;
-                appKey.Close();
+                TitleKeyGood = true;
+                TitleKey.ReadOnly = true;
+                TitleKey.BackColor = Color.Lime;
+            }
+            else
+            {
+                TitleKeyGood = false;
+                TitleKey.ReadOnly = false;
+                TitleKey.BackColor = Color.White;
+            }
+            AncastKey.Text = AncastKey.Text.ToUpper();
+            sSourceData = AncastKey.Text;
+            tmpSource = ASCIIEncoding.ASCII.GetBytes(sSourceData);
+            tmpHash = new MD5CryptoServiceProvider().ComputeHash(tmpSource);
+            AncastKeyHash = BitConverter.ToString(tmpHash);
+            if (AncastKeyHash == "31-8D-1F-9D-98-FB-08-E7-7C-7F-E1-77-AA-49-05-43")
+            {
+                AncastKeyGood = true;
+            }
+            else
+            {
+                AncastKeyGood = false;
+            }
+            //Final check for if all requirements are good
+            if (FlagGameSpecified & FlagIconSpecified & FlagBannerSpecified)
+            {
+                SourceCheck.ForeColor = Color.Green;
+                BuildFlagSource = true;
+            }
+            else
+            {
+                SourceCheck.ForeColor = Color.Red;
+                BuildFlagSource = false;
+            }
+            if (PackedTitleLine1.Text != "" & PackedTitleIDLine.TextLength == 16)
+            {
+                MetaCheck.ForeColor = Color.Green;
+                BuildFlagMeta = true;
+            }
+            else
+            {
+                MetaCheck.ForeColor = Color.Red;
+                BuildFlagMeta = false;
+            }
 
-                //Generate MD5 hashes for loaded keys and check them
-                WiiUCommonKey.Text = WiiUCommonKey.Text.ToUpper();
-                sSourceData = WiiUCommonKey.Text;
-                tmpSource = ASCIIEncoding.ASCII.GetBytes(sSourceData);
-                tmpHash = new MD5CryptoServiceProvider().ComputeHash(tmpSource);
-                WiiUCommonKeyHash = BitConverter.ToString(tmpHash);
-                if (WiiUCommonKeyHash == "35-AC-59-94-97-22-79-33-1D-97-09-4F-A2-FB-97-FC")
-                {
-                    CommonKeyGood = true;
-                    WiiUCommonKey.ReadOnly = true;
-                    WiiUCommonKey.BackColor = Color.Lime;
-                }
-                else
-                {
-                    CommonKeyGood = false;
-                    WiiUCommonKey.ReadOnly = false;
-                    WiiUCommonKey.BackColor = Color.White;
-                }
-                TitleKey.Text = TitleKey.Text.ToUpper();
-                sSourceData = TitleKey.Text;
-                tmpSource = ASCIIEncoding.ASCII.GetBytes(sSourceData);
-                tmpHash = new MD5CryptoServiceProvider().ComputeHash(tmpSource);
-                TitleKeyHash = BitConverter.ToString(tmpHash);
-                if (TitleKeyHash == "F9-4B-D8-8E-BB-7A-A9-38-67-E6-30-61-5F-27-1C-9F")
-                {
-                    TitleKeyGood = true;
-                    TitleKey.ReadOnly = true;
-                    TitleKey.BackColor = Color.Lime;
-                }
-                else
-                {
-                    TitleKeyGood = false;
-                    TitleKey.ReadOnly = false;
-                    TitleKey.BackColor = Color.White;
-                }
-                AncastKey.Text = AncastKey.Text.ToUpper();
-                sSourceData = AncastKey.Text;
-                tmpSource = ASCIIEncoding.ASCII.GetBytes(sSourceData);
-                tmpHash = new MD5CryptoServiceProvider().ComputeHash(tmpSource);
-                AncastKeyHash = BitConverter.ToString(tmpHash);
-                if (AncastKeyHash == "31-8D-1F-9D-98-FB-08-E7-7C-7F-E1-77-AA-49-05-43")
-                {
-                    AncastKeyGood = true;
-                }
-                else
-                {
-                    AncastKeyGood = false;
-                }
-                //Final check for if all requirements are good
-                if (FlagGameSpecified & FlagIconSpecified & FlagBannerSpecified)
-                {
-                    SourceCheck.ForeColor = Color.Green;
-                    BuildFlagSource = true;
-                }
-                else
-                {
-                    SourceCheck.ForeColor = Color.Red;
-                    BuildFlagSource = false;
-                }
-                if (PackedTitleLine1.Text != "" & PackedTitleIDLine.TextLength == 16)
-                {
-                    MetaCheck.ForeColor = Color.Green;
-                    BuildFlagMeta = true;
-                }
-                else
-                {
-                    MetaCheck.ForeColor = Color.Red;
-                    BuildFlagMeta = false;
-                }
-
-                if (CustomMainDol.Checked == false)
+            if (CustomMainDol.Checked == false)
+            {
+                AdvanceCheck.ForeColor = Color.Green;
+                BuildFlagAdvance = true;
+            }
+            else
+            {
+                if (Path.GetExtension(OpenMainDol.FileName) == ".dol")
                 {
                     AdvanceCheck.ForeColor = Color.Green;
                     BuildFlagAdvance = true;
                 }
                 else
                 {
-                    if (Path.GetExtension(OpenMainDol.FileName) == ".dol")
-                    {
-                        AdvanceCheck.ForeColor = Color.Green;
-                        BuildFlagAdvance = true;
-                    }
-                    else
-                    {
-                        AdvanceCheck.ForeColor = Color.Red;
-                        BuildFlagAdvance = false;
-                    }
+                    AdvanceCheck.ForeColor = Color.Red;
+                    BuildFlagAdvance = false;
                 }
+            }
 
-
-                //Skip Ancast Key if box not checked in advanced
-                if (C2WPatchFlag.Checked == false)
+            //Skip Ancast Key if box not checked in advanced
+            if (C2WPatchFlag.Checked == false)
+            {
+                if (CommonKeyGood & TitleKeyGood)
                 {
-                    if (CommonKeyGood & TitleKeyGood)
-                    {
-                        KeysCheck.ForeColor = Color.Green;
-                        BuildFlagKeys = true;
-                    }
-                    else
-                    {
-                        KeysCheck.ForeColor = Color.Red;
-                        BuildFlagKeys = false;
-                    }
+                    KeysCheck.ForeColor = Color.Green;
+                    BuildFlagKeys = true;
                 }
                 else
                 {
-                    if (CommonKeyGood & TitleKeyGood & AncastKeyGood)
-                    {
-                        KeysCheck.ForeColor = Color.Green;
-                        BuildFlagKeys = true;
-                    }
-                    else
-                    {
-                        KeysCheck.ForeColor = Color.Red;
-                        BuildFlagKeys = false;
-                    }
+                    KeysCheck.ForeColor = Color.Red;
+                    BuildFlagKeys = false;
                 }
-                //Enable Build Button
-                if (BuildFlagSource & BuildFlagMeta & BuildFlagAdvance & BuildFlagKeys)
+            }
+            else
+            {
+                if (CommonKeyGood & TitleKeyGood & AncastKeyGood)
                 {
-                    TheBigOneTM.Enabled = true;
+                    KeysCheck.ForeColor = Color.Green;
+                    BuildFlagKeys = true;
                 }
                 else
                 {
-                    TheBigOneTM.Enabled = false;
+                    KeysCheck.ForeColor = Color.Red;
+                    BuildFlagKeys = false;
                 }
+            }
+            //Enable Build Button
+            if (BuildFlagSource & BuildFlagMeta & BuildFlagAdvance & BuildFlagKeys)
+            {
+                TheBigOneTM.Enabled = true;
+            }
+            else
+            {
+                TheBigOneTM.Enabled = false;
+            }
+        }
+
+        //Performs actions when switching tabs
+        private void MainTabs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //Disables Radio buttons when switching away from the main tab
+            if (!IsBuilding)
+            {
+                EnableSystemSelection(MainTabs.SelectedTab == SourceFilesTab);
+            }
+
+            //Check for building requirements when switching to the Build tab
+            if (MainTabs.SelectedTab == BuildTab)
+            {
+                CheckBuildRequirements();
             }
         }
 
@@ -1813,7 +1920,7 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 try
                 {
-                    BuildPack(false);
+                    BuildLegacy();
                 }
                 catch (Exception ex)
                 {
@@ -1904,7 +2011,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private void BuildCompleted(bool succeed)
         {
-            if (succeed)
+            if (succeed && PropmtForSucceed && !InClosing)
             {
                 MessageBox.Show(tr.Tr("Conversion Complete! Your packed game can be found here: ")
                     + OutputDirectory.Text + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text
@@ -2768,13 +2875,13 @@ namespace TeconMoon_s_WiiVC_Injector
                 NUSPackerEncrypt
             };
 
-            bool succeed = true;
+            ThrowProcessException = true;
+            int succeed = 0;
 
             foreach (BuildStep buildStep in buildSteps)
             {
                 if (LastBuildCancelled)
                 {
-                    succeed = false;
                     break;
                 }
 
@@ -2782,14 +2889,14 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     if (!buildStep())
                     {
-                        succeed = false;
                         break;
                     }
+
+                    ++succeed;
                 }
                 catch (Exception ex)
                 {
                     Console.Write("buildStep throws an exception: " + ex.Message);
-                    succeed = false;
                     break;
                 }
             }
@@ -2798,11 +2905,13 @@ namespace TeconMoon_s_WiiVC_Injector
 
             Invoke(ActBuildStatus, tr.Tr("Conversion complete..."));
 
-            return succeed;
+            return (succeed == buildSteps.Length);
         }
 
-        private void BuildPack(bool silent)
+        private void BuildLegacy()
         {
+            ThrowProcessException = false;
+            
             //Initialize Build Process
             //Disable form elements so navigation can't be attempted during build process
             MainTabs.Enabled = false;
@@ -3428,7 +3537,7 @@ namespace TeconMoon_s_WiiVC_Injector
             //END
             BuildStatus.Text = tr.Tr("Conversion complete...");
             BuildStatus.Refresh();
-            if (!silent)
+            if (PropmtForSucceed && !InClosing)
             {
                 MessageBox.Show(tr.Tr("Conversion Complete! Your packed game can be found here: ")
                     + OutputDirectory.Text + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text
