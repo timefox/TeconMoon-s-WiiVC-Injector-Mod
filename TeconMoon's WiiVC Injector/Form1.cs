@@ -2090,7 +2090,7 @@ namespace TeconMoon_s_WiiVC_Injector
                     MessageBox.Show(tr.Tr("Output folder selection has been cancelled, conversion will not continue."));
                     return false;
                 }
-                OutputDirectory.Text = OutputFolderSelect.SelectedPath;
+                Invoke(new Action<string>((s) => { OutputDirectory.Text = s; }), OutputFolderSelect.SelectedPath);
             }
             if (!Directory.Exists(OutputDirectory.Text))
             {
@@ -3721,7 +3721,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private void GameFile_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (!IsBuilding && Program.AutoBuildList.Count == 0 && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }
