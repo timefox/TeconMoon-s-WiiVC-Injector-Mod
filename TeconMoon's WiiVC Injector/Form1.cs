@@ -49,25 +49,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
             ActBuildOutput = new Action<BuildOutputItem>((item) =>
             {
-                Color color = BuildOutput.ForeColor;
-                Font font = null;
-
-                switch (item.buildOutputType)
-                {
-                    case BuildOutputType.botError:
-                        color = Color.DarkRed;
-                        font = new Font(BuildOutput.Font, FontStyle.Bold);                        
-                        break;
-                    case BuildOutputType.botStep:
-                        color = Color.AliceBlue;
-                        font = new Font(BuildOutput.Font.FontFamily, BuildOutput.Font.Size + 1, FontStyle.Bold);
-                        break;
-                    case BuildOutputType.botNormal:
-                    default:
-                        break;
-                }
-                BuildOutput.AppendText(item.s, color, font);
-                BuildOutput.ScrollToCaret();
+                AppendBuildOutput(item);
             });
 
             // Process any pending build requests.
@@ -347,9 +329,37 @@ namespace TeconMoon_s_WiiVC_Injector
             return false;
         }
 
-        public string NormalizeCmdlineArg(string arg)
+        private string NormalizeCmdlineArg(string arg)
         {
             return String.Format("\"{0}\"", arg);
+        }
+
+        private void AppendBuildOutput(BuildOutputItem item)
+        {
+            Color color = BuildOutput.ForeColor;
+            Font font = null;
+
+            switch (item.buildOutputType)
+            {
+                case BuildOutputType.botError:
+                    color = Color.DarkRed;
+                    font = new Font(BuildOutput.Font, FontStyle.Bold);
+                    break;
+                case BuildOutputType.botStep:
+                    color = Color.AliceBlue;
+                    font = new Font(BuildOutput.Font.FontFamily, BuildOutput.Font.Size + 1, FontStyle.Bold);
+                    break;
+                case BuildOutputType.botExec:
+                    color = Color.Blue;
+                    font = new Font(BuildOutput.Font, FontStyle.Bold);
+                    break;
+                case BuildOutputType.botNormal:
+                default:
+                    break;
+            }
+            BuildOutput.AppendText(item.s, color, font);
+            BuildOutput.ScrollToCaret();
+
         }
 
         //Specify public variables for later use (ASK ALAN)
@@ -413,6 +423,7 @@ namespace TeconMoon_s_WiiVC_Injector
             botNormal,
             botError,
             botStep,
+            botExec,
         };
 
         struct BuildOutputItem
@@ -462,6 +473,13 @@ namespace TeconMoon_s_WiiVC_Injector
 
             bool exitNormally = true;
 
+            BeginInvoke(ActBuildOutput, new BuildOutputItem()
+            {
+                s = tr.Tr("Executing:") + ' ' + LauncherExeFile + '\n' 
+                + tr.Tr("Args:") + ' ' + LauncherExeArgs + '\n',
+                buildOutputType = BuildOutputType.botExec
+            });
+
             try
             {
                 Process process = Process.Start(Launcher);
@@ -476,7 +494,8 @@ namespace TeconMoon_s_WiiVC_Injector
                         return;
                     }
 
-                    BeginInvoke(ActBuildOutput, new BuildOutputItem() { 
+                    BeginInvoke(ActBuildOutput, new BuildOutputItem() 
+                    { 
                         s = data.Replace("\0", ""), 
                         buildOutputType = BuildOutputType.botNormal
                     });
@@ -2117,9 +2136,12 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             TheBigOneTM.Enabled = false;
             LastBuildCancelled = true;
-            Invoke(ActBuildOutput, new BuildOutputItem() { 
+
+            Invoke(ActBuildOutput, new BuildOutputItem() 
+            { 
                 s = tr.Tr("Build cancelled."), 
-                buildOutputType = BuildOutputType.botError });
+                buildOutputType = BuildOutputType.botError 
+            });
         }
 
         private bool CheckFreeDiskSpaceForPack()
@@ -3650,6 +3672,10 @@ namespace TeconMoon_s_WiiVC_Injector
 
             // Setup temp directory for generated images.
             string saveDir = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\";
+            if (!Directory.Exists(saveDir))
+            {
+                Directory.CreateDirectory(saveDir);
+            }
 
             // Create the background image for gamepad bar.
             Bitmap bitmapGamePadBar = new Bitmap(854, 480);
@@ -3806,7 +3832,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private void ClearBuildOutput_Click(object sender, EventArgs e)
         {
-            BuildOutput.Clear();
+            BuildOutput.ResetText();
         }
     }
 }

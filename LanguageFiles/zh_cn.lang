@@ -1,8 +1,8 @@
 [TeconMoon-s-WiiVC-Injector-Mod-Language]
 language=简体中文(zh-cn)
-verion=3.0.1mod4
+verion=3.0.1mod6
 author=robin
-date=11/21/2019
+date=11/24/2019
 [WiiVC_Injector]
 @Title=TeconMoon's WiiVC 注入器
 WiiRetail=Wii 游戏注入
@@ -85,6 +85,7 @@ WiiNAND=vWii NAND 启动器
 WiiHomebrew=Wii 自制程序注入
 OutputDirLabel=输出目录
 BrowseOutputDir=浏览...
+BuildOutputTab=生成输出（详细的转换过程信息）
 [SDCardMenu]
 @Title=Nintendont SD卡菜单
 Format=推荐的SD卡格式化工具
@@ -203,3 +204,7 @@ String101=停止
 String102=您确定要停止当前的生成过程吗？
 String103=停止生成
 String104=转换完成...
+String105=全部清除
+String106=生成已被取消。
+String107=正在执行：
+String108=参数：

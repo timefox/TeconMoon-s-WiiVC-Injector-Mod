@@ -461,4 +461,16 @@ Additional error information:</value>
   <data name="clearbuildoutput" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\clearbuildoutput.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="String105" xml:space="preserve">
+    <value>Clear Outputs</value>
+  </data>
+  <data name="String106" xml:space="preserve">
+    <value>Build cancelled.</value>
+  </data>
+  <data name="String107" xml:space="preserve">
+    <value>Executing:</value>
+  </data>
+  <data name="String108" xml:space="preserve">
+    <value>Args:</value>
+  </data>
 </root>

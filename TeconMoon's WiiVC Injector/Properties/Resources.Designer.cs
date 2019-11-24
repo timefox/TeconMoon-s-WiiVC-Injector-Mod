@@ -138,6 +138,42 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   查找类似 Clear Outputs 的本地化字符串。
+        /// </summary>
+        internal static string String105 {
+            get {
+                return ResourceManager.GetString("String105", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Build cancelled. 的本地化字符串。
+        /// </summary>
+        internal static string String106 {
+            get {
+                return ResourceManager.GetString("String106", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Executing: 的本地化字符串。
+        /// </summary>
+        internal static string String107 {
+            get {
+                return ResourceManager.GetString("String107", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Args: 的本地化字符串。
+        /// </summary>
+        internal static string String108 {
+            get {
+                return ResourceManager.GetString("String108", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 DOL Files (*.dol)|*.dol 的本地化字符串。
         /// </summary>
         internal static string String11 {
