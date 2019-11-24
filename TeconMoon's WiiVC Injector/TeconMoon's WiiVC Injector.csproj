@@ -7,7 +7,7 @@
     <ProjectGuid>{8228DC31-4869-4C1C-8AED-D7ED37ECF3B9}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>TeconMoon_s_WiiVC_Injector</RootNamespace>
-    <AssemblyName>TeconMoon%27s WiiVC Injector Mod Version</AssemblyName>
+    <AssemblyName>TeconMoon%27s WiiVC Injector Mod</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

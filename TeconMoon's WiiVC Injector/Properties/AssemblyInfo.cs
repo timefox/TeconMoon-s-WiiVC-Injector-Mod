@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TeconMoon's WiiVC Injector Mod Version")]
+[assembly: AssemblyTitle("TeconMoon's WiiVC Injector Mod")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TeconMoon's WiiVC Injector Mod Version")]
+[assembly: AssemblyProduct("TeconMoon's WiiVC Injector Mod")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
