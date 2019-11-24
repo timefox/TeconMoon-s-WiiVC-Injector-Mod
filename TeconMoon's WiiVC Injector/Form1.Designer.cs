@@ -121,6 +121,10 @@
             this.RHFKeyLabel = new System.Windows.Forms.Label();
             this.CommonLabel = new System.Windows.Forms.Label();
             this.WiiUCommonKey = new System.Windows.Forms.TextBox();
+            this.BuildOutputTab = new System.Windows.Forms.TabPage();
+            this.BuildOutputContainer = new System.Windows.Forms.SplitContainer();
+            this.ClearBuildOutput = new System.Windows.Forms.Button();
+            this.BuildOutput = new System.Windows.Forms.RichTextBox();
             this.SDCardStuff = new System.Windows.Forms.Button();
             this.GCRetail = new System.Windows.Forms.RadioButton();
             this.WiiNAND = new System.Windows.Forms.RadioButton();
@@ -146,6 +150,11 @@
             this.GamePadEmuLayout.SuspendLayout();
             this.AdvancedTab.SuspendLayout();
             this.BuildTab.SuspendLayout();
+            this.BuildOutputTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BuildOutputContainer)).BeginInit();
+            this.BuildOutputContainer.Panel1.SuspendLayout();
+            this.BuildOutputContainer.Panel2.SuspendLayout();
+            this.BuildOutputContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainTableLayout
@@ -163,12 +172,13 @@
             this.MainTableLayout.Controls.Add(this.WiiHomebrew, 1, 0);
             this.MainTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainTableLayout.Location = new System.Drawing.Point(0, 0);
+            this.MainTableLayout.Margin = new System.Windows.Forms.Padding(4);
             this.MainTableLayout.Name = "MainTableLayout";
             this.MainTableLayout.RowCount = 3;
-            this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
-            this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
+            this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 44F));
+            this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 46F));
             this.MainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.MainTableLayout.Size = new System.Drawing.Size(581, 449);
+            this.MainTableLayout.Size = new System.Drawing.Size(872, 674);
             this.MainTableLayout.TabIndex = 0;
             this.MainTableLayout.DragDrop += new System.Windows.Forms.DragEventHandler(this.GameFile_DragDrop);
             this.MainTableLayout.DragEnter += new System.Windows.Forms.DragEventHandler(this.GameFile_DragEnter);
@@ -180,9 +190,10 @@
             this.WiiRetail.AutoSize = true;
             this.WiiRetail.Checked = true;
             this.WiiRetail.ForeColor = System.Drawing.Color.Black;
-            this.WiiRetail.Location = new System.Drawing.Point(3, 3);
+            this.WiiRetail.Location = new System.Drawing.Point(4, 4);
+            this.WiiRetail.Margin = new System.Windows.Forms.Padding(4);
             this.WiiRetail.Name = "WiiRetail";
-            this.WiiRetail.Size = new System.Drawing.Size(143, 23);
+            this.WiiRetail.Size = new System.Drawing.Size(213, 36);
             this.WiiRetail.TabIndex = 0;
             this.WiiRetail.TabStop = true;
             this.WiiRetail.Text = "Wii Retail Injection";
@@ -197,11 +208,13 @@
             this.MainTabs.Controls.Add(this.MetaTab);
             this.MainTabs.Controls.Add(this.AdvancedTab);
             this.MainTabs.Controls.Add(this.BuildTab);
+            this.MainTabs.Controls.Add(this.BuildOutputTab);
             this.MainTabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MainTabs.Location = new System.Drawing.Point(3, 63);
+            this.MainTabs.Location = new System.Drawing.Point(4, 94);
+            this.MainTabs.Margin = new System.Windows.Forms.Padding(4);
             this.MainTabs.Name = "MainTabs";
             this.MainTabs.SelectedIndex = 0;
-            this.MainTabs.Size = new System.Drawing.Size(575, 383);
+            this.MainTabs.Size = new System.Drawing.Size(864, 576);
             this.MainTabs.TabIndex = 4;
             this.MainTabs.SelectedIndexChanged += new System.EventHandler(this.MainTabs_SelectedIndexChanged);
             // 
@@ -225,9 +238,10 @@
             this.SourceFilesTab.Controls.Add(this.IconSourceButton);
             this.SourceFilesTab.Controls.Add(this.GameSourceDirectory);
             this.SourceFilesTab.Controls.Add(this.GameSourceButton);
-            this.SourceFilesTab.Location = new System.Drawing.Point(4, 22);
+            this.SourceFilesTab.Location = new System.Drawing.Point(4, 28);
+            this.SourceFilesTab.Margin = new System.Windows.Forms.Padding(4);
             this.SourceFilesTab.Name = "SourceFilesTab";
-            this.SourceFilesTab.Size = new System.Drawing.Size(567, 357);
+            this.SourceFilesTab.Size = new System.Drawing.Size(856, 544);
             this.SourceFilesTab.TabIndex = 0;
             this.SourceFilesTab.Text = "Required Source Files";
             this.SourceFilesTab.DragDrop += new System.Windows.Forms.DragEventHandler(this.GameFile_DragDrop);
@@ -235,9 +249,10 @@
             // 
             // GenerateImage
             // 
-            this.GenerateImage.Location = new System.Drawing.Point(454, 86);
+            this.GenerateImage.Location = new System.Drawing.Point(681, 129);
+            this.GenerateImage.Margin = new System.Windows.Forms.Padding(4);
             this.GenerateImage.Name = "GenerateImage";
-            this.GenerateImage.Size = new System.Drawing.Size(103, 59);
+            this.GenerateImage.Size = new System.Drawing.Size(154, 88);
             this.GenerateImage.TabIndex = 15;
             this.GenerateImage.Text = "Generate images by game name";
             this.GenerateImage.UseVisualStyleBackColor = false;
@@ -246,9 +261,10 @@
             // RepoDownload
             // 
             this.RepoDownload.BackColor = System.Drawing.Color.Silver;
-            this.RepoDownload.Location = new System.Drawing.Point(8, 150);
+            this.RepoDownload.Location = new System.Drawing.Point(12, 225);
+            this.RepoDownload.Margin = new System.Windows.Forms.Padding(4);
             this.RepoDownload.Name = "RepoDownload";
-            this.RepoDownload.Size = new System.Drawing.Size(128, 45);
+            this.RepoDownload.Size = new System.Drawing.Size(192, 68);
             this.RepoDownload.TabIndex = 14;
             this.RepoDownload.Text = "Download images from cucholix\'s repo";
             this.RepoDownload.UseVisualStyleBackColor = false;
@@ -259,9 +275,10 @@
             this.TitleIDLabel.BackColor = System.Drawing.Color.LightGray;
             this.TitleIDLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.TitleIDLabel.Cursor = System.Windows.Forms.Cursors.Default;
-            this.TitleIDLabel.Location = new System.Drawing.Point(161, 115);
+            this.TitleIDLabel.Location = new System.Drawing.Point(242, 172);
+            this.TitleIDLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.TitleIDLabel.Name = "TitleIDLabel";
-            this.TitleIDLabel.Size = new System.Drawing.Size(282, 21);
+            this.TitleIDLabel.Size = new System.Drawing.Size(423, 32);
             this.TitleIDLabel.TabIndex = 13;
             // 
             // GameNameLabel
@@ -269,35 +286,39 @@
             this.GameNameLabel.BackColor = System.Drawing.Color.LightGray;
             this.GameNameLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.GameNameLabel.Cursor = System.Windows.Forms.Cursors.Default;
-            this.GameNameLabel.Location = new System.Drawing.Point(161, 91);
+            this.GameNameLabel.Location = new System.Drawing.Point(242, 136);
+            this.GameNameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.GameNameLabel.Name = "GameNameLabel";
-            this.GameNameLabel.Size = new System.Drawing.Size(282, 21);
+            this.GameNameLabel.Size = new System.Drawing.Size(423, 32);
             this.GameNameLabel.TabIndex = 12;
             // 
             // ITIDText
             // 
             this.ITIDText.AutoSize = true;
-            this.ITIDText.Location = new System.Drawing.Point(6, 120);
+            this.ITIDText.Location = new System.Drawing.Point(9, 180);
+            this.ITIDText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ITIDText.Name = "ITIDText";
-            this.ITIDText.Size = new System.Drawing.Size(143, 12);
+            this.ITIDText.Size = new System.Drawing.Size(215, 18);
             this.ITIDText.TabIndex = 11;
             this.ITIDText.Text = "Internal Game Title ID:";
             this.ITIDText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // IGNText
             // 
-            this.IGNText.Location = new System.Drawing.Point(8, 95);
+            this.IGNText.Location = new System.Drawing.Point(12, 142);
+            this.IGNText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.IGNText.Name = "IGNText";
-            this.IGNText.Size = new System.Drawing.Size(143, 17);
+            this.IGNText.Size = new System.Drawing.Size(214, 26);
             this.IGNText.TabIndex = 10;
             this.IGNText.Text = "Internal Game Name:";
             this.IGNText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // BannerPreviewText
             // 
-            this.BannerPreviewText.Location = new System.Drawing.Point(210, 150);
+            this.BannerPreviewText.Location = new System.Drawing.Point(315, 225);
+            this.BannerPreviewText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BannerPreviewText.Name = "BannerPreviewText";
-            this.BannerPreviewText.Size = new System.Drawing.Size(320, 14);
+            this.BannerPreviewText.Size = new System.Drawing.Size(480, 21);
             this.BannerPreviewText.TabIndex = 9;
             this.BannerPreviewText.Text = "Banner Preview (1280x720)";
             this.BannerPreviewText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -306,18 +327,20 @@
             // 
             this.BannerPreviewBox.BackColor = System.Drawing.Color.DimGray;
             this.BannerPreviewBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BannerPreviewBox.Location = new System.Drawing.Point(161, 171);
+            this.BannerPreviewBox.Location = new System.Drawing.Point(242, 256);
+            this.BannerPreviewBox.Margin = new System.Windows.Forms.Padding(4);
             this.BannerPreviewBox.Name = "BannerPreviewBox";
-            this.BannerPreviewBox.Size = new System.Drawing.Size(397, 189);
+            this.BannerPreviewBox.Size = new System.Drawing.Size(594, 282);
             this.BannerPreviewBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.BannerPreviewBox.TabIndex = 8;
             this.BannerPreviewBox.TabStop = false;
             // 
             // IconPreviewText
             // 
-            this.IconPreviewText.Location = new System.Drawing.Point(8, 199);
+            this.IconPreviewText.Location = new System.Drawing.Point(12, 298);
+            this.IconPreviewText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.IconPreviewText.Name = "IconPreviewText";
-            this.IconPreviewText.Size = new System.Drawing.Size(128, 14);
+            this.IconPreviewText.Size = new System.Drawing.Size(192, 21);
             this.IconPreviewText.TabIndex = 7;
             this.IconPreviewText.Text = "Icon Preview (128x128)";
             this.IconPreviewText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -326,9 +349,10 @@
             // 
             this.IconPreviewBox.BackColor = System.Drawing.Color.DimGray;
             this.IconPreviewBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.IconPreviewBox.Location = new System.Drawing.Point(0, 216);
+            this.IconPreviewBox.Location = new System.Drawing.Point(0, 324);
+            this.IconPreviewBox.Margin = new System.Windows.Forms.Padding(4);
             this.IconPreviewBox.Name = "IconPreviewBox";
-            this.IconPreviewBox.Size = new System.Drawing.Size(141, 141);
+            this.IconPreviewBox.Size = new System.Drawing.Size(210, 210);
             this.IconPreviewBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.IconPreviewBox.TabIndex = 6;
             this.IconPreviewBox.TabStop = false;
@@ -340,9 +364,10 @@
             this.BannerSourceDirectory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.BannerSourceDirectory.Cursor = System.Windows.Forms.Cursors.Default;
             this.BannerSourceDirectory.ForeColor = System.Drawing.Color.Red;
-            this.BannerSourceDirectory.Location = new System.Drawing.Point(161, 59);
+            this.BannerSourceDirectory.Location = new System.Drawing.Point(242, 88);
+            this.BannerSourceDirectory.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BannerSourceDirectory.Name = "BannerSourceDirectory";
-            this.BannerSourceDirectory.Size = new System.Drawing.Size(396, 21);
+            this.BannerSourceDirectory.Size = new System.Drawing.Size(594, 32);
             this.BannerSourceDirectory.TabIndex = 5;
             this.BannerSourceDirectory.Text = "Banner has not been specified";
             this.BannerSourceDirectory.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -350,9 +375,10 @@
             // BannerSourceButton
             // 
             this.BannerSourceButton.BackColor = System.Drawing.Color.Silver;
-            this.BannerSourceButton.Location = new System.Drawing.Point(6, 59);
+            this.BannerSourceButton.Location = new System.Drawing.Point(9, 88);
+            this.BannerSourceButton.Margin = new System.Windows.Forms.Padding(4);
             this.BannerSourceButton.Name = "BannerSourceButton";
-            this.BannerSourceButton.Size = new System.Drawing.Size(130, 21);
+            this.BannerSourceButton.Size = new System.Drawing.Size(195, 32);
             this.BannerSourceButton.TabIndex = 4;
             this.BannerSourceButton.Text = "Banner...";
             this.BannerSourceButton.UseVisualStyleBackColor = false;
@@ -365,9 +391,10 @@
             this.IconSourceDirectory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.IconSourceDirectory.Cursor = System.Windows.Forms.Cursors.Default;
             this.IconSourceDirectory.ForeColor = System.Drawing.Color.Red;
-            this.IconSourceDirectory.Location = new System.Drawing.Point(161, 32);
+            this.IconSourceDirectory.Location = new System.Drawing.Point(242, 48);
+            this.IconSourceDirectory.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.IconSourceDirectory.Name = "IconSourceDirectory";
-            this.IconSourceDirectory.Size = new System.Drawing.Size(396, 21);
+            this.IconSourceDirectory.Size = new System.Drawing.Size(594, 32);
             this.IconSourceDirectory.TabIndex = 3;
             this.IconSourceDirectory.Text = "Icon has not been specified";
             this.IconSourceDirectory.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -375,9 +402,10 @@
             // IconSourceButton
             // 
             this.IconSourceButton.BackColor = System.Drawing.Color.Silver;
-            this.IconSourceButton.Location = new System.Drawing.Point(6, 32);
+            this.IconSourceButton.Location = new System.Drawing.Point(9, 48);
+            this.IconSourceButton.Margin = new System.Windows.Forms.Padding(4);
             this.IconSourceButton.Name = "IconSourceButton";
-            this.IconSourceButton.Size = new System.Drawing.Size(130, 21);
+            this.IconSourceButton.Size = new System.Drawing.Size(195, 32);
             this.IconSourceButton.TabIndex = 2;
             this.IconSourceButton.Text = "Icon...";
             this.IconSourceButton.UseVisualStyleBackColor = false;
@@ -390,9 +418,10 @@
             this.GameSourceDirectory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.GameSourceDirectory.Cursor = System.Windows.Forms.Cursors.Default;
             this.GameSourceDirectory.ForeColor = System.Drawing.Color.Red;
-            this.GameSourceDirectory.Location = new System.Drawing.Point(161, 6);
+            this.GameSourceDirectory.Location = new System.Drawing.Point(242, 9);
+            this.GameSourceDirectory.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.GameSourceDirectory.Name = "GameSourceDirectory";
-            this.GameSourceDirectory.Size = new System.Drawing.Size(396, 21);
+            this.GameSourceDirectory.Size = new System.Drawing.Size(594, 32);
             this.GameSourceDirectory.TabIndex = 1;
             this.GameSourceDirectory.Text = "Game file has not been specified";
             this.GameSourceDirectory.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -400,9 +429,10 @@
             // GameSourceButton
             // 
             this.GameSourceButton.BackColor = System.Drawing.Color.Silver;
-            this.GameSourceButton.Location = new System.Drawing.Point(6, 6);
+            this.GameSourceButton.Location = new System.Drawing.Point(9, 9);
+            this.GameSourceButton.Margin = new System.Windows.Forms.Padding(4);
             this.GameSourceButton.Name = "GameSourceButton";
-            this.GameSourceButton.Size = new System.Drawing.Size(130, 21);
+            this.GameSourceButton.Size = new System.Drawing.Size(195, 32);
             this.GameSourceButton.TabIndex = 0;
             this.GameSourceButton.Text = "Game...";
             this.GameSourceButton.UseVisualStyleBackColor = false;
@@ -426,11 +456,11 @@
             this.SourceFilesTab2.Controls.Add(this.DrcSourceDirectory);
             this.SourceFilesTab2.Controls.Add(this.DrcSourceButton);
             this.SourceFilesTab2.Controls.Add(this.BootSoundPreviewButton);
-            this.SourceFilesTab2.Location = new System.Drawing.Point(4, 22);
-            this.SourceFilesTab2.Margin = new System.Windows.Forms.Padding(4);
+            this.SourceFilesTab2.Location = new System.Drawing.Point(4, 28);
+            this.SourceFilesTab2.Margin = new System.Windows.Forms.Padding(6);
             this.SourceFilesTab2.Name = "SourceFilesTab2";
-            this.SourceFilesTab2.Padding = new System.Windows.Forms.Padding(4);
-            this.SourceFilesTab2.Size = new System.Drawing.Size(567, 357);
+            this.SourceFilesTab2.Padding = new System.Windows.Forms.Padding(6);
+            this.SourceFilesTab2.Size = new System.Drawing.Size(856, 544);
             this.SourceFilesTab2.TabIndex = 5;
             this.SourceFilesTab2.Text = "Optional Source Files";
             // 
@@ -441,9 +471,10 @@
             this.GC2SourceDirectory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.GC2SourceDirectory.Cursor = System.Windows.Forms.Cursors.Default;
             this.GC2SourceDirectory.ForeColor = System.Drawing.Color.Red;
-            this.GC2SourceDirectory.Location = new System.Drawing.Point(165, 6);
+            this.GC2SourceDirectory.Location = new System.Drawing.Point(248, 9);
+            this.GC2SourceDirectory.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.GC2SourceDirectory.Name = "GC2SourceDirectory";
-            this.GC2SourceDirectory.Size = new System.Drawing.Size(391, 21);
+            this.GC2SourceDirectory.Size = new System.Drawing.Size(586, 32);
             this.GC2SourceDirectory.TabIndex = 20;
             this.GC2SourceDirectory.Text = "2nd GameCube Disc Image has not been specified";
             this.GC2SourceDirectory.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -452,9 +483,10 @@
             // 
             this.GC2SourceButton.BackColor = System.Drawing.Color.Silver;
             this.GC2SourceButton.Enabled = false;
-            this.GC2SourceButton.Location = new System.Drawing.Point(6, 6);
+            this.GC2SourceButton.Location = new System.Drawing.Point(9, 9);
+            this.GC2SourceButton.Margin = new System.Windows.Forms.Padding(4);
             this.GC2SourceButton.Name = "GC2SourceButton";
-            this.GC2SourceButton.Size = new System.Drawing.Size(133, 21);
+            this.GC2SourceButton.Size = new System.Drawing.Size(200, 32);
             this.GC2SourceButton.TabIndex = 19;
             this.GC2SourceButton.Text = "2nd GC Disc";
             this.GC2SourceButton.UseVisualStyleBackColor = false;
@@ -462,9 +494,10 @@
             // 
             // ToggleBootSoundLoop
             // 
-            this.ToggleBootSoundLoop.Location = new System.Drawing.Point(6, 118);
+            this.ToggleBootSoundLoop.Location = new System.Drawing.Point(9, 177);
+            this.ToggleBootSoundLoop.Margin = new System.Windows.Forms.Padding(4);
             this.ToggleBootSoundLoop.Name = "ToggleBootSoundLoop";
-            this.ToggleBootSoundLoop.Size = new System.Drawing.Size(133, 22);
+            this.ToggleBootSoundLoop.Size = new System.Drawing.Size(200, 33);
             this.ToggleBootSoundLoop.TabIndex = 18;
             this.ToggleBootSoundLoop.Text = "Loop Boot Sound";
             this.ToggleBootSoundLoop.UseVisualStyleBackColor = true;
@@ -472,18 +505,20 @@
             // 
             // BootSoundPreviewText
             // 
-            this.BootSoundPreviewText.Location = new System.Drawing.Point(8, 218);
+            this.BootSoundPreviewText.Location = new System.Drawing.Point(12, 327);
+            this.BootSoundPreviewText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BootSoundPreviewText.Name = "BootSoundPreviewText";
-            this.BootSoundPreviewText.Size = new System.Drawing.Size(128, 14);
+            this.BootSoundPreviewText.Size = new System.Drawing.Size(192, 21);
             this.BootSoundPreviewText.TabIndex = 16;
             this.BootSoundPreviewText.Text = "Sound Preview";
             this.BootSoundPreviewText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // LogoPreviewText
             // 
-            this.LogoPreviewText.Location = new System.Drawing.Point(7, 146);
+            this.LogoPreviewText.Location = new System.Drawing.Point(10, 219);
+            this.LogoPreviewText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.LogoPreviewText.Name = "LogoPreviewText";
-            this.LogoPreviewText.Size = new System.Drawing.Size(128, 15);
+            this.LogoPreviewText.Size = new System.Drawing.Size(192, 22);
             this.LogoPreviewText.TabIndex = 15;
             this.LogoPreviewText.Text = "Logo Preview (170x42)";
             this.LogoPreviewText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -492,18 +527,20 @@
             // 
             this.LogoPreviewBox.BackColor = System.Drawing.Color.DimGray;
             this.LogoPreviewBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.LogoPreviewBox.Location = new System.Drawing.Point(7, 169);
+            this.LogoPreviewBox.Location = new System.Drawing.Point(10, 254);
+            this.LogoPreviewBox.Margin = new System.Windows.Forms.Padding(4);
             this.LogoPreviewBox.Name = "LogoPreviewBox";
-            this.LogoPreviewBox.Size = new System.Drawing.Size(134, 33);
+            this.LogoPreviewBox.Size = new System.Drawing.Size(199, 48);
             this.LogoPreviewBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.LogoPreviewBox.TabIndex = 14;
             this.LogoPreviewBox.TabStop = false;
             // 
             // DrcPreviewText
             // 
-            this.DrcPreviewText.Location = new System.Drawing.Point(200, 146);
+            this.DrcPreviewText.Location = new System.Drawing.Point(300, 219);
+            this.DrcPreviewText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.DrcPreviewText.Name = "DrcPreviewText";
-            this.DrcPreviewText.Size = new System.Drawing.Size(320, 14);
+            this.DrcPreviewText.Size = new System.Drawing.Size(480, 21);
             this.DrcPreviewText.TabIndex = 13;
             this.DrcPreviewText.Text = "GamePad Banner Preview (854x480)";
             this.DrcPreviewText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -512,9 +549,10 @@
             // 
             this.DrcPreviewBox.BackColor = System.Drawing.Color.DimGray;
             this.DrcPreviewBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.DrcPreviewBox.Location = new System.Drawing.Point(165, 169);
+            this.DrcPreviewBox.Location = new System.Drawing.Point(248, 254);
+            this.DrcPreviewBox.Margin = new System.Windows.Forms.Padding(4);
             this.DrcPreviewBox.Name = "DrcPreviewBox";
-            this.DrcPreviewBox.Size = new System.Drawing.Size(393, 191);
+            this.DrcPreviewBox.Size = new System.Drawing.Size(588, 284);
             this.DrcPreviewBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.DrcPreviewBox.TabIndex = 12;
             this.DrcPreviewBox.TabStop = false;
@@ -526,9 +564,10 @@
             this.BootSoundDirectory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.BootSoundDirectory.Cursor = System.Windows.Forms.Cursors.Default;
             this.BootSoundDirectory.ForeColor = System.Drawing.Color.Red;
-            this.BootSoundDirectory.Location = new System.Drawing.Point(165, 92);
+            this.BootSoundDirectory.Location = new System.Drawing.Point(248, 138);
+            this.BootSoundDirectory.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BootSoundDirectory.Name = "BootSoundDirectory";
-            this.BootSoundDirectory.Size = new System.Drawing.Size(391, 21);
+            this.BootSoundDirectory.Size = new System.Drawing.Size(586, 32);
             this.BootSoundDirectory.TabIndex = 11;
             this.BootSoundDirectory.Text = "Boot Sound has not been specified";
             this.BootSoundDirectory.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -536,9 +575,10 @@
             // BootSoundButton
             // 
             this.BootSoundButton.BackColor = System.Drawing.Color.Silver;
-            this.BootSoundButton.Location = new System.Drawing.Point(6, 92);
+            this.BootSoundButton.Location = new System.Drawing.Point(9, 138);
+            this.BootSoundButton.Margin = new System.Windows.Forms.Padding(4);
             this.BootSoundButton.Name = "BootSoundButton";
-            this.BootSoundButton.Size = new System.Drawing.Size(133, 21);
+            this.BootSoundButton.Size = new System.Drawing.Size(200, 32);
             this.BootSoundButton.TabIndex = 10;
             this.BootSoundButton.Text = "Boot Sound...";
             this.BootSoundButton.UseVisualStyleBackColor = false;
@@ -551,9 +591,10 @@
             this.LogoSourceDirectory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.LogoSourceDirectory.Cursor = System.Windows.Forms.Cursors.Default;
             this.LogoSourceDirectory.ForeColor = System.Drawing.Color.Red;
-            this.LogoSourceDirectory.Location = new System.Drawing.Point(165, 63);
+            this.LogoSourceDirectory.Location = new System.Drawing.Point(248, 94);
+            this.LogoSourceDirectory.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.LogoSourceDirectory.Name = "LogoSourceDirectory";
-            this.LogoSourceDirectory.Size = new System.Drawing.Size(391, 21);
+            this.LogoSourceDirectory.Size = new System.Drawing.Size(586, 32);
             this.LogoSourceDirectory.TabIndex = 9;
             this.LogoSourceDirectory.Text = "Boot Logo has not been specified";
             this.LogoSourceDirectory.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -561,9 +602,10 @@
             // LogoSourceButton
             // 
             this.LogoSourceButton.BackColor = System.Drawing.Color.Silver;
-            this.LogoSourceButton.Location = new System.Drawing.Point(6, 63);
+            this.LogoSourceButton.Location = new System.Drawing.Point(9, 94);
+            this.LogoSourceButton.Margin = new System.Windows.Forms.Padding(4);
             this.LogoSourceButton.Name = "LogoSourceButton";
-            this.LogoSourceButton.Size = new System.Drawing.Size(133, 21);
+            this.LogoSourceButton.Size = new System.Drawing.Size(200, 32);
             this.LogoSourceButton.TabIndex = 8;
             this.LogoSourceButton.Text = "Boot Logo...";
             this.LogoSourceButton.UseVisualStyleBackColor = false;
@@ -576,9 +618,10 @@
             this.DrcSourceDirectory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.DrcSourceDirectory.Cursor = System.Windows.Forms.Cursors.Default;
             this.DrcSourceDirectory.ForeColor = System.Drawing.Color.Red;
-            this.DrcSourceDirectory.Location = new System.Drawing.Point(165, 35);
+            this.DrcSourceDirectory.Location = new System.Drawing.Point(248, 52);
+            this.DrcSourceDirectory.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.DrcSourceDirectory.Name = "DrcSourceDirectory";
-            this.DrcSourceDirectory.Size = new System.Drawing.Size(391, 21);
+            this.DrcSourceDirectory.Size = new System.Drawing.Size(586, 32);
             this.DrcSourceDirectory.TabIndex = 7;
             this.DrcSourceDirectory.Text = "GamePad Banner has not been specified";
             this.DrcSourceDirectory.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -586,9 +629,10 @@
             // DrcSourceButton
             // 
             this.DrcSourceButton.BackColor = System.Drawing.Color.Silver;
-            this.DrcSourceButton.Location = new System.Drawing.Point(6, 35);
+            this.DrcSourceButton.Location = new System.Drawing.Point(9, 52);
+            this.DrcSourceButton.Margin = new System.Windows.Forms.Padding(4);
             this.DrcSourceButton.Name = "DrcSourceButton";
-            this.DrcSourceButton.Size = new System.Drawing.Size(133, 21);
+            this.DrcSourceButton.Size = new System.Drawing.Size(200, 32);
             this.DrcSourceButton.TabIndex = 6;
             this.DrcSourceButton.Text = "GamePad Banner...";
             this.DrcSourceButton.UseVisualStyleBackColor = false;
@@ -598,9 +642,10 @@
             // 
             this.BootSoundPreviewButton.BackColor = System.Drawing.Color.Silver;
             this.BootSoundPreviewButton.Enabled = false;
-            this.BootSoundPreviewButton.Location = new System.Drawing.Point(7, 241);
+            this.BootSoundPreviewButton.Location = new System.Drawing.Point(10, 362);
+            this.BootSoundPreviewButton.Margin = new System.Windows.Forms.Padding(4);
             this.BootSoundPreviewButton.Name = "BootSoundPreviewButton";
-            this.BootSoundPreviewButton.Size = new System.Drawing.Size(133, 118);
+            this.BootSoundPreviewButton.Size = new System.Drawing.Size(200, 177);
             this.BootSoundPreviewButton.TabIndex = 17;
             this.BootSoundPreviewButton.Text = "Play Sound";
             this.BootSoundPreviewButton.UseVisualStyleBackColor = false;
@@ -620,11 +665,11 @@
             this.MetaTab.Controls.Add(this.PackedTitleLine2);
             this.MetaTab.Controls.Add(this.PackedTitleLine1);
             this.MetaTab.Controls.Add(this.PackedTitleText);
-            this.MetaTab.Location = new System.Drawing.Point(4, 22);
-            this.MetaTab.Margin = new System.Windows.Forms.Padding(4);
+            this.MetaTab.Location = new System.Drawing.Point(4, 28);
+            this.MetaTab.Margin = new System.Windows.Forms.Padding(6);
             this.MetaTab.Name = "MetaTab";
-            this.MetaTab.Padding = new System.Windows.Forms.Padding(4);
-            this.MetaTab.Size = new System.Drawing.Size(567, 357);
+            this.MetaTab.Padding = new System.Windows.Forms.Padding(6);
+            this.MetaTab.Size = new System.Drawing.Size(856, 544);
             this.MetaTab.TabIndex = 2;
             this.MetaTab.Text = "GamePad/Meta Options";
             // 
@@ -632,9 +677,10 @@
             // 
             this.LRPatch.AutoSize = true;
             this.LRPatch.Enabled = false;
-            this.LRPatch.Location = new System.Drawing.Point(9, 230);
+            this.LRPatch.Location = new System.Drawing.Point(14, 345);
+            this.LRPatch.Margin = new System.Windows.Forms.Padding(4);
             this.LRPatch.Name = "LRPatch";
-            this.LRPatch.Size = new System.Drawing.Size(162, 16);
+            this.LRPatch.Size = new System.Drawing.Size(241, 22);
             this.LRPatch.TabIndex = 17;
             this.LRPatch.Text = "Swap L && R with ZL && ZR";
             this.LRPatch.UseVisualStyleBackColor = true;
@@ -643,10 +689,10 @@
             // 
             this.TutorialLink.AutoSize = true;
             this.TutorialLink.BackColor = System.Drawing.Color.Gainsboro;
-            this.TutorialLink.Location = new System.Drawing.Point(489, 343);
-            this.TutorialLink.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.TutorialLink.Location = new System.Drawing.Point(734, 514);
+            this.TutorialLink.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.TutorialLink.Name = "TutorialLink";
-            this.TutorialLink.Size = new System.Drawing.Size(77, 12);
+            this.TutorialLink.Size = new System.Drawing.Size(116, 18);
             this.TutorialLink.TabIndex = 16;
             this.TutorialLink.TabStop = true;
             this.TutorialLink.Text = "Instructions";
@@ -654,9 +700,10 @@
             // 
             // AdvancedLabel5
             // 
-            this.AdvancedLabel5.Location = new System.Drawing.Point(6, 250);
+            this.AdvancedLabel5.Location = new System.Drawing.Point(9, 375);
+            this.AdvancedLabel5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.AdvancedLabel5.Name = "AdvancedLabel5";
-            this.AdvancedLabel5.Size = new System.Drawing.Size(557, 91);
+            this.AdvancedLabel5.Size = new System.Drawing.Size(836, 136);
             this.AdvancedLabel5.TabIndex = 14;
             this.AdvancedLabel5.Text = resources.GetString("AdvancedLabel5.Text");
             this.AdvancedLabel5.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -667,20 +714,21 @@
             this.GamePadEmuLayout.ColumnCount = 2;
             this.GamePadEmuLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 53.125F));
             this.GamePadEmuLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 46.875F));
-            this.GamePadEmuLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.GamePadEmuLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.GamePadEmuLayout.Controls.Add(this.ForceCC, 0, 2);
             this.GamePadEmuLayout.Controls.Add(this.NoGamePadEmu, 0, 0);
             this.GamePadEmuLayout.Controls.Add(this.CCEmu, 1, 0);
             this.GamePadEmuLayout.Controls.Add(this.ForceNoCC, 1, 2);
             this.GamePadEmuLayout.Controls.Add(this.HorWiiMote, 1, 1);
             this.GamePadEmuLayout.Controls.Add(this.VerWiiMote, 0, 1);
-            this.GamePadEmuLayout.Location = new System.Drawing.Point(8, 145);
+            this.GamePadEmuLayout.Location = new System.Drawing.Point(12, 218);
+            this.GamePadEmuLayout.Margin = new System.Windows.Forms.Padding(4);
             this.GamePadEmuLayout.Name = "GamePadEmuLayout";
             this.GamePadEmuLayout.RowCount = 3;
             this.GamePadEmuLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.GamePadEmuLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.GamePadEmuLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.GamePadEmuLayout.Size = new System.Drawing.Size(555, 83);
+            this.GamePadEmuLayout.Size = new System.Drawing.Size(832, 124);
             this.GamePadEmuLayout.TabIndex = 8;
             // 
             // ForceCC
@@ -688,9 +736,10 @@
             this.ForceCC.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.ForceCC.AutoSize = true;
-            this.ForceCC.Location = new System.Drawing.Point(6, 58);
+            this.ForceCC.Location = new System.Drawing.Point(7, 87);
+            this.ForceCC.Margin = new System.Windows.Forms.Padding(4);
             this.ForceCC.Name = "ForceCC";
-            this.ForceCC.Size = new System.Drawing.Size(239, 19);
+            this.ForceCC.Size = new System.Drawing.Size(357, 30);
             this.ForceCC.TabIndex = 8;
             this.ForceCC.Text = "**Force Classic Controller Connected";
             this.ForceCC.UseVisualStyleBackColor = true;
@@ -702,9 +751,10 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.NoGamePadEmu.AutoSize = true;
             this.NoGamePadEmu.Checked = true;
-            this.NoGamePadEmu.Location = new System.Drawing.Point(6, 6);
+            this.NoGamePadEmu.Location = new System.Drawing.Point(7, 7);
+            this.NoGamePadEmu.Margin = new System.Windows.Forms.Padding(4);
             this.NoGamePadEmu.Name = "NoGamePadEmu";
-            this.NoGamePadEmu.Size = new System.Drawing.Size(251, 17);
+            this.NoGamePadEmu.Size = new System.Drawing.Size(375, 29);
             this.NoGamePadEmu.TabIndex = 10;
             this.NoGamePadEmu.TabStop = true;
             this.NoGamePadEmu.Text = "No GamePad emulation, Wii Remotes only";
@@ -716,9 +766,10 @@
             this.CCEmu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.CCEmu.AutoSize = true;
-            this.CCEmu.Location = new System.Drawing.Point(299, 6);
+            this.CCEmu.Location = new System.Drawing.Point(447, 7);
+            this.CCEmu.Margin = new System.Windows.Forms.Padding(4);
             this.CCEmu.Name = "CCEmu";
-            this.CCEmu.Size = new System.Drawing.Size(191, 17);
+            this.CCEmu.Size = new System.Drawing.Size(285, 29);
             this.CCEmu.TabIndex = 11;
             this.CCEmu.Text = "Classic Controller Emulation";
             this.CCEmu.UseVisualStyleBackColor = true;
@@ -729,9 +780,10 @@
             this.ForceNoCC.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.ForceNoCC.AutoSize = true;
-            this.ForceNoCC.Location = new System.Drawing.Point(299, 58);
+            this.ForceNoCC.Location = new System.Drawing.Point(447, 87);
+            this.ForceNoCC.Margin = new System.Windows.Forms.Padding(4);
             this.ForceNoCC.Name = "ForceNoCC";
-            this.ForceNoCC.Size = new System.Drawing.Size(197, 19);
+            this.ForceNoCC.Size = new System.Drawing.Size(294, 30);
             this.ForceNoCC.TabIndex = 9;
             this.ForceNoCC.Text = "**Force No Classic Controller";
             this.ForceNoCC.UseVisualStyleBackColor = true;
@@ -742,9 +794,10 @@
             this.HorWiiMote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.HorWiiMote.AutoSize = true;
-            this.HorWiiMote.Location = new System.Drawing.Point(299, 32);
+            this.HorWiiMote.Location = new System.Drawing.Point(447, 47);
+            this.HorWiiMote.Margin = new System.Windows.Forms.Padding(4);
             this.HorWiiMote.Name = "HorWiiMote";
-            this.HorWiiMote.Size = new System.Drawing.Size(215, 17);
+            this.HorWiiMote.Size = new System.Drawing.Size(321, 29);
             this.HorWiiMote.TabIndex = 13;
             this.HorWiiMote.Text = "*Horizontal Wii Remote emulation";
             this.HorWiiMote.UseVisualStyleBackColor = true;
@@ -755,9 +808,10 @@
             this.VerWiiMote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.VerWiiMote.AutoSize = true;
-            this.VerWiiMote.Location = new System.Drawing.Point(6, 32);
+            this.VerWiiMote.Location = new System.Drawing.Point(7, 47);
+            this.VerWiiMote.Margin = new System.Windows.Forms.Padding(4);
             this.VerWiiMote.Name = "VerWiiMote";
-            this.VerWiiMote.Size = new System.Drawing.Size(203, 17);
+            this.VerWiiMote.Size = new System.Drawing.Size(303, 29);
             this.VerWiiMote.TabIndex = 12;
             this.VerWiiMote.Text = "*Vertical Wii Remote Emulation";
             this.VerWiiMote.UseVisualStyleBackColor = true;
@@ -765,9 +819,10 @@
             // 
             // GamePadModeText
             // 
-            this.GamePadModeText.Location = new System.Drawing.Point(0, 129);
+            this.GamePadModeText.Location = new System.Drawing.Point(0, 194);
+            this.GamePadModeText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.GamePadModeText.Name = "GamePadModeText";
-            this.GamePadModeText.Size = new System.Drawing.Size(570, 17);
+            this.GamePadModeText.Size = new System.Drawing.Size(855, 26);
             this.GamePadModeText.TabIndex = 7;
             this.GamePadModeText.Text = "GamePad Emulation Mode (Only applicable for Wii Retail Injections / vWii NAND Tit" +
     "le Launcher)";
@@ -775,27 +830,30 @@
             // 
             // PackedTitleIDLine
             // 
-            this.PackedTitleIDLine.Location = new System.Drawing.Point(6, 99);
+            this.PackedTitleIDLine.Location = new System.Drawing.Point(9, 148);
+            this.PackedTitleIDLine.Margin = new System.Windows.Forms.Padding(4);
             this.PackedTitleIDLine.MaxLength = 16;
             this.PackedTitleIDLine.Name = "PackedTitleIDLine";
-            this.PackedTitleIDLine.Size = new System.Drawing.Size(461, 21);
+            this.PackedTitleIDLine.Size = new System.Drawing.Size(690, 28);
             this.PackedTitleIDLine.TabIndex = 5;
             // 
             // PackedTitleIDText
             // 
             this.PackedTitleIDText.AutoSize = true;
-            this.PackedTitleIDText.Location = new System.Drawing.Point(3, 79);
+            this.PackedTitleIDText.Location = new System.Drawing.Point(4, 118);
+            this.PackedTitleIDText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.PackedTitleIDText.Name = "PackedTitleIDText";
-            this.PackedTitleIDText.Size = new System.Drawing.Size(347, 12);
+            this.PackedTitleIDText.Size = new System.Drawing.Size(521, 18);
             this.PackedTitleIDText.TabIndex = 4;
             this.PackedTitleIDText.Text = "Pre-generated Title ID (Changing this is not recommended)";
             // 
             // EnablePackedLine2
             // 
             this.EnablePackedLine2.AutoSize = true;
-            this.EnablePackedLine2.Location = new System.Drawing.Point(474, 50);
+            this.EnablePackedLine2.Location = new System.Drawing.Point(711, 75);
+            this.EnablePackedLine2.Margin = new System.Windows.Forms.Padding(4);
             this.EnablePackedLine2.Name = "EnablePackedLine2";
-            this.EnablePackedLine2.Size = new System.Drawing.Size(84, 16);
+            this.EnablePackedLine2.Size = new System.Drawing.Size(124, 22);
             this.EnablePackedLine2.TabIndex = 3;
             this.EnablePackedLine2.Text = "Use Line 2";
             this.EnablePackedLine2.UseVisualStyleBackColor = true;
@@ -804,28 +862,31 @@
             // PackedTitleLine2
             // 
             this.PackedTitleLine2.BackColor = System.Drawing.Color.Silver;
-            this.PackedTitleLine2.Location = new System.Drawing.Point(6, 53);
+            this.PackedTitleLine2.Location = new System.Drawing.Point(9, 80);
+            this.PackedTitleLine2.Margin = new System.Windows.Forms.Padding(4);
             this.PackedTitleLine2.MaxLength = 32;
             this.PackedTitleLine2.Name = "PackedTitleLine2";
             this.PackedTitleLine2.ReadOnly = true;
-            this.PackedTitleLine2.Size = new System.Drawing.Size(461, 21);
+            this.PackedTitleLine2.Size = new System.Drawing.Size(690, 28);
             this.PackedTitleLine2.TabIndex = 2;
             this.PackedTitleLine2.Text = "(Optional) Line 2";
             // 
             // PackedTitleLine1
             // 
-            this.PackedTitleLine1.Location = new System.Drawing.Point(6, 26);
+            this.PackedTitleLine1.Location = new System.Drawing.Point(9, 39);
+            this.PackedTitleLine1.Margin = new System.Windows.Forms.Padding(4);
             this.PackedTitleLine1.MaxLength = 32;
             this.PackedTitleLine1.Name = "PackedTitleLine1";
-            this.PackedTitleLine1.Size = new System.Drawing.Size(461, 21);
+            this.PackedTitleLine1.Size = new System.Drawing.Size(690, 28);
             this.PackedTitleLine1.TabIndex = 1;
             // 
             // PackedTitleText
             // 
             this.PackedTitleText.AutoSize = true;
-            this.PackedTitleText.Location = new System.Drawing.Point(3, 6);
+            this.PackedTitleText.Location = new System.Drawing.Point(4, 9);
+            this.PackedTitleText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.PackedTitleText.Name = "PackedTitleText";
-            this.PackedTitleText.Size = new System.Drawing.Size(389, 12);
+            this.PackedTitleText.Size = new System.Drawing.Size(584, 18);
             this.PackedTitleText.TabIndex = 0;
             this.PackedTitleText.Text = "Name to use for Packaged Title (ACCENT CHARACTERS NOT SUPPORTED)";
             // 
@@ -850,20 +911,21 @@
             this.AdvancedTab.Controls.Add(this.C2WPatchFlag);
             this.AdvancedTab.Controls.Add(this.AncastKey);
             this.AdvancedTab.Controls.Add(this.AdvancedLabel1);
-            this.AdvancedTab.Location = new System.Drawing.Point(4, 22);
-            this.AdvancedTab.Margin = new System.Windows.Forms.Padding(4);
+            this.AdvancedTab.Location = new System.Drawing.Point(4, 28);
+            this.AdvancedTab.Margin = new System.Windows.Forms.Padding(6);
             this.AdvancedTab.Name = "AdvancedTab";
-            this.AdvancedTab.Padding = new System.Windows.Forms.Padding(4);
-            this.AdvancedTab.Size = new System.Drawing.Size(567, 357);
+            this.AdvancedTab.Padding = new System.Windows.Forms.Padding(6);
+            this.AdvancedTab.Size = new System.Drawing.Size(856, 544);
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             // 
             // WiiVMC
             // 
             this.WiiVMC.AutoSize = true;
-            this.WiiVMC.Location = new System.Drawing.Point(9, 299);
+            this.WiiVMC.Location = new System.Drawing.Point(14, 448);
+            this.WiiVMC.Margin = new System.Windows.Forms.Padding(4);
             this.WiiVMC.Name = "WiiVMC";
-            this.WiiVMC.Size = new System.Drawing.Size(534, 16);
+            this.WiiVMC.Size = new System.Drawing.Size(799, 22);
             this.WiiVMC.TabIndex = 26;
             this.WiiVMC.Text = "Patch video mode with Wii-VMC (Wii Retail only, opens a new window during convers" +
     "ion)";
@@ -872,9 +934,10 @@
             // DisableGamePad
             // 
             this.DisableGamePad.AutoSize = true;
-            this.DisableGamePad.Location = new System.Drawing.Point(9, 139);
+            this.DisableGamePad.Location = new System.Drawing.Point(14, 208);
+            this.DisableGamePad.Margin = new System.Windows.Forms.Padding(4);
             this.DisableGamePad.Name = "DisableGamePad";
-            this.DisableGamePad.Size = new System.Drawing.Size(360, 16);
+            this.DisableGamePad.Size = new System.Drawing.Size(538, 22);
             this.DisableGamePad.TabIndex = 25;
             this.DisableGamePad.Text = "Don\'t use GamePad as controller (Won\'t prompt for usage)";
             this.DisableGamePad.UseVisualStyleBackColor = true;
@@ -884,9 +947,10 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(6, 261);
+            this.label2.Location = new System.Drawing.Point(9, 392);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(329, 13);
+            this.label2.Size = new System.Drawing.Size(481, 20);
             this.label2.TabIndex = 24;
             this.label2.Text = "Wii Retail Injection / vWii NAND Title Launcher Patches";
             // 
@@ -894,9 +958,10 @@
             // 
             this.SaveAncastKeyButton.BackColor = System.Drawing.Color.Silver;
             this.SaveAncastKeyButton.Enabled = false;
-            this.SaveAncastKeyButton.Location = new System.Drawing.Point(494, 177);
+            this.SaveAncastKeyButton.Location = new System.Drawing.Point(741, 266);
+            this.SaveAncastKeyButton.Margin = new System.Windows.Forms.Padding(4);
             this.SaveAncastKeyButton.Name = "SaveAncastKeyButton";
-            this.SaveAncastKeyButton.Size = new System.Drawing.Size(63, 21);
+            this.SaveAncastKeyButton.Size = new System.Drawing.Size(94, 32);
             this.SaveAncastKeyButton.TabIndex = 23;
             this.SaveAncastKeyButton.Text = "Save Key";
             this.SaveAncastKeyButton.UseVisualStyleBackColor = false;
@@ -905,9 +970,10 @@
             // DisableNintendontAutoboot
             // 
             this.DisableNintendontAutoboot.AutoSize = true;
-            this.DisableNintendontAutoboot.Location = new System.Drawing.Point(9, 71);
+            this.DisableNintendontAutoboot.Location = new System.Drawing.Point(14, 106);
+            this.DisableNintendontAutoboot.Margin = new System.Windows.Forms.Padding(4);
             this.DisableNintendontAutoboot.Name = "DisableNintendontAutoboot";
-            this.DisableNintendontAutoboot.Size = new System.Drawing.Size(120, 16);
+            this.DisableNintendontAutoboot.Size = new System.Drawing.Size(178, 22);
             this.DisableNintendontAutoboot.TabIndex = 22;
             this.DisableNintendontAutoboot.Text = "Disable Autoboot";
             this.DisableNintendontAutoboot.UseVisualStyleBackColor = true;
@@ -916,9 +982,10 @@
             // DisableTrimming
             // 
             this.DisableTrimming.AutoSize = true;
-            this.DisableTrimming.Location = new System.Drawing.Point(9, 279);
+            this.DisableTrimming.Location = new System.Drawing.Point(14, 418);
+            this.DisableTrimming.Margin = new System.Windows.Forms.Padding(4);
             this.DisableTrimming.Name = "DisableTrimming";
-            this.DisableTrimming.Size = new System.Drawing.Size(264, 16);
+            this.DisableTrimming.Size = new System.Drawing.Size(394, 22);
             this.DisableTrimming.TabIndex = 21;
             this.DisableTrimming.Text = "Don\'t trim game output (Wii Retail only)";
             this.DisableTrimming.UseVisualStyleBackColor = true;
@@ -927,9 +994,10 @@
             // Force43NAND
             // 
             this.Force43NAND.AutoSize = true;
-            this.Force43NAND.Location = new System.Drawing.Point(9, 319);
+            this.Force43NAND.Location = new System.Drawing.Point(14, 478);
+            this.Force43NAND.Margin = new System.Windows.Forms.Padding(4);
             this.Force43NAND.Name = "Force43NAND";
-            this.Force43NAND.Size = new System.Drawing.Size(222, 16);
+            this.Force43NAND.Size = new System.Drawing.Size(331, 22);
             this.Force43NAND.TabIndex = 20;
             this.Force43NAND.Text = "Force 4:3 (vWii NAND Titles only)";
             this.Force43NAND.UseVisualStyleBackColor = true;
@@ -937,9 +1005,10 @@
             // DisablePassthrough
             // 
             this.DisablePassthrough.AutoSize = true;
-            this.DisablePassthrough.Location = new System.Drawing.Point(9, 120);
+            this.DisablePassthrough.Location = new System.Drawing.Point(14, 180);
+            this.DisablePassthrough.Margin = new System.Windows.Forms.Padding(4);
             this.DisablePassthrough.Name = "DisablePassthrough";
-            this.DisablePassthrough.Size = new System.Drawing.Size(300, 16);
+            this.DisablePassthrough.Size = new System.Drawing.Size(448, 22);
             this.DisablePassthrough.TabIndex = 19;
             this.DisablePassthrough.Text = "Disable Wii Remote passthrough in GamePad mode";
             this.DisablePassthrough.UseVisualStyleBackColor = true;
@@ -951,9 +1020,10 @@
             this.MainDolLabel.BackColor = System.Drawing.Color.LightGray;
             this.MainDolLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.MainDolLabel.Cursor = System.Windows.Forms.Cursors.Default;
-            this.MainDolLabel.Location = new System.Drawing.Point(346, 47);
+            this.MainDolLabel.Location = new System.Drawing.Point(519, 70);
+            this.MainDolLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.MainDolLabel.Name = "MainDolLabel";
-            this.MainDolLabel.Size = new System.Drawing.Size(211, 15);
+            this.MainDolLabel.Size = new System.Drawing.Size(316, 22);
             this.MainDolLabel.TabIndex = 18;
             this.MainDolLabel.Text = "<- Specify custom main.dol file";
             this.MainDolLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -961,9 +1031,10 @@
             // CustomMainDol
             // 
             this.CustomMainDol.AutoSize = true;
-            this.CustomMainDol.Location = new System.Drawing.Point(9, 47);
+            this.CustomMainDol.Location = new System.Drawing.Point(14, 70);
+            this.CustomMainDol.Margin = new System.Windows.Forms.Padding(4);
             this.CustomMainDol.Name = "CustomMainDol";
-            this.CustomMainDol.Size = new System.Drawing.Size(234, 16);
+            this.CustomMainDol.Size = new System.Drawing.Size(349, 22);
             this.CustomMainDol.TabIndex = 17;
             this.CustomMainDol.Text = "Specify custom Nintendont Forwarder";
             this.CustomMainDol.UseVisualStyleBackColor = true;
@@ -975,9 +1046,10 @@
             this.MainDolSourceButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.MainDolSourceButton.BackColor = System.Drawing.Color.LightGray;
             this.MainDolSourceButton.Enabled = false;
-            this.MainDolSourceButton.Location = new System.Drawing.Point(311, 45);
+            this.MainDolSourceButton.Location = new System.Drawing.Point(466, 68);
+            this.MainDolSourceButton.Margin = new System.Windows.Forms.Padding(4);
             this.MainDolSourceButton.Name = "MainDolSourceButton";
-            this.MainDolSourceButton.Size = new System.Drawing.Size(33, 22);
+            this.MainDolSourceButton.Size = new System.Drawing.Size(45, 28);
             this.MainDolSourceButton.TabIndex = 16;
             this.MainDolSourceButton.Text = "...";
             this.MainDolSourceButton.UseVisualStyleBackColor = false;
@@ -987,18 +1059,20 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(6, 6);
+            this.label1.Location = new System.Drawing.Point(9, 9);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(116, 13);
+            this.label1.Size = new System.Drawing.Size(170, 20);
             this.label1.TabIndex = 15;
             this.label1.Text = "Nintendont Options";
             // 
             // Force43NINTENDONT
             // 
             this.Force43NINTENDONT.AutoSize = true;
-            this.Force43NINTENDONT.Location = new System.Drawing.Point(9, 23);
+            this.Force43NINTENDONT.Location = new System.Drawing.Point(14, 34);
+            this.Force43NINTENDONT.Margin = new System.Windows.Forms.Padding(4);
             this.Force43NINTENDONT.Name = "Force43NINTENDONT";
-            this.Force43NINTENDONT.Size = new System.Drawing.Size(528, 16);
+            this.Force43NINTENDONT.Size = new System.Drawing.Size(790, 22);
             this.Force43NINTENDONT.TabIndex = 14;
             this.Force43NINTENDONT.Text = "Force 4:3 for Nintendont - (Disables \"Force Widescreen\" and \"WiiU Widescreen\" Fla" +
     "gs)";
@@ -1008,9 +1082,10 @@
             // sign_c2w_patcher_link
             // 
             this.sign_c2w_patcher_link.AutoSize = true;
-            this.sign_c2w_patcher_link.Location = new System.Drawing.Point(9, 231);
+            this.sign_c2w_patcher_link.Location = new System.Drawing.Point(14, 346);
+            this.sign_c2w_patcher_link.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.sign_c2w_patcher_link.Name = "sign_c2w_patcher_link";
-            this.sign_c2w_patcher_link.Size = new System.Drawing.Size(101, 12);
+            this.sign_c2w_patcher_link.Size = new System.Drawing.Size(152, 18);
             this.sign_c2w_patcher_link.TabIndex = 10;
             this.sign_c2w_patcher_link.TabStop = true;
             this.sign_c2w_patcher_link.Text = "sign_c2w_patcher";
@@ -1018,9 +1093,10 @@
             // 
             // AdvancedLabel2
             // 
-            this.AdvancedLabel2.Location = new System.Drawing.Point(9, 201);
+            this.AdvancedLabel2.Location = new System.Drawing.Point(14, 302);
+            this.AdvancedLabel2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.AdvancedLabel2.Name = "AdvancedLabel2";
-            this.AdvancedLabel2.Size = new System.Drawing.Size(547, 27);
+            this.AdvancedLabel2.Size = new System.Drawing.Size(820, 40);
             this.AdvancedLabel2.TabIndex = 4;
             this.AdvancedLabel2.Text = "cafe2wii patching unlocks the vWii clock speed for supported homebrew like WiiSXR" +
     " or Nintendont. cafe2wii patched titles MUST be launched using:";
@@ -1028,9 +1104,10 @@
             // C2WPatchFlag
             // 
             this.C2WPatchFlag.AutoSize = true;
-            this.C2WPatchFlag.Location = new System.Drawing.Point(9, 159);
+            this.C2WPatchFlag.Location = new System.Drawing.Point(14, 238);
+            this.C2WPatchFlag.Margin = new System.Windows.Forms.Padding(4);
             this.C2WPatchFlag.Name = "C2WPatchFlag";
-            this.C2WPatchFlag.Size = new System.Drawing.Size(276, 16);
+            this.C2WPatchFlag.Size = new System.Drawing.Size(412, 22);
             this.C2WPatchFlag.TabIndex = 3;
             this.C2WPatchFlag.Text = "Enable cafe2wii patching (NOT RECOMMENDED)";
             this.C2WPatchFlag.UseVisualStyleBackColor = true;
@@ -1039,11 +1116,12 @@
             // AncastKey
             // 
             this.AncastKey.BackColor = System.Drawing.Color.Silver;
-            this.AncastKey.Location = new System.Drawing.Point(9, 178);
+            this.AncastKey.Location = new System.Drawing.Point(14, 267);
+            this.AncastKey.Margin = new System.Windows.Forms.Padding(4);
             this.AncastKey.MaxLength = 32;
             this.AncastKey.Name = "AncastKey";
             this.AncastKey.ReadOnly = true;
-            this.AncastKey.Size = new System.Drawing.Size(481, 21);
+            this.AncastKey.Size = new System.Drawing.Size(720, 28);
             this.AncastKey.TabIndex = 2;
             this.AncastKey.Text = "Wii U Starbuck Ancast Key Required";
             // 
@@ -1051,9 +1129,10 @@
             // 
             this.AdvancedLabel1.AutoSize = true;
             this.AdvancedLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AdvancedLabel1.Location = new System.Drawing.Point(6, 103);
+            this.AdvancedLabel1.Location = new System.Drawing.Point(9, 154);
+            this.AdvancedLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.AdvancedLabel1.Name = "AdvancedLabel1";
-            this.AdvancedLabel1.Size = new System.Drawing.Size(138, 13);
+            this.AdvancedLabel1.Size = new System.Drawing.Size(205, 20);
             this.AdvancedLabel1.TabIndex = 0;
             this.AdvancedLabel1.Text = "Wii Homebrew Patches";
             // 
@@ -1078,11 +1157,11 @@
             this.BuildTab.Controls.Add(this.RHFKeyLabel);
             this.BuildTab.Controls.Add(this.CommonLabel);
             this.BuildTab.Controls.Add(this.WiiUCommonKey);
-            this.BuildTab.Location = new System.Drawing.Point(4, 22);
-            this.BuildTab.Margin = new System.Windows.Forms.Padding(4);
+            this.BuildTab.Location = new System.Drawing.Point(4, 28);
+            this.BuildTab.Margin = new System.Windows.Forms.Padding(6);
             this.BuildTab.Name = "BuildTab";
-            this.BuildTab.Padding = new System.Windows.Forms.Padding(4);
-            this.BuildTab.Size = new System.Drawing.Size(567, 357);
+            this.BuildTab.Padding = new System.Windows.Forms.Padding(6);
+            this.BuildTab.Size = new System.Drawing.Size(856, 544);
             this.BuildTab.TabIndex = 4;
             this.BuildTab.Text = "Build Title";
             // 
@@ -1090,9 +1169,10 @@
             // 
             this.BrowseOutputDir.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BrowseOutputDir.BackColor = System.Drawing.Color.Silver;
-            this.BrowseOutputDir.Location = new System.Drawing.Point(300, 115);
+            this.BrowseOutputDir.Location = new System.Drawing.Point(450, 172);
+            this.BrowseOutputDir.Margin = new System.Windows.Forms.Padding(4);
             this.BrowseOutputDir.Name = "BrowseOutputDir";
-            this.BrowseOutputDir.Size = new System.Drawing.Size(90, 22);
+            this.BrowseOutputDir.Size = new System.Drawing.Size(135, 33);
             this.BrowseOutputDir.TabIndex = 20;
             this.BrowseOutputDir.Text = "Browse...";
             this.BrowseOutputDir.UseVisualStyleBackColor = false;
@@ -1100,18 +1180,20 @@
             // 
             // OutputDirectory
             // 
-            this.OutputDirectory.Location = new System.Drawing.Point(6, 115);
+            this.OutputDirectory.Location = new System.Drawing.Point(9, 172);
+            this.OutputDirectory.Margin = new System.Windows.Forms.Padding(4);
             this.OutputDirectory.MaxLength = 32;
             this.OutputDirectory.Name = "OutputDirectory";
-            this.OutputDirectory.Size = new System.Drawing.Size(288, 21);
+            this.OutputDirectory.Size = new System.Drawing.Size(430, 28);
             this.OutputDirectory.TabIndex = 19;
             // 
             // OutputDirLabel
             // 
             this.OutputDirLabel.AutoSize = true;
-            this.OutputDirLabel.Location = new System.Drawing.Point(8, 99);
+            this.OutputDirLabel.Location = new System.Drawing.Point(12, 148);
+            this.OutputDirLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.OutputDirLabel.Name = "OutputDirLabel";
-            this.OutputDirLabel.Size = new System.Drawing.Size(107, 12);
+            this.OutputDirLabel.Size = new System.Drawing.Size(161, 18);
             this.OutputDirLabel.TabIndex = 18;
             this.OutputDirLabel.Text = "Output Directory:";
             // 
@@ -1120,9 +1202,10 @@
             this.DebugButton.AutoSize = true;
             this.DebugButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.DebugButton.BackColor = System.Drawing.Color.Turquoise;
-            this.DebugButton.Location = new System.Drawing.Point(515, 6);
+            this.DebugButton.Location = new System.Drawing.Point(772, 9);
+            this.DebugButton.Margin = new System.Windows.Forms.Padding(4);
             this.DebugButton.Name = "DebugButton";
-            this.DebugButton.Size = new System.Drawing.Size(45, 22);
+            this.DebugButton.Size = new System.Drawing.Size(63, 28);
             this.DebugButton.TabIndex = 17;
             this.DebugButton.Text = "Debug";
             this.DebugButton.UseVisualStyleBackColor = false;
@@ -1133,37 +1216,39 @@
             this.AdvanceCheck.AutoSize = true;
             this.AdvanceCheck.BackColor = System.Drawing.Color.Transparent;
             this.AdvanceCheck.ForeColor = System.Drawing.Color.Red;
-            this.AdvanceCheck.Location = new System.Drawing.Point(8, 184);
+            this.AdvanceCheck.Location = new System.Drawing.Point(12, 276);
+            this.AdvanceCheck.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.AdvanceCheck.Name = "AdvanceCheck";
-            this.AdvanceCheck.Size = new System.Drawing.Size(191, 12);
+            this.AdvanceCheck.Size = new System.Drawing.Size(287, 18);
             this.AdvanceCheck.TabIndex = 16;
             this.AdvanceCheck.Text = "No advanced options conflicting";
             // 
             // BuildStatus
             // 
             this.BuildStatus.BackColor = System.Drawing.Color.Gainsboro;
-            this.BuildStatus.Location = new System.Drawing.Point(6, 214);
-            this.BuildStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.BuildStatus.Location = new System.Drawing.Point(9, 321);
+            this.BuildStatus.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.BuildStatus.Name = "BuildStatus";
-            this.BuildStatus.Size = new System.Drawing.Size(556, 25);
+            this.BuildStatus.Size = new System.Drawing.Size(834, 38);
             this.BuildStatus.TabIndex = 15;
             // 
             // BuildProgress
             // 
             this.BuildProgress.BackColor = System.Drawing.Color.Gainsboro;
-            this.BuildProgress.Location = new System.Drawing.Point(7, 243);
-            this.BuildProgress.Margin = new System.Windows.Forms.Padding(4);
+            this.BuildProgress.Location = new System.Drawing.Point(10, 364);
+            this.BuildProgress.Margin = new System.Windows.Forms.Padding(6);
             this.BuildProgress.Name = "BuildProgress";
-            this.BuildProgress.Size = new System.Drawing.Size(557, 26);
+            this.BuildProgress.Size = new System.Drawing.Size(836, 39);
             this.BuildProgress.TabIndex = 14;
             // 
             // SaveTitleKeyButton
             // 
             this.SaveTitleKeyButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.SaveTitleKeyButton.BackColor = System.Drawing.Color.Silver;
-            this.SaveTitleKeyButton.Location = new System.Drawing.Point(300, 71);
+            this.SaveTitleKeyButton.Location = new System.Drawing.Point(450, 106);
+            this.SaveTitleKeyButton.Margin = new System.Windows.Forms.Padding(4);
             this.SaveTitleKeyButton.Name = "SaveTitleKeyButton";
-            this.SaveTitleKeyButton.Size = new System.Drawing.Size(90, 22);
+            this.SaveTitleKeyButton.Size = new System.Drawing.Size(135, 33);
             this.SaveTitleKeyButton.TabIndex = 13;
             this.SaveTitleKeyButton.Text = "Save Key";
             this.SaveTitleKeyButton.UseVisualStyleBackColor = false;
@@ -1173,9 +1258,10 @@
             // 
             this.SaveCommonKeyButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.SaveCommonKeyButton.BackColor = System.Drawing.Color.Silver;
-            this.SaveCommonKeyButton.Location = new System.Drawing.Point(300, 23);
+            this.SaveCommonKeyButton.Location = new System.Drawing.Point(450, 34);
+            this.SaveCommonKeyButton.Margin = new System.Windows.Forms.Padding(4);
             this.SaveCommonKeyButton.Name = "SaveCommonKeyButton";
-            this.SaveCommonKeyButton.Size = new System.Drawing.Size(90, 22);
+            this.SaveCommonKeyButton.Size = new System.Drawing.Size(135, 33);
             this.SaveCommonKeyButton.TabIndex = 12;
             this.SaveCommonKeyButton.Text = "Save Key";
             this.SaveCommonKeyButton.UseVisualStyleBackColor = false;
@@ -1186,9 +1272,10 @@
             this.TheBigOneTM.BackColor = System.Drawing.Color.Silver;
             this.TheBigOneTM.Enabled = false;
             this.TheBigOneTM.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TheBigOneTM.Location = new System.Drawing.Point(7, 271);
+            this.TheBigOneTM.Location = new System.Drawing.Point(10, 406);
+            this.TheBigOneTM.Margin = new System.Windows.Forms.Padding(4);
             this.TheBigOneTM.Name = "TheBigOneTM";
-            this.TheBigOneTM.Size = new System.Drawing.Size(557, 83);
+            this.TheBigOneTM.Size = new System.Drawing.Size(836, 124);
             this.TheBigOneTM.TabIndex = 11;
             this.TheBigOneTM.Text = "BUILD";
             this.TheBigOneTM.UseVisualStyleBackColor = false;
@@ -1199,9 +1286,10 @@
             this.KeysCheck.AutoSize = true;
             this.KeysCheck.BackColor = System.Drawing.Color.Transparent;
             this.KeysCheck.ForeColor = System.Drawing.Color.Red;
-            this.KeysCheck.Location = new System.Drawing.Point(8, 198);
+            this.KeysCheck.Location = new System.Drawing.Point(12, 297);
+            this.KeysCheck.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.KeysCheck.Name = "KeysCheck";
-            this.KeysCheck.Size = new System.Drawing.Size(221, 12);
+            this.KeysCheck.Size = new System.Drawing.Size(332, 18);
             this.KeysCheck.TabIndex = 10;
             this.KeysCheck.Text = "Required keys are properly specified";
             // 
@@ -1210,9 +1298,10 @@
             this.MetaCheck.AutoSize = true;
             this.MetaCheck.BackColor = System.Drawing.Color.Transparent;
             this.MetaCheck.ForeColor = System.Drawing.Color.Red;
-            this.MetaCheck.Location = new System.Drawing.Point(8, 171);
+            this.MetaCheck.Location = new System.Drawing.Point(12, 256);
+            this.MetaCheck.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.MetaCheck.Name = "MetaCheck";
-            this.MetaCheck.Size = new System.Drawing.Size(137, 12);
+            this.MetaCheck.Size = new System.Drawing.Size(206, 18);
             this.MetaCheck.TabIndex = 8;
             this.MetaCheck.Text = "Meta options are valid";
             // 
@@ -1221,9 +1310,10 @@
             this.SourceCheck.AutoSize = true;
             this.SourceCheck.BackColor = System.Drawing.Color.Transparent;
             this.SourceCheck.ForeColor = System.Drawing.Color.Red;
-            this.SourceCheck.Location = new System.Drawing.Point(8, 158);
+            this.SourceCheck.Location = new System.Drawing.Point(12, 237);
+            this.SourceCheck.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.SourceCheck.Name = "SourceCheck";
-            this.SourceCheck.Size = new System.Drawing.Size(215, 12);
+            this.SourceCheck.Size = new System.Drawing.Size(323, 18);
             this.SourceCheck.TabIndex = 7;
             this.SourceCheck.Text = "Source Files are properly specified";
             // 
@@ -1231,27 +1321,30 @@
             // 
             this.RequirementsLabel.AutoSize = true;
             this.RequirementsLabel.BackColor = System.Drawing.Color.Transparent;
-            this.RequirementsLabel.Location = new System.Drawing.Point(4, 140);
+            this.RequirementsLabel.Location = new System.Drawing.Point(6, 210);
+            this.RequirementsLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.RequirementsLabel.Name = "RequirementsLabel";
-            this.RequirementsLabel.Size = new System.Drawing.Size(251, 12);
+            this.RequirementsLabel.Size = new System.Drawing.Size(377, 18);
             this.RequirementsLabel.TabIndex = 6;
             this.RequirementsLabel.Text = "Requirements: RED = NOT MET / GREEN = MET";
             // 
             // TitleKey
             // 
-            this.TitleKey.Location = new System.Drawing.Point(6, 71);
+            this.TitleKey.Location = new System.Drawing.Point(9, 106);
+            this.TitleKey.Margin = new System.Windows.Forms.Padding(4);
             this.TitleKey.MaxLength = 32;
             this.TitleKey.Name = "TitleKey";
-            this.TitleKey.Size = new System.Drawing.Size(288, 21);
+            this.TitleKey.Size = new System.Drawing.Size(430, 28);
             this.TitleKey.TabIndex = 4;
             // 
             // RHFKeyLabel
             // 
             this.RHFKeyLabel.AutoSize = true;
             this.RHFKeyLabel.BackColor = System.Drawing.Color.Transparent;
-            this.RHFKeyLabel.Location = new System.Drawing.Point(6, 54);
+            this.RHFKeyLabel.Location = new System.Drawing.Point(9, 81);
+            this.RHFKeyLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.RHFKeyLabel.Name = "RHFKeyLabel";
-            this.RHFKeyLabel.Size = new System.Drawing.Size(461, 12);
+            this.RHFKeyLabel.Size = new System.Drawing.Size(692, 18);
             this.RHFKeyLabel.TabIndex = 3;
             this.RHFKeyLabel.Text = "Rhythm Heaven Fever [USA] Title Key - (Find it on \"that one title key site\")";
             // 
@@ -1259,27 +1352,86 @@
             // 
             this.CommonLabel.AutoSize = true;
             this.CommonLabel.BackColor = System.Drawing.Color.Transparent;
-            this.CommonLabel.Location = new System.Drawing.Point(6, 6);
+            this.CommonLabel.Location = new System.Drawing.Point(9, 9);
+            this.CommonLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.CommonLabel.Name = "CommonLabel";
-            this.CommonLabel.Size = new System.Drawing.Size(185, 12);
+            this.CommonLabel.Size = new System.Drawing.Size(278, 18);
             this.CommonLabel.TabIndex = 1;
             this.CommonLabel.Text = "Wii U Common Key - (Google it)";
             // 
             // WiiUCommonKey
             // 
-            this.WiiUCommonKey.Location = new System.Drawing.Point(6, 23);
+            this.WiiUCommonKey.Location = new System.Drawing.Point(9, 34);
+            this.WiiUCommonKey.Margin = new System.Windows.Forms.Padding(4);
             this.WiiUCommonKey.MaxLength = 32;
             this.WiiUCommonKey.Name = "WiiUCommonKey";
-            this.WiiUCommonKey.Size = new System.Drawing.Size(288, 21);
+            this.WiiUCommonKey.Size = new System.Drawing.Size(430, 28);
             this.WiiUCommonKey.TabIndex = 0;
+            // 
+            // BuildOutputTab
+            // 
+            this.BuildOutputTab.Controls.Add(this.BuildOutputContainer);
+            this.BuildOutputTab.Location = new System.Drawing.Point(4, 28);
+            this.BuildOutputTab.Name = "BuildOutputTab";
+            this.BuildOutputTab.Size = new System.Drawing.Size(856, 544);
+            this.BuildOutputTab.TabIndex = 6;
+            this.BuildOutputTab.Text = "Build Output";
+            this.BuildOutputTab.UseVisualStyleBackColor = true;
+            // 
+            // BuildOutputContainer
+            // 
+            this.BuildOutputContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BuildOutputContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.BuildOutputContainer.IsSplitterFixed = true;
+            this.BuildOutputContainer.Location = new System.Drawing.Point(0, 0);
+            this.BuildOutputContainer.Margin = new System.Windows.Forms.Padding(0);
+            this.BuildOutputContainer.Name = "BuildOutputContainer";
+            this.BuildOutputContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // BuildOutputContainer.Panel1
+            // 
+            this.BuildOutputContainer.Panel1.Controls.Add(this.ClearBuildOutput);
+            this.BuildOutputContainer.Panel1MinSize = 0;
+            // 
+            // BuildOutputContainer.Panel2
+            // 
+            this.BuildOutputContainer.Panel2.Controls.Add(this.BuildOutput);
+            this.BuildOutputContainer.Panel2MinSize = 0;
+            this.BuildOutputContainer.Size = new System.Drawing.Size(856, 544);
+            this.BuildOutputContainer.SplitterDistance = 25;
+            this.BuildOutputContainer.SplitterWidth = 1;
+            this.BuildOutputContainer.TabIndex = 0;
+            // 
+            // ClearBuildOutput
+            // 
+            this.ClearBuildOutput.AutoSize = true;
+            this.ClearBuildOutput.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ClearBuildOutput.Image = ((System.Drawing.Image)(resources.GetObject("ClearBuildOutput.Image")));
+            this.ClearBuildOutput.Location = new System.Drawing.Point(11, 1);
+            this.ClearBuildOutput.Name = "ClearBuildOutput";
+            this.ClearBuildOutput.Size = new System.Drawing.Size(24, 24);
+            this.ClearBuildOutput.TabIndex = 0;
+            this.ClearBuildOutput.UseVisualStyleBackColor = true;
+            this.ClearBuildOutput.Click += new System.EventHandler(this.ClearBuildOutput_Click);
+            // 
+            // BuildOutput
+            // 
+            this.BuildOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BuildOutput.Location = new System.Drawing.Point(0, 0);
+            this.BuildOutput.Name = "BuildOutput";
+            this.BuildOutput.ReadOnly = true;
+            this.BuildOutput.Size = new System.Drawing.Size(856, 518);
+            this.BuildOutput.TabIndex = 0;
+            this.BuildOutput.Text = "";
             // 
             // SDCardStuff
             // 
             this.SDCardStuff.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.SDCardStuff.Location = new System.Drawing.Point(389, 32);
+            this.SDCardStuff.Location = new System.Drawing.Point(584, 48);
+            this.SDCardStuff.Margin = new System.Windows.Forms.Padding(4);
             this.SDCardStuff.Name = "SDCardStuff";
-            this.SDCardStuff.Size = new System.Drawing.Size(157, 25);
+            this.SDCardStuff.Size = new System.Drawing.Size(236, 38);
             this.SDCardStuff.TabIndex = 5;
             this.SDCardStuff.Text = "Nintendont SD Card Menu";
             this.SDCardStuff.UseVisualStyleBackColor = true;
@@ -1290,9 +1442,10 @@
             this.GCRetail.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.GCRetail.AutoSize = true;
-            this.GCRetail.Location = new System.Drawing.Point(389, 3);
+            this.GCRetail.Location = new System.Drawing.Point(584, 4);
+            this.GCRetail.Margin = new System.Windows.Forms.Padding(4);
             this.GCRetail.Name = "GCRetail";
-            this.GCRetail.Size = new System.Drawing.Size(137, 23);
+            this.GCRetail.Size = new System.Drawing.Size(204, 36);
             this.GCRetail.TabIndex = 3;
             this.GCRetail.Text = "GC Retail Injection";
             this.GCRetail.UseVisualStyleBackColor = true;
@@ -1303,9 +1456,10 @@
             this.WiiNAND.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.WiiNAND.AutoSize = true;
-            this.WiiNAND.Location = new System.Drawing.Point(3, 32);
+            this.WiiNAND.Location = new System.Drawing.Point(4, 48);
+            this.WiiNAND.Margin = new System.Windows.Forms.Padding(4);
             this.WiiNAND.Name = "WiiNAND";
-            this.WiiNAND.Size = new System.Drawing.Size(167, 25);
+            this.WiiNAND.Size = new System.Drawing.Size(249, 38);
             this.WiiNAND.TabIndex = 2;
             this.WiiNAND.Text = "vWii NAND Title Launcher";
             this.WiiNAND.UseVisualStyleBackColor = true;
@@ -1316,9 +1470,10 @@
             this.WiiHomebrew.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.WiiHomebrew.AutoSize = true;
-            this.WiiHomebrew.Location = new System.Drawing.Point(196, 3);
+            this.WiiHomebrew.Location = new System.Drawing.Point(294, 4);
+            this.WiiHomebrew.Margin = new System.Windows.Forms.Padding(4);
             this.WiiHomebrew.Name = "WiiHomebrew";
-            this.WiiHomebrew.Size = new System.Drawing.Size(155, 23);
+            this.WiiHomebrew.Size = new System.Drawing.Size(231, 36);
             this.WiiHomebrew.TabIndex = 1;
             this.WiiHomebrew.Text = "Wii Homebrew Injection";
             this.WiiHomebrew.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1375,17 +1530,18 @@
             // 
             // WiiVC_Injector
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(581, 449);
+            this.ClientSize = new System.Drawing.Size(872, 674);
             this.Controls.Add(this.MainTableLayout);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.Name = "WiiVC_Injector";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "TeconMoon\'s WiiVC Injector";
+            this.Load += new System.EventHandler(this.WiiVC_Injector_Load);
             this.MainTableLayout.ResumeLayout(false);
             this.MainTableLayout.PerformLayout();
             this.MainTabs.ResumeLayout(false);
@@ -1404,6 +1560,12 @@
             this.AdvancedTab.PerformLayout();
             this.BuildTab.ResumeLayout(false);
             this.BuildTab.PerformLayout();
+            this.BuildOutputTab.ResumeLayout(false);
+            this.BuildOutputContainer.Panel1.ResumeLayout(false);
+            this.BuildOutputContainer.Panel1.PerformLayout();
+            this.BuildOutputContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.BuildOutputContainer)).EndInit();
+            this.BuildOutputContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1515,6 +1677,10 @@
         private System.Windows.Forms.Button BrowseOutputDir;
         private System.Windows.Forms.TextBox OutputDirectory;
         private System.Windows.Forms.Label OutputDirLabel;
+        private System.Windows.Forms.TabPage BuildOutputTab;
+        private System.Windows.Forms.SplitContainer BuildOutputContainer;
+        private System.Windows.Forms.Button ClearBuildOutput;
+        private System.Windows.Forms.RichTextBox BuildOutput;
     }
 }
 

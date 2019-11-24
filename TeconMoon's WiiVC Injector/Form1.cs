@@ -47,6 +47,30 @@ namespace TeconMoon_s_WiiVC_Injector
                 BuildProgress.Value = progress;
             });
 
+            ActBuildOutput = new Action<BuildOutputItem>((item) =>
+            {
+                Color color = BuildOutput.ForeColor;
+                Font font = null;
+
+                switch (item.buildOutputType)
+                {
+                    case BuildOutputType.botError:
+                        color = Color.DarkRed;
+                        font = new Font(BuildOutput.Font, FontStyle.Bold);                        
+                        break;
+                    case BuildOutputType.botStep:
+                        color = Color.AliceBlue;
+                        font = new Font(BuildOutput.Font.FontFamily, BuildOutput.Font.Size + 1, FontStyle.Bold);
+                        break;
+                    case BuildOutputType.botNormal:
+                    default:
+                        break;
+                }
+                BuildOutput.AppendText(item.s, color, font);
+                BuildOutput.ScrollToCaret();
+            });
+
+            // Process any pending build requests.
             AutoBuildWiiRetail();
         }
 
@@ -191,6 +215,21 @@ namespace TeconMoon_s_WiiVC_Injector
             }
         }
 
+        private void EnsureEnableControl(Control control, bool enabled)
+        {
+            control.Enabled = enabled;
+
+            if (enabled)
+            {
+                Control parent = control.Parent;
+                while (parent != null)
+                {
+                    parent.Enabled = true;
+                    parent = parent.Parent;
+                }
+            }
+        }
+
         private void FreezeFormBuild(bool freeze)
         {
             if (freeze)
@@ -200,14 +239,9 @@ namespace TeconMoon_s_WiiVC_Injector
                     EnableControl(control, false);
                 }
 
-                TheBigOneTM.Enabled = true;
-
-                Control parent = TheBigOneTM.Parent;
-                while (parent != null)
-                {
-                    parent.Enabled = true;
-                    parent = parent.Parent;
-                }
+                EnsureEnableControl(TheBigOneTM, true);
+                EnsureEnableControl(BuildOutput, true);
+                EnsureEnableControl(ClearBuildOutput, true);
             }
             else
             {
@@ -241,7 +275,7 @@ namespace TeconMoon_s_WiiVC_Injector
             WiiRetail.PerformClick();
 
             PropmtForSucceed = false;
-            AutoBuildNext();           
+            AutoBuildNext();
         }
 
         void AutoBuildNext()
@@ -374,6 +408,19 @@ namespace TeconMoon_s_WiiVC_Injector
         string TempSoundPath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootSound.wav";
         string OGfilepath;
 
+        enum BuildOutputType
+        {
+            botNormal,
+            botError,
+            botStep,
+        };
+
+        struct BuildOutputItem
+        {
+            public string s;
+            public BuildOutputType buildOutputType;
+        };
+
         string GameIso;
         List<string> AutoBuildSucceedList = new List<string>();
         List<string> AutoBuildFailedList = new List<string>();
@@ -383,6 +430,8 @@ namespace TeconMoon_s_WiiVC_Injector
                 Application.StartupPath + @"\language.lang");
         Action<string> ActBuildStatus;
         Action<int> ActBuildProgress;
+        Action<BuildOutputItem> ActBuildOutput;
+        System.Windows.Forms.ToolTip ToolTip;
 
         private bool IsBuilding
         {
@@ -427,7 +476,10 @@ namespace TeconMoon_s_WiiVC_Injector
                         return;
                     }
 
-                    Console.Write("standardOutput: " + data.Replace("\0", ""));
+                    BeginInvoke(ActBuildOutput, new BuildOutputItem() { 
+                        s = data.Replace("\0", ""), 
+                        buildOutputType = BuildOutputType.botNormal
+                    });
                 };
 
                 standardError.DataReceived += (sender, data) =>
@@ -437,7 +489,11 @@ namespace TeconMoon_s_WiiVC_Injector
                         return;
                     }
 
-                    Console.Write("standardError: " + data.Replace("\0", ""));
+                    BeginInvoke(ActBuildOutput, new BuildOutputItem()
+                    {
+                        s = data.Replace("\0", ""),
+                        buildOutputType = BuildOutputType.botError
+                    });
                 };
 
                 standardOutput.Start();
@@ -1991,7 +2047,19 @@ namespace TeconMoon_s_WiiVC_Injector
             BuildStatus.Text = "";
             BuildStatus.ForeColor = Color.Black;
 
+            //
+            // Reset build output.
+            //
+            BuildOutput.ResetText();
+
+            //
+            // Reset user cancellation flag.
+            //
             LastBuildCancelled = false;
+
+            //
+            // Allocate a new builder thread.
+            //
             BuilderThread = new Thread(new ThreadStart(this.BuildThread));
 
             try
@@ -2049,6 +2117,9 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             TheBigOneTM.Enabled = false;
             LastBuildCancelled = true;
+            Invoke(ActBuildOutput, new BuildOutputItem() { 
+                s = tr.Tr("Build cancelled."), 
+                buildOutputType = BuildOutputType.botError });
         }
 
         private bool CheckFreeDiskSpaceForPack()
@@ -3725,6 +3796,17 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 e.Effect = DragDropEffects.Copy;
             }
+        }
+
+        private void WiiVC_Injector_Load(object sender, EventArgs e)
+        {
+            ToolTip = new System.Windows.Forms.ToolTip();
+            ToolTip.SetToolTip(ClearBuildOutput, tr.Tr("Clear Outputs"));
+        }
+
+        private void ClearBuildOutput_Click(object sender, EventArgs e)
+        {
+            BuildOutput.Clear();
         }
     }
 }

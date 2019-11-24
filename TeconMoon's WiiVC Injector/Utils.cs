@@ -206,6 +206,30 @@ namespace TeconMoon_s_WiiVC_Injector
             }
         }
 
+        public static class RichTextBoxExtensions
+        {
+            public static void AppendText(this RichTextBox box, string text, Color color)
+            {
+                AppendText(box, text, color, null);
+            }
+
+            public static void AppendText(this RichTextBox box, string text, Color color, Font font)
+            {
+                box.SelectionStart = box.TextLength;
+                box.SelectionLength = 0;
+
+                box.SelectionColor = color;
+                if (font != null)
+                {
+                    box.SelectionFont = font;
+                }                
+                
+                box.AppendText(text);
+                box.SelectionColor = box.ForeColor;
+                box.SelectionFont = box.Font;
+            }
+        }
+
         class StringEx
         {
             // Check if the input byte array is GB2312 encoded.
