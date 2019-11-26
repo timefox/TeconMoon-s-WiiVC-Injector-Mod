@@ -215,6 +215,9 @@ namespace TeconMoon_s_WiiVC_Injector
 
             public static void AppendText(this RichTextBox box, string text, Color color, Font font)
             {
+                Win32Native.LockWindowUpdate(box.Handle);
+                int savedSelectionStart = box.SelectionStart;
+                int savedSelectionLength = box.SelectionLength;
                 box.SelectionStart = box.TextLength;
                 box.SelectionLength = 0;
 
@@ -227,6 +230,9 @@ namespace TeconMoon_s_WiiVC_Injector
                 box.AppendText(text);
                 box.SelectionColor = box.ForeColor;
                 box.SelectionFont = box.Font;
+                box.SelectionStart = savedSelectionStart;
+                box.SelectionLength = savedSelectionLength;
+                Win32Native.LockWindowUpdate(IntPtr.Zero);
             }
         }
 
@@ -396,6 +402,23 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     AppendControlTranslation(subControl);
                 }
+
+                ToolStrip toolStrip = control as ToolStrip;
+                if (toolStrip != null)
+                {
+                    foreach (ToolStripItem item in toolStrip.Items)
+                    {
+                        AppendToolStripItemTranslation(item);
+                    }
+                }
+            }
+
+            private void AppendToolStripItemTranslation(ToolStripItem item)
+            {
+                if (!String.IsNullOrEmpty(item.Text))
+                {
+                    TemplateFile.WriteStringValue(item.Name, item.Text);
+                }
             }
 
             public void AppendStringResourceTranslation(ResourceSet resourceSet)
@@ -432,6 +455,15 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     TranslateControl(subControl);
                 }
+
+                ToolStrip toolStrip = control as ToolStrip;
+                if (toolStrip != null)
+                {
+                    foreach (ToolStripItem item in toolStrip.Items)
+                    {
+                        TranslateToolStripItem(item);
+                    }
+                }
             }
 
             private void _TranslateControl(Control control)
@@ -446,6 +478,21 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (!String.IsNullOrEmpty(translation))
                 {
                     control.Text = translation;
+                }
+            }
+
+            private void TranslateToolStripItem(ToolStripItem item)
+            {
+                TranslateToolStripItem(item, item.Name);
+            }
+
+            private void TranslateToolStripItem(ToolStripItem item, string id)
+            {
+                string translation = TemplateFile.ReadStringValue(id, 1024);
+
+                if (!String.IsNullOrEmpty(translation))
+                {
+                    item.Text = translation;
                 }
             }
 

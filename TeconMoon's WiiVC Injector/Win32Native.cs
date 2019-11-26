@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace TeconMoon_s_WiiVC_Injector
 {
@@ -12,5 +13,8 @@ namespace TeconMoon_s_WiiVC_Injector
         internal static extern uint GetPrivateProfileString(
             string lpAppName, string lpKeyName, string lpDefault, string lpReturnedString,
             uint nSize, string lpFileName);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        internal static extern IntPtr LockWindowUpdate(IntPtr Handle);
     }
 }

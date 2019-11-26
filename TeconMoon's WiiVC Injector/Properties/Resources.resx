@@ -121,14 +121,14 @@
     <value>This is not a valid WAV file. It will not be loaded. 
 Consider converting it with something like Audacity.</value>
   </data>
-  <data name="String87" xml:space="preserve">
-    <value>Config generation complete.</value>
-  </data>
-  <data name="String39" xml:space="preserve">
-    <value>Play Sound</value>
+  <data name="String9" xml:space="preserve">
+    <value>2nd GameCube Disc Image has not been specified</value>
   </data>
   <data name="String80" xml:space="preserve">
     <value>Conversion Complete! Your packed game can be found here: </value>
+  </data>
+  <data name="String20" xml:space="preserve">
+    <value>Only 4 characters can be used, try again. Example: The Star Fox 64 (USA) Channel's Title ID is NADE01, so you would specify NADE as the Title ID</value>
   </data>
   <data name="String86" xml:space="preserve">
     <value>Drive not specified, nowhere to place generated config</value>
@@ -148,12 +148,9 @@ Consider converting it with something like Audacity.</value>
   <data name="String72" xml:space="preserve">
     <value>Converting all image sources to expected TGA specification...</value>
   </data>
-  <data name="String81" xml:space="preserve">
-    <value>.
-
-Install your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.
-
- Click OK to continue...</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="clearbuildoutput" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\clearbuildoutput.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="String68" xml:space="preserve">
     <value>Saving files from Nintendo for future use...</value>
@@ -170,6 +167,9 @@ Install your title using WUP Installer GX2 with signature patches enabled (CBHC,
   <data name="String60" xml:space="preserve">
     <value>(One-Time Download) Downloading base files from Nintendo... (fw.img)</value>
   </data>
+  <data name="String37" xml:space="preserve">
+    <value>Boot Sound has not been specified</value>
+  </data>
   <data name="String25" xml:space="preserve">
     <value>Icon has not been specified</value>
   </data>
@@ -179,18 +179,17 @@ Install your title using WUP Installer GX2 with signature patches enabled (CBHC,
   <data name="String26" xml:space="preserve">
     <value>Make sure your Banner is 1280x720 (16:9) to prevent distortion</value>
   </data>
-  <data name="String10" xml:space="preserve">
-    <value>boot.dol</value>
+  <data name="String105" xml:space="preserve">
+    <value>Build cancelled.</value>
   </data>
   <data name="String66" xml:space="preserve">
     <value>(One-Time Download) Downloading base files from Nintendo... (bootLogoTex.tga)</value>
   </data>
-  <data name="String44" xml:space="preserve">
-    <value>The Wii U Common Key you have provided is incorrect
-(MD5 Hash verification failed)</value>
+  <data name="String50" xml:space="preserve">
+    <value>Your internet connection could not be verified, do you wish to try and download the necessary base files from Nintendo anyways? (This is a one-time download)</value>
   </data>
-  <data name="String22" xml:space="preserve">
-    <value>This is not a Wii image. It will not be loaded.</value>
+  <data name="String107" xml:space="preserve">
+    <value>Args:</value>
   </data>
   <data name="String48" xml:space="preserve">
     <value>Check your hard drive space</value>
@@ -211,14 +210,14 @@ Click OK to continue...</value>
   <data name="String61" xml:space="preserve">
     <value>(One-Time Download) Downloading base files from Nintendo... (fw.tmd)</value>
   </data>
-  <data name="String11" xml:space="preserve">
-    <value>DOL Files (*.dol)|*.dol</value>
+  <data name="String10" xml:space="preserve">
+    <value>boot.dol</value>
   </data>
   <data name="String35" xml:space="preserve">
     <value>Your sound file will be cut off if it's longer than 6 seconds to prevent the Wii U from not loading it. When the Wii U plays the boot sound, it will fade out once it's done loading the game (usually after about 5 seconds). You can not change this.</value>
   </data>
-  <data name="String62" xml:space="preserve">
-    <value>(One-Time Download) Downloading base files from Nintendo... (htk.bin)</value>
+  <data name="String100" xml:space="preserve">
+    <value>BUILD</value>
   </data>
   <data name="String93" xml:space="preserve">
     <value>Specify your boot sound</value>
@@ -228,9 +227,6 @@ Click OK to continue...</value>
   </data>
   <data name="String7" xml:space="preserve">
     <value>Wii Dumps (*.iso,*.wbfs)|*.iso;*.wbfs</value>
-  </data>
-  <data name="String9" xml:space="preserve">
-    <value>2nd GameCube Disc Image has not been specified</value>
   </data>
   <data name="String4" xml:space="preserve">
     <value>Closing</value>
@@ -244,14 +240,11 @@ Click OK to continue...</value>
   <data name="String17" xml:space="preserve">
     <value>Title ID specification cancelled, reselect vWii NAND Title Launcher to specify</value>
   </data>
-  <data name="String21" xml:space="preserve">
-    <value>GameCube Dumps (*.gcm,*.iso)|*.gcm;*.iso</value>
-  </data>
-  <data name="String52" xml:space="preserve">
-    <value>(One-Time Download) Downloading base files from Nintendo...</value>
-  </data>
   <data name="String71" xml:space="preserve">
     <value>Generating app.xml and meta.xml</value>
+  </data>
+  <data name="String39" xml:space="preserve">
+    <value>Play Sound</value>
   </data>
   <data name="String69" xml:space="preserve">
     <value>Failed to download base files using JNUSTool, conversion will not continue</value>
@@ -268,14 +261,24 @@ Click OK to continue...</value>
   <data name="String53" xml:space="preserve">
     <value>(One-Time Download) Downloading base files from Nintendo... (deint.txt)</value>
   </data>
+  <data name="String62" xml:space="preserve">
+    <value>(One-Time Download) Downloading base files from Nintendo... (htk.bin)</value>
+  </data>
   <data name="String27" xml:space="preserve">
     <value>Banner has not been specified</value>
   </data>
-  <data name="String100" xml:space="preserve">
-    <value>BUILD</value>
+  <data name="String81" xml:space="preserve">
+    <value>.
+
+Install your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.
+
+ Click OK to continue...</value>
   </data>
   <data name="String28" xml:space="preserve">
     <value>Please select your game before using this option</value>
+  </data>
+  <data name="String104" xml:space="preserve">
+    <value>Conversion complete...</value>
   </data>
   <data name="String79" xml:space="preserve">
     <value> Conversion Complete...</value>
@@ -286,11 +289,11 @@ Click OK to continue...</value>
   <data name="String74" xml:space="preserve">
     <value>Processing game for NFS Conversion...</value>
   </data>
-  <data name="String59" xml:space="preserve">
-    <value>(One-Time Download) Downloading base files from Nintendo... (frisbiiU.rpx)</value>
-  </data>
   <data name="String77" xml:space="preserve">
     <value>Converting processed game to NFS format...</value>
+  </data>
+  <data name="String70" xml:space="preserve">
+    <value>Copying base files to temporary build directory...</value>
   </data>
   <data name="String63" xml:space="preserve">
     <value>(One-Time Download) Downloading base files from Nintendo... (nn_hai_user.rpl)</value>
@@ -298,8 +301,8 @@ Click OK to continue...</value>
   <data name="String92" xml:space="preserve">
     <value>Your image will be converted to PNG (Lossless) to be later processed.</value>
   </data>
-  <data name="String37" xml:space="preserve">
-    <value>Boot Sound has not been specified</value>
+  <data name="String87" xml:space="preserve">
+    <value>Config generation complete.</value>
   </data>
   <data name="String91" xml:space="preserve">
     <value>Specify your game file</value>
@@ -332,7 +335,9 @@ Click OK to close the injector and open "Programs and Features"...</value>
   <data name="String18" xml:space="preserve">
     <value>N/A</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="String3" xml:space="preserve">
+    <value>Are you sure you want to close?</value>
+  </data>
   <data name="TOOLDIR" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TOOLDIR.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -346,15 +351,13 @@ Click OK to close the injector and open "Programs and Features"...</value>
     <value>(One-Time Download) Downloading base files from Nintendo... (banner.gsh / fade.gsh)</value>
   </data>
   <data name="String99" xml:space="preserve">
-    <value>All conversions have been completed.
-Succeed: {0}.
-Failed: {1}.</value>
+    <value>All conversions have been completed.&#x000A;Succeed: {0}.&#x000A;Failed: {1}.</value>
   </data>
   <data name="String32" xml:space="preserve">
     <value>Make sure your GamePad Banner is 854x480 (16:9) to prevent distortion</value>
   </data>
-  <data name="String104" xml:space="preserve">
-    <value>Conversion complete...</value>
+  <data name="String52" xml:space="preserve">
+    <value>(One-Time Download) Downloading base files from Nintendo...</value>
   </data>
   <data name="String24" xml:space="preserve">
     <value>Make sure your icon is 128x128 (1:1) to prevent distortion</value>
@@ -367,6 +370,9 @@ Failed: {1}.</value>
   </data>
   <data name="String29" xml:space="preserve">
     <value>Cucholix's Repo does not have assets for your game. You will need to provide your own. Would you like to visit the GBAtemp request thread?</value>
+  </data>
+  <data name="String106" xml:space="preserve">
+    <value>Executing:</value>
   </data>
   <data name="String49" xml:space="preserve">
     <value>Output folder selection has been cancelled, conversion will not continue.</value>
@@ -392,17 +398,17 @@ Failed: {1}.</value>
   <data name="String85" xml:space="preserve">
     <value>Drive not specified, nowhere to download contents</value>
   </data>
-  <data name="String50" xml:space="preserve">
-    <value>Your internet connection could not be verified, do you wish to try and download the necessary base files from Nintendo anyways? (This is a one-time download)</value>
+  <data name="String59" xml:space="preserve">
+    <value>(One-Time Download) Downloading base files from Nintendo... (frisbiiU.rpx)</value>
   </data>
-  <data name="String20" xml:space="preserve">
-    <value>Only 4 characters can be used, try again. Example: The Star Fox 64 (USA) Channel's Title ID is NADE01, so you would specify NADE as the Title ID</value>
+  <data name="String21" xml:space="preserve">
+    <value>GameCube Dumps (*.gcm,*.iso)|*.gcm;*.iso</value>
   </data>
   <data name="String54" xml:space="preserve">
     <value>(One-Time Download) Downloading base files from Nintendo... (font.bin)</value>
   </data>
-  <data name="String3" xml:space="preserve">
-    <value>Are you sure you want to close?</value>
+  <data name="String22" xml:space="preserve">
+    <value>This is not a Wii image. It will not be loaded.</value>
   </data>
   <data name="String42" xml:space="preserve">
     <value>The Wii U Starbuck Ancast Key you have provided is incorrect
@@ -423,12 +429,15 @@ Failed: {1}.</value>
   <data name="String95" xml:space="preserve">
     <value>Specify your replacement Nintendont Forwarder</value>
   </data>
+  <data name="String30" xml:space="preserve">
+    <value>Game not found on Repo</value>
+  </data>
   <data name="String98" xml:space="preserve">
     <value>Can't create the specified output directory, conversion will not continue.
 Additional error information:</value>
   </data>
-  <data name="String30" xml:space="preserve">
-    <value>Game not found on Repo</value>
+  <data name="String11" xml:space="preserve">
+    <value>DOL Files (*.dol)|*.dol</value>
   </data>
   <data name="String2" xml:space="preserve">
     <value>.NET Framework v3.5 not found...</value>
@@ -455,22 +464,17 @@ Additional error information:</value>
   <data name="String13" xml:space="preserve">
     <value>NULL</value>
   </data>
-  <data name="String70" xml:space="preserve">
-    <value>Copying base files to temporary build directory...</value>
+  <data name="String44" xml:space="preserve">
+    <value>The Wii U Common Key you have provided is incorrect
+(MD5 Hash verification failed)</value>
   </data>
-  <data name="clearbuildoutput" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\clearbuildoutput.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="String105" xml:space="preserve">
-    <value>Clear Outputs</value>
-  </data>
-  <data name="String106" xml:space="preserve">
-    <value>Build cancelled.</value>
-  </data>
-  <data name="String107" xml:space="preserve">
-    <value>Executing:</value>
+  <data name="autoscroll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\autoscroll.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="String108" xml:space="preserve">
-    <value>Args:</value>
+    <value>Build succeed.</value>
+  </data>
+  <data name="String109" xml:space="preserve">
+    <value>Build failed.</value>
   </data>
 </root>

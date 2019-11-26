@@ -137,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\clearbuildoutput.png" />
+    <None Include="Resources\autoscroll.png" />
     <Content Include="Resources\universal_Wii_WiiWare_template_bootTvTex.png" />
     <Content Include="Resources\universal_Wii_WiiWare_template_iconTex.png" />
     <Content Include="WiiU.ico" />
