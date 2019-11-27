@@ -33,6 +33,10 @@ namespace TeconMoon_s_WiiVC_Injector
 
             this.Text += " - [" + Program.Version + "]";
 
+#if !DEBUG
+            this.DebugButton.Visible = false;
+#endif
+
             // 
             // Initlize actions for build thread.
             //
@@ -276,6 +280,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
             AutoBuildSucceedList.Clear();
             AutoBuildFailedList.Clear();
+            AutoBuildSkippedList.Clear();
 
             BuildCompletedEx += WiiVC_Injector_BuildCompletedEx;
 
@@ -327,6 +332,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
             if (LastBuildCancelled)
             {
+                AutoBuildSkippedList.AddRange(Program.AutoBuildList);
                 Program.AutoBuildList.Clear();
             }
 
@@ -469,6 +475,7 @@ namespace TeconMoon_s_WiiVC_Injector
         string GameIso;
         List<string> AutoBuildSucceedList = new List<string>();
         List<string> AutoBuildFailedList = new List<string>();
+        List<string> AutoBuildSkippedList = new List<string>();
         Dictionary<String, bool> ControlEnabledStatus = new Dictionary<String, bool>();
         Thread BuilderThread;
         TranslationTemplate tr = TranslationTemplate.LoadTemplate(
@@ -476,6 +483,7 @@ namespace TeconMoon_s_WiiVC_Injector
         Action<string> ActBuildStatus;
         Action<int> ActBuildProgress;
         Action<BuildOutputItem> ActBuildOutput;
+        Stopwatch BuildStopwatch = new Stopwatch();
 
         private bool IsBuilding
         {
@@ -2122,6 +2130,11 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             BuilderThread = new Thread(new ThreadStart(this.BuildThread));
 
+            //
+            // Start stopwatch for building.
+            //
+            BuildStopwatch.Restart();
+
             try
             {
                 BuilderThread.Start();
@@ -2139,6 +2152,8 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private void BuildCompleted(bool succeed)
         {
+            BuildStopwatch.Stop();
+
             if (succeed && PropmtForSucceed && !InClosing)
             {
                 MessageBox.Show(tr.Tr("Conversion Complete! Your packed game can be found here: ")
@@ -2194,6 +2209,9 @@ namespace TeconMoon_s_WiiVC_Injector
                         buildResult.buildOutputType = BuildOutputType.botError;
                     }
                 }
+
+                
+                buildResult.s += String.Format("({0})", TimeSpan.FromMilliseconds(BuildStopwatch.ElapsedMilliseconds).Duration().ToString());
 
                 AppendBuildOutput(buildResult);
             }
