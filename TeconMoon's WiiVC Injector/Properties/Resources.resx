@@ -351,7 +351,9 @@ Click OK to close the injector and open "Programs and Features"...</value>
     <value>(One-Time Download) Downloading base files from Nintendo... (banner.gsh / fade.gsh)</value>
   </data>
   <data name="String99" xml:space="preserve">
-    <value>All conversions have been completed.&#x000A;Succeed: {0}.&#x000A;Failed: {1}.</value>
+    <value>All conversions have been completed.
+Succeed: {0}.
+Failed: {1}.</value>
   </data>
   <data name="String32" xml:space="preserve">
     <value>Make sure your GamePad Banner is 854x480 (16:9) to prevent distortion</value>
@@ -476,5 +478,8 @@ Additional error information:</value>
   </data>
   <data name="String109" xml:space="preserve">
     <value>Build failed.</value>
+  </data>
+  <data name="String110" xml:space="preserve">
+    <value>Auto generated.</value>
   </data>
 </root>

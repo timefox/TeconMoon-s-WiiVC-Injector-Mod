@@ -446,15 +446,15 @@ namespace TeconMoon_s_WiiVC_Injector
         string LauncherExeFile;
         string LauncherExeArgs;
         string JNUSToolDownloads = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\JNUSToolDownloads\\";
-        string TempRootPath = Path.GetTempPath() + "WiiVCInjector\\";
-        string TempSourcePath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\";
-        string TempBuildPath = Path.GetTempPath() + "WiiVCInjector\\BUILDDIR\\";
-        string TempToolsPath = Path.GetTempPath() + "WiiVCInjector\\TOOLDIR\\";
-        string TempIconPath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png";
-        string TempBannerPath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png";
-        string TempDrcPath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootDrcTex.png";
-        string TempLogoPath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootLogoTex.png";
-        string TempSoundPath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootSound.wav";
+        static string TempRootPath = GetTempRootPath() + "WiiVCInjector\\";
+        string TempSourcePath = TempRootPath + "SOURCETEMP\\";
+        string TempBuildPath = TempRootPath + "BUILDDIR\\";
+        string TempToolsPath = TempRootPath + "TOOLDIR\\";
+        string TempIconPath = TempRootPath + "SOURCETEMP\\iconTex.png";
+        string TempBannerPath = TempRootPath + "SOURCETEMP\\bootTvTex.png";
+        string TempDrcPath = TempRootPath + "SOURCETEMP\\bootDrcTex.png";
+        string TempLogoPath = TempRootPath + "SOURCETEMP\\bootLogoTex.png";
+        string TempSoundPath = TempRootPath + "SOURCETEMP\\bootSound.wav";
         string OGfilepath;
 
         enum BuildOutputType
@@ -496,6 +496,36 @@ namespace TeconMoon_s_WiiVC_Injector
         private delegate bool BuildStep();
 
         private event EventHandler<bool> BuildCompletedEx;
+
+        private static string GetTempRootPath(bool hasBackslash = true)
+        {
+            RegistryKey key = Registry.CurrentUser.OpenSubKey("WiiVCInjector");
+            string path = Path.GetTempPath();
+
+            if (key != null)
+            {
+                path = key.GetValue("TemporaryDirectory", "") as string;
+                if (String.IsNullOrWhiteSpace(path))
+                {
+                    path = Path.GetTempPath();
+                }
+
+            }
+
+            if (hasBackslash)
+            {
+                if (!path.EndsWith("\\"))
+                {
+                    path += "\\";
+                }
+            }
+            else
+            {
+                path = path.TrimEnd(new char[] { '\\' });
+            }
+
+            return path;
+        }
 
         //call options
         public bool LaunchProgram()
@@ -1031,6 +1061,7 @@ namespace TeconMoon_s_WiiVC_Injector
             }
             TitleKey.Text = appKey.GetValue("TitleKey").ToString();
             OutputDirectory.Text = appKey.GetValue("OutputDirectory") as string;
+            TemporaryDirectory.Text = GetTempRootPath(false);
             appKey.Close();
 
             //Generate MD5 hashes for loaded keys and check them
@@ -3854,7 +3885,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 // Set the text information of the edit control 
                 // which indicates the image source path.
                 Label sourceDirectory = this.Controls.Find(images[i].dirControlName, true).FirstOrDefault() as Label;
-                sourceDirectory.Text = "Auto generated.";
+                sourceDirectory.Text = tr.Tr("Auto generated.");
                 sourceDirectory.ForeColor = Color.Green;
             }
 
@@ -3911,6 +3942,17 @@ namespace TeconMoon_s_WiiVC_Injector
         private void AutoScrollBuildOutput_Click(object sender, EventArgs e)
         {
             AutoScrollBuildOutput.Checked = !AutoScrollBuildOutput.Checked;
+        }
+
+        private void BrowseTempDir_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog tempFolderSelect = new FolderBrowserDialog();
+            if (tempFolderSelect.ShowDialog() == DialogResult.OK)
+            {
+                TemporaryDirectory.Text = tempFolderSelect.SelectedPath;
+                Registry.CurrentUser.CreateSubKey("WiiVCInjector")
+                    .SetValue("TemporaryDirectory", TemporaryDirectory.Text);
+            }
         }
     }
 }

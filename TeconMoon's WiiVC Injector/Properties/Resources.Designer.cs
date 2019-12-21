@@ -202,6 +202,15 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Auto generated..
+        /// </summary>
+        internal static string String110 {
+            get {
+                return ResourceManager.GetString("String110", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to TitleID....
         /// </summary>
         internal static string String12 {

@@ -103,6 +103,9 @@
             this.AncastKey = new System.Windows.Forms.TextBox();
             this.AdvancedLabel1 = new System.Windows.Forms.Label();
             this.BuildTab = new System.Windows.Forms.TabPage();
+            this.BrowseTempDir = new System.Windows.Forms.Button();
+            this.TemporaryDirectory = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.BrowseOutputDir = new System.Windows.Forms.Button();
             this.OutputDirectory = new System.Windows.Forms.TextBox();
             this.OutputDirLabel = new System.Windows.Forms.Label();
@@ -1073,6 +1076,9 @@
             // BuildTab
             // 
             this.BuildTab.BackColor = System.Drawing.Color.Gainsboro;
+            this.BuildTab.Controls.Add(this.BrowseTempDir);
+            this.BuildTab.Controls.Add(this.TemporaryDirectory);
+            this.BuildTab.Controls.Add(this.label3);
             this.BuildTab.Controls.Add(this.BrowseOutputDir);
             this.BuildTab.Controls.Add(this.OutputDirectory);
             this.BuildTab.Controls.Add(this.OutputDirLabel);
@@ -1099,11 +1105,40 @@
             this.BuildTab.TabIndex = 4;
             this.BuildTab.Text = "Build Title";
             // 
+            // BrowseTempDir
+            // 
+            this.BrowseTempDir.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.BrowseTempDir.BackColor = System.Drawing.Color.Silver;
+            this.BrowseTempDir.Location = new System.Drawing.Point(300, 146);
+            this.BrowseTempDir.Name = "BrowseTempDir";
+            this.BrowseTempDir.Size = new System.Drawing.Size(90, 22);
+            this.BrowseTempDir.TabIndex = 23;
+            this.BrowseTempDir.Text = "Browse...";
+            this.BrowseTempDir.UseVisualStyleBackColor = false;
+            this.BrowseTempDir.Click += new System.EventHandler(this.BrowseTempDir_Click);
+            // 
+            // TemporaryDirectory
+            // 
+            this.TemporaryDirectory.Location = new System.Drawing.Point(6, 146);
+            this.TemporaryDirectory.MaxLength = 32;
+            this.TemporaryDirectory.Name = "TemporaryDirectory";
+            this.TemporaryDirectory.Size = new System.Drawing.Size(288, 21);
+            this.TemporaryDirectory.TabIndex = 22;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 130);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(125, 12);
+            this.label3.TabIndex = 21;
+            this.label3.Text = "Temporary Directory:";
+            // 
             // BrowseOutputDir
             // 
             this.BrowseOutputDir.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BrowseOutputDir.BackColor = System.Drawing.Color.Silver;
-            this.BrowseOutputDir.Location = new System.Drawing.Point(300, 115);
+            this.BrowseOutputDir.Location = new System.Drawing.Point(300, 104);
             this.BrowseOutputDir.Name = "BrowseOutputDir";
             this.BrowseOutputDir.Size = new System.Drawing.Size(90, 22);
             this.BrowseOutputDir.TabIndex = 20;
@@ -1113,7 +1148,7 @@
             // 
             // OutputDirectory
             // 
-            this.OutputDirectory.Location = new System.Drawing.Point(6, 115);
+            this.OutputDirectory.Location = new System.Drawing.Point(6, 104);
             this.OutputDirectory.MaxLength = 32;
             this.OutputDirectory.Name = "OutputDirectory";
             this.OutputDirectory.Size = new System.Drawing.Size(288, 21);
@@ -1122,7 +1157,7 @@
             // OutputDirLabel
             // 
             this.OutputDirLabel.AutoSize = true;
-            this.OutputDirLabel.Location = new System.Drawing.Point(8, 99);
+            this.OutputDirLabel.Location = new System.Drawing.Point(8, 88);
             this.OutputDirLabel.Name = "OutputDirLabel";
             this.OutputDirLabel.Size = new System.Drawing.Size(107, 12);
             this.OutputDirLabel.TabIndex = 18;
@@ -1146,7 +1181,7 @@
             this.AdvanceCheck.AutoSize = true;
             this.AdvanceCheck.BackColor = System.Drawing.Color.Transparent;
             this.AdvanceCheck.ForeColor = System.Drawing.Color.Red;
-            this.AdvanceCheck.Location = new System.Drawing.Point(8, 184);
+            this.AdvanceCheck.Location = new System.Drawing.Point(8, 220);
             this.AdvanceCheck.Name = "AdvanceCheck";
             this.AdvanceCheck.Size = new System.Drawing.Size(191, 12);
             this.AdvanceCheck.TabIndex = 16;
@@ -1155,7 +1190,7 @@
             // BuildStatus
             // 
             this.BuildStatus.BackColor = System.Drawing.Color.Gainsboro;
-            this.BuildStatus.Location = new System.Drawing.Point(6, 214);
+            this.BuildStatus.Location = new System.Drawing.Point(6, 253);
             this.BuildStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.BuildStatus.Name = "BuildStatus";
             this.BuildStatus.Size = new System.Drawing.Size(556, 25);
@@ -1164,7 +1199,7 @@
             // BuildProgress
             // 
             this.BuildProgress.BackColor = System.Drawing.Color.Gainsboro;
-            this.BuildProgress.Location = new System.Drawing.Point(7, 243);
+            this.BuildProgress.Location = new System.Drawing.Point(7, 283);
             this.BuildProgress.Margin = new System.Windows.Forms.Padding(4);
             this.BuildProgress.Name = "BuildProgress";
             this.BuildProgress.Size = new System.Drawing.Size(557, 26);
@@ -1174,7 +1209,7 @@
             // 
             this.SaveTitleKeyButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.SaveTitleKeyButton.BackColor = System.Drawing.Color.Silver;
-            this.SaveTitleKeyButton.Location = new System.Drawing.Point(300, 71);
+            this.SaveTitleKeyButton.Location = new System.Drawing.Point(300, 63);
             this.SaveTitleKeyButton.Name = "SaveTitleKeyButton";
             this.SaveTitleKeyButton.Size = new System.Drawing.Size(90, 22);
             this.SaveTitleKeyButton.TabIndex = 13;
@@ -1186,7 +1221,7 @@
             // 
             this.SaveCommonKeyButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.SaveCommonKeyButton.BackColor = System.Drawing.Color.Silver;
-            this.SaveCommonKeyButton.Location = new System.Drawing.Point(300, 23);
+            this.SaveCommonKeyButton.Location = new System.Drawing.Point(300, 20);
             this.SaveCommonKeyButton.Name = "SaveCommonKeyButton";
             this.SaveCommonKeyButton.Size = new System.Drawing.Size(90, 22);
             this.SaveCommonKeyButton.TabIndex = 12;
@@ -1198,10 +1233,10 @@
             // 
             this.TheBigOneTM.BackColor = System.Drawing.Color.Silver;
             this.TheBigOneTM.Enabled = false;
-            this.TheBigOneTM.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TheBigOneTM.Location = new System.Drawing.Point(7, 271);
+            this.TheBigOneTM.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TheBigOneTM.Location = new System.Drawing.Point(7, 311);
             this.TheBigOneTM.Name = "TheBigOneTM";
-            this.TheBigOneTM.Size = new System.Drawing.Size(557, 83);
+            this.TheBigOneTM.Size = new System.Drawing.Size(557, 43);
             this.TheBigOneTM.TabIndex = 11;
             this.TheBigOneTM.Text = "BUILD";
             this.TheBigOneTM.UseVisualStyleBackColor = false;
@@ -1212,7 +1247,7 @@
             this.KeysCheck.AutoSize = true;
             this.KeysCheck.BackColor = System.Drawing.Color.Transparent;
             this.KeysCheck.ForeColor = System.Drawing.Color.Red;
-            this.KeysCheck.Location = new System.Drawing.Point(8, 198);
+            this.KeysCheck.Location = new System.Drawing.Point(8, 234);
             this.KeysCheck.Name = "KeysCheck";
             this.KeysCheck.Size = new System.Drawing.Size(221, 12);
             this.KeysCheck.TabIndex = 10;
@@ -1223,7 +1258,7 @@
             this.MetaCheck.AutoSize = true;
             this.MetaCheck.BackColor = System.Drawing.Color.Transparent;
             this.MetaCheck.ForeColor = System.Drawing.Color.Red;
-            this.MetaCheck.Location = new System.Drawing.Point(8, 171);
+            this.MetaCheck.Location = new System.Drawing.Point(8, 207);
             this.MetaCheck.Name = "MetaCheck";
             this.MetaCheck.Size = new System.Drawing.Size(137, 12);
             this.MetaCheck.TabIndex = 8;
@@ -1234,7 +1269,7 @@
             this.SourceCheck.AutoSize = true;
             this.SourceCheck.BackColor = System.Drawing.Color.Transparent;
             this.SourceCheck.ForeColor = System.Drawing.Color.Red;
-            this.SourceCheck.Location = new System.Drawing.Point(8, 158);
+            this.SourceCheck.Location = new System.Drawing.Point(8, 194);
             this.SourceCheck.Name = "SourceCheck";
             this.SourceCheck.Size = new System.Drawing.Size(215, 12);
             this.SourceCheck.TabIndex = 7;
@@ -1244,7 +1279,7 @@
             // 
             this.RequirementsLabel.AutoSize = true;
             this.RequirementsLabel.BackColor = System.Drawing.Color.Transparent;
-            this.RequirementsLabel.Location = new System.Drawing.Point(4, 140);
+            this.RequirementsLabel.Location = new System.Drawing.Point(4, 180);
             this.RequirementsLabel.Name = "RequirementsLabel";
             this.RequirementsLabel.Size = new System.Drawing.Size(251, 12);
             this.RequirementsLabel.TabIndex = 6;
@@ -1252,7 +1287,7 @@
             // 
             // TitleKey
             // 
-            this.TitleKey.Location = new System.Drawing.Point(6, 71);
+            this.TitleKey.Location = new System.Drawing.Point(6, 63);
             this.TitleKey.MaxLength = 32;
             this.TitleKey.Name = "TitleKey";
             this.TitleKey.Size = new System.Drawing.Size(288, 21);
@@ -1262,7 +1297,7 @@
             // 
             this.RHFKeyLabel.AutoSize = true;
             this.RHFKeyLabel.BackColor = System.Drawing.Color.Transparent;
-            this.RHFKeyLabel.Location = new System.Drawing.Point(6, 54);
+            this.RHFKeyLabel.Location = new System.Drawing.Point(6, 46);
             this.RHFKeyLabel.Name = "RHFKeyLabel";
             this.RHFKeyLabel.Size = new System.Drawing.Size(461, 12);
             this.RHFKeyLabel.TabIndex = 3;
@@ -1280,7 +1315,7 @@
             // 
             // WiiUCommonKey
             // 
-            this.WiiUCommonKey.Location = new System.Drawing.Point(6, 23);
+            this.WiiUCommonKey.Location = new System.Drawing.Point(6, 20);
             this.WiiUCommonKey.MaxLength = 32;
             this.WiiUCommonKey.Name = "WiiUCommonKey";
             this.WiiUCommonKey.Size = new System.Drawing.Size(288, 21);
@@ -1623,6 +1658,9 @@
         private System.Windows.Forms.ToolStrip BuildOutputToolStrip;
         private System.Windows.Forms.ToolStripButton ClearBuildOuput;
         private System.Windows.Forms.ToolStripButton AutoScrollBuildOutput;
+        private System.Windows.Forms.Button BrowseTempDir;
+        private System.Windows.Forms.TextBox TemporaryDirectory;
+        private System.Windows.Forms.Label label3;
     }
 }
 
