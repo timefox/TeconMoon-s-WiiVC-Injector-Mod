@@ -211,6 +211,24 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create temporary directory failed, it may be caused by low space on hard drive, permission denied or invalid path name..
+        /// </summary>
+        internal static string String111 {
+            get {
+                return ResourceManager.GetString("String111", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string String112 {
+            get {
+                return ResourceManager.GetString("String112", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to TitleID....
         /// </summary>
         internal static string String12 {

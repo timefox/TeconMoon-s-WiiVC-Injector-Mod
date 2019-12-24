@@ -30,7 +30,8 @@ namespace TeconMoon_s_WiiVC_Injector
             if (!ExtractToolChainsToTemp())
             {
                 MessageBox.Show(
-                    tr.Tr("Create temporary directory failed, your hard drive may be low on space."),
+                    tr.Tr("Create temporary directory failed, it may be caused by "
+                    + "low space on hard drive, permission denied or invalid path name."),
                     tr.Tr("Error"));
 
                 Environment.Exit(0);
@@ -2285,6 +2286,11 @@ namespace TeconMoon_s_WiiVC_Injector
                 tempDir = GetTempRootPath() + "WiiVCInjector\\";
             }
 
+            if (!tempDir.EndsWith("\\"))
+            {
+                tempDir += "\\";
+            }
+
             if (!tempDir.EndsWith("WiiVCInjector\\", StringComparison.OrdinalIgnoreCase))
             {
                 tempDir += "WiiVCInjector\\";
@@ -2297,11 +2303,17 @@ namespace TeconMoon_s_WiiVC_Injector
                 return true;
             }
 
+            MessageBox.Show(
+                tr.Tr("Create temporary directory failed, it may be caused by "
+                + "low space on hard drive, permission denied or invalid path name."),
+                tr.Tr("Error"));
+
             //
             // Restore the default temp dir location on failed.
             //
             TemporaryDirectory.Text = Path.GetTempPath();
-            Registry.CurrentUser.CreateSubKey("WiiVCInjector").DeleteValue("TemporaryDirectory");
+            Registry.CurrentUser.CreateSubKey("WiiVCInjector")
+                .DeleteValue("TemporaryDirectory");
 
             return false;
         }

@@ -482,4 +482,10 @@ Additional error information:</value>
   <data name="String110" xml:space="preserve">
     <value>Auto generated.</value>
   </data>
+  <data name="String111" xml:space="preserve">
+    <value>Create temporary directory failed, it may be caused by low space on hard drive, permission denied or invalid path name.</value>
+  </data>
+  <data name="String112" xml:space="preserve">
+    <value>Error</value>
+  </data>
 </root>
