@@ -27,7 +27,14 @@ namespace TeconMoon_s_WiiVC_Injector
             //Check for if .Net v3.5 component is installed
             CheckForNet35();
 
-            ExtractToolChainsToTemp();
+            if (!ExtractToolChainsToTemp())
+            {
+                MessageBox.Show(
+                    tr.Tr("Create temporary directory failed, your hard drive may be low on space."),
+                    tr.Tr("Error"));
+
+                Environment.Exit(0);
+            }
 
             ApplyTranslation();
 
@@ -60,21 +67,50 @@ namespace TeconMoon_s_WiiVC_Injector
             AutoBuildWiiRetail();
         }
 
-        void ExtractToolChainsToTemp()
+        bool ExtractToolChainsToTemp()
         {
-            //Delete Temporary Root Folder if it exists
-            if (Directory.Exists(TempRootPath))
+            try
             {
-                Directory.Delete(TempRootPath, true);
+                //Delete Temporary Root Folder if it exists
+                if (Directory.Exists(TempRootPath))
+                {
+                    Directory.Delete(TempRootPath, true);
+                }
+                Directory.CreateDirectory(TempRootPath);
+                //Extract Tools to temp folder
+                File.WriteAllBytes(TempRootPath + "TOOLDIR.zip", Properties.Resources.TOOLDIR);
+                ZipFile.ExtractToDirectory(TempRootPath + "TOOLDIR.zip", TempRootPath);
+                File.Delete(TempRootPath + "TOOLDIR.zip");
+                //Create Source and Build directories
+                Directory.CreateDirectory(TempSourcePath);
+                Directory.CreateDirectory(TempBuildPath);
             }
-            Directory.CreateDirectory(TempRootPath);
-            //Extract Tools to temp folder
-            File.WriteAllBytes(TempRootPath + "TOOLDIR.zip", Properties.Resources.TOOLDIR);
-            ZipFile.ExtractToDirectory(TempRootPath + "TOOLDIR.zip", TempRootPath);
-            File.Delete(TempRootPath + "TOOLDIR.zip");
-            //Create Source and Build directories
-            Directory.CreateDirectory(TempSourcePath);
-            Directory.CreateDirectory(TempBuildPath);
+            catch (Exception)
+            {
+                if (!TempRootPath.Equals(DefaultTempRootPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    Registry.CurrentUser.CreateSubKey("WiiVCInjector").DeleteValue("TemporaryDirectory");
+                    TempRootPath = DefaultTempRootPath;
+                    UpdateTempDirs();
+                    return ExtractToolChainsToTemp();
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        void UpdateTempDirs()
+        {
+            TempSourcePath = TempRootPath + "SOURCETEMP\\";
+            TempBuildPath = TempRootPath + "BUILDDIR\\";
+            TempToolsPath = TempRootPath + "TOOLDIR\\";
+            TempIconPath = TempRootPath + "SOURCETEMP\\iconTex.png";
+            TempBannerPath = TempRootPath + "SOURCETEMP\\bootTvTex.png";
+            TempDrcPath = TempRootPath + "SOURCETEMP\\bootDrcTex.png";
+            TempLogoPath = TempRootPath + "SOURCETEMP\\bootLogoTex.png";
+            TempSoundPath = TempRootPath + "SOURCETEMP\\bootSound.wav";
         }
 
         void CleanupBuildSourceTemp()
@@ -425,7 +461,6 @@ namespace TeconMoon_s_WiiVC_Injector
         bool HideProcess = true;
         bool ThrowProcessException = false;
         bool LastBuildCancelled = false;
-        bool LegacyBuild = false;
         bool InClosing = false;
         bool PropmtForSucceed = true;
         int TitleIDInt;
@@ -446,6 +481,7 @@ namespace TeconMoon_s_WiiVC_Injector
         string LauncherExeFile;
         string LauncherExeArgs;
         string JNUSToolDownloads = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\JNUSToolDownloads\\";
+        static string DefaultTempRootPath = Path.GetTempPath() + "WiiVCInjector\\";
         static string TempRootPath = GetTempRootPath() + "WiiVCInjector\\";
         string TempSourcePath = TempRootPath + "SOURCETEMP\\";
         string TempBuildPath = TempRootPath + "BUILDDIR\\";
@@ -509,7 +545,6 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     path = Path.GetTempPath();
                 }
-
             }
 
             if (hasBackslash)
@@ -2061,36 +2096,12 @@ namespace TeconMoon_s_WiiVC_Injector
         private void DebugButton_Click(object sender, EventArgs e)
         {
             // MessageBox.Show(ShortenPath(OpenGame.FileName));
-
-            LegacyBuild = true;
         }
+
         //Events for the actual "Build" Button
         private void TheBigOneTM_Click(object sender, EventArgs e)
         {
-            if (!LegacyBuild)
-            {
-                ToggleBuild();
-            }
-            else
-            {
-                try
-                {
-                    BuildLegacy();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-
-                try
-                {
-                    CleanupBuildSourceTemp();
-                }
-                catch (Exception)
-                {
-                    
-                }                
-            }
+            ToggleBuild();
         }
 
         private void BuildThread()
@@ -2252,6 +2263,41 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             TheBigOneTM.Enabled = false;
             LastBuildCancelled = true;
+        }
+
+        private bool PrepareTemporaryDirectory()
+        {
+            string tempDir = TemporaryDirectory.Text;
+
+            if (String.IsNullOrWhiteSpace(tempDir))
+            {
+                tempDir = TempRootPath;
+            }
+
+            if (String.IsNullOrWhiteSpace(tempDir))
+            {
+                tempDir = GetTempRootPath() + "WiiVCInjector\\";
+            }
+
+            if (!tempDir.EndsWith("WiiVCInjector\\", StringComparison.OrdinalIgnoreCase))
+            {
+                tempDir += "WiiVCInjector\\";
+            }
+
+            if (MoveTempDir(TempRootPath, tempDir))
+            {
+                TempRootPath = tempDir;
+                UpdateTempDirs();
+                return true;
+            }
+
+            //
+            // Restore the default temp dir location on failed.
+            //
+            TemporaryDirectory.Text = Path.GetTempPath();
+            Registry.CurrentUser.CreateSubKey("WiiVCInjector").DeleteValue("TemporaryDirectory");
+
+            return false;
         }
 
         private bool CheckFreeDiskSpaceForPack()
@@ -3066,6 +3112,7 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             BuildStep[] buildSteps = new BuildStep[]
             {
+                PrepareTemporaryDirectory,
                 CheckFreeDiskSpaceForPack,
                 PrepareOutputDirectory,
                 PrepareJNUSStuffs,
@@ -3109,650 +3156,6 @@ namespace TeconMoon_s_WiiVC_Injector
             Invoke(ActBuildStatus, tr.Tr("Conversion complete..."));
 
             return (succeed == buildSteps.Length);
-        }
-
-        private void BuildLegacy()
-        {
-            ThrowProcessException = false;
-            
-            //Initialize Build Process
-            //Disable form elements so navigation can't be attempted during build process
-            MainTabs.Enabled = false;
-            //Check for free space
-            if (SystemType == "wii")
-            {
-                long gamesize = new FileInfo(OpenGame.FileName).Length;
-                var drive = new DriveInfo(TempRootPath);
-                long freeSpaceInBytes = drive.AvailableFreeSpace;
-                if (freeSpaceInBytes < gamesize * 2 + 5000000000)
-                {
-                    DialogResult dialogResult = MessageBox.Show(
-                        tr.Tr("Your hard drive may be low on space. The conversion process involves temporary files that can amount to more than double the size of your game. If you continue without clearing some hard drive space, the conversion may fail. Do you want to continue anyways?"),
-                        tr.Tr("Check your hard drive space"), MessageBoxButtons.YesNo);
-                    if (dialogResult == DialogResult.No)
-                    {
-                        MainTabs.Enabled = true;
-                        BuildStatus.Text = "";
-                        BuildProgress.Value = 0;
-                        goto BuildProcessFin;
-                    }
-                }
-            }
-            if (SystemType == "dol")
-            {
-                var drive = new DriveInfo(TempRootPath);
-                long freeSpaceInBytes = drive.AvailableFreeSpace;
-                if (freeSpaceInBytes < 6000000000)
-                {
-                    DialogResult dialogResult = MessageBox.Show(
-                        tr.Tr("Your hard drive may be low on space. Even for small programs, the conversion process can use almost 5 GB of temporary storage. If you continue without clearing some hard drive space, the conversion may fail. Do you want to continue anyways?"),
-                        tr.Tr("Check your hard drive space"), MessageBoxButtons.YesNo);
-                    if (dialogResult == DialogResult.No)
-                    {
-                        MainTabs.Enabled = true;
-                        BuildStatus.Text = "";
-                        BuildProgress.Value = 0;
-                        goto BuildProcessFin;
-                    }
-                }
-            }
-            if (SystemType == "wiiware")
-            {
-                var drive = new DriveInfo(TempRootPath);
-                long freeSpaceInBytes = drive.AvailableFreeSpace;
-                if (freeSpaceInBytes < 6000000000)
-                {
-                    DialogResult dialogResult = MessageBox.Show(
-                        tr.Tr("Your hard drive may be low on space. Even for small programs, the conversion process can use almost 5 GB of temporary storage. If you continue without clearing some hard drive space, the conversion may fail. Do you want to continue anyways?"),
-                        tr.Tr("Check your hard drive space"), MessageBoxButtons.YesNo);
-                    if (dialogResult == DialogResult.No)
-                    {
-                        MainTabs.Enabled = true;
-                        BuildStatus.Text = "";
-                        BuildProgress.Value = 0;
-                        goto BuildProcessFin;
-                    }
-                }
-            }
-            if (SystemType == "gcn")
-            {
-                long gamesize = new FileInfo(OpenGame.FileName).Length;
-                var drive = new DriveInfo(TempRootPath);
-                long freeSpaceInBytes = drive.AvailableFreeSpace;
-                if (freeSpaceInBytes < gamesize * 2 + 6000000000)
-                {
-                    DialogResult dialogResult = MessageBox.Show(
-                        tr.Tr("Your hard drive may be low on space. The conversion process involves temporary files that can amount to more than double the size of your game. If you continue without clearing some hard drive space, the conversion may fail. Do you want to continue anyways?"),
-                        tr.Tr("Check your hard drive space"), MessageBoxButtons.YesNo);
-                    if (dialogResult == DialogResult.No)
-                    {
-                        MainTabs.Enabled = true;
-                        BuildStatus.Text = "";
-                        BuildProgress.Value = 0;
-                        goto BuildProcessFin;
-                    }
-                }
-            }
-
-            // Specify Path Variables to be called later
-            if (String.IsNullOrWhiteSpace(OutputDirectory.Text))
-            {
-                if (OutputFolderSelect.ShowDialog() == DialogResult.Cancel)
-                {
-                    MessageBox.Show(tr.Tr("Output folder selection has been cancelled, conversion will not continue."));
-                    MainTabs.Enabled = true;
-                    goto BuildProcessFin;
-                }
-                OutputDirectory.Text = OutputFolderSelect.SelectedPath;
-            }
-            if (!Directory.Exists(OutputDirectory.Text))
-            {
-                try
-                {
-                    Directory.CreateDirectory(OutputDirectory.Text);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(
-                        tr.Tr("Can't create the specified output directory, conversion will not continue.\nAdditional error information:")
-                        + ex.Message);
-
-                    OutputDirectory.Text = "";
-                    Registry.CurrentUser.CreateSubKey("WiiVCInjector")
-                        .DeleteValue("OutputDirectory");
-                    MainTabs.Enabled = true;
-                    goto BuildProcessFin;
-                }
-            }
-            Registry.CurrentUser.CreateSubKey("WiiVCInjector")
-                .SetValue("OutputDirectory", OutputDirectory.Text);
-
-            BuildProgress.Value = 2;
-            //////////////////////////
-
-            //Download base files with JNUSTool, store them for future use
-            if (Directory.Exists(JNUSToolDownloads) == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "0005001010004000\\code\\deint.txt") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "0005001010004000\\code\\font.bin") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "0005001010004001\\code\\c2w.img") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "0005001010004001\\code\\boot.bin") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "0005001010004001\\code\\dmcu.d.hex") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\cos.xml") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\frisbiiU.rpx") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\fw.img") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\fw.tmd") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\htk.bin") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\nn_hai_user.rpl") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\content\\assets\\shaders\\cafe\\banner.gsh") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\content\\assets\\shaders\\cafe\\fade.gsh") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\meta\\bootMovie.h264") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\meta\\bootLogoTex.tga") == false)
-            {
-                goto JNUSStuff;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\meta\\bootSound.btsnd") == false)
-            {
-                goto JNUSStuff;
-            }
-            goto SkipJNUS;
-        JNUSStuff:;
-            if (CheckForInternetConnection() == false)
-            {
-                DialogResult dialogResult = MessageBox.Show(
-                    tr.Tr("Your internet connection could not be verified, do you wish to try and download the necessary base files from Nintendo anyways? (This is a one-time download)"),
-                    tr.Tr("Internet Connection Verification Failed"), MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.No)
-                {
-                    MainTabs.Enabled = true;
-                    BuildStatus.Text = "";
-                    BuildProgress.Value = 0;
-                    goto BuildProcessFin;
-                }
-            }
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo...");
-            BuildStatus.Refresh();
-            string[] JNUSToolConfig = { "http://ccs.cdn.wup.shop.nintendo.net/ccs/download", WiiUCommonKey.Text };
-            File.WriteAllLines(TempToolsPath + "JAR\\config", JNUSToolConfig);
-            Directory.SetCurrentDirectory(TempToolsPath + "JAR");
-            BuildProgress.Value = 10;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (deint.txt)");
-            BuildStatus.Refresh();
-            LauncherExeFile = "JNUSTool.exe";
-            LauncherExeArgs = "0005001010004000 -file /code/deint.txt";
-            LaunchProgram();
-            BuildProgress.Value = 12;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (font.bin)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "0005001010004000 -file /code/font.bin";
-            LaunchProgram();
-            BuildProgress.Value = 15;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (c2w.img)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "0005001010004001 -file /code/c2w.img";
-            LaunchProgram();
-            BuildProgress.Value = 17;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (boot.bin)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "0005001010004001 -file /code/boot.bin";
-            LaunchProgram();
-            BuildProgress.Value = 20;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (dmcu.d.hex)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "0005001010004001 -file /code/dmcu.d.hex";
-            LaunchProgram();
-            BuildProgress.Value = 23;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (cos.xml)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/cos.xml";
-            LaunchProgram();
-            BuildProgress.Value = 25;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (frisbiiU.rpx)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/frisbiiU.rpx";
-            LaunchProgram();
-            BuildProgress.Value = 27;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (fw.img)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/fw.img";
-            LaunchProgram();
-            BuildProgress.Value = 30;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (fw.tmd)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/fw.tmd";
-            LaunchProgram();
-            BuildProgress.Value = 32;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (htk.bin)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/htk.bin";
-            LaunchProgram();
-            BuildProgress.Value = 35;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (nn_hai_user.rpl)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/nn_hai_user.rpl";
-            LaunchProgram();
-            BuildProgress.Value = 37;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (banner.gsh / fade.gsh)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "00050000101b0700 " + TitleKey.Text + " -file /content/assets/.*";
-            LaunchProgram();
-            BuildProgress.Value = 40;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (bootMovie.h264)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "00050000101b0700 " + TitleKey.Text + " -file /meta/bootMovie.h264";
-            LaunchProgram();
-            BuildProgress.Value = 42;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (bootLogoTex.tga)");
-            LauncherExeArgs = "00050000101b0700 " + TitleKey.Text + " -file /meta/bootLogoTex.tga";
-            LaunchProgram();
-            BuildProgress.Value = 45;
-            BuildStatus.Text = tr.Tr("(One-Time Download) Downloading base files from Nintendo... (bootSound.btsnd)");
-            BuildStatus.Refresh();
-            LauncherExeArgs = "00050000101b0700 " + TitleKey.Text + " -file /meta/bootSound.btsnd";
-            LaunchProgram();
-            BuildProgress.Value = 47;
-            BuildStatus.Text = tr.Tr("Saving files from Nintendo for future use...");
-            BuildStatus.Refresh();
-            Directory.CreateDirectory(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]");
-            Directory.CreateDirectory(JNUSToolDownloads + "0005001010004000");
-            Directory.CreateDirectory(JNUSToolDownloads + "0005001010004001");
-            FileSystem.CopyDirectory("Rhythm Heaven Fever [VAKE01]", JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]");
-            FileSystem.CopyDirectory("0005001010004000", JNUSToolDownloads + "0005001010004000");
-            FileSystem.CopyDirectory("0005001010004001", JNUSToolDownloads + "0005001010004001");
-            Directory.Delete("Rhythm Heaven Fever [VAKE01]", true);
-            Directory.Delete("0005001010004000", true);
-            Directory.Delete("0005001010004001", true);
-            File.Delete("config");
-            //Check if files exist after they were supposed to be downloaded
-            bool JNUSFail = false;
-            if (File.Exists(JNUSToolDownloads + "0005001010004000\\code\\deint.txt") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "0005001010004000\\code\\font.bin") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "0005001010004001\\code\\c2w.img") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "0005001010004001\\code\\boot.bin") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "0005001010004001\\code\\dmcu.d.hex") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\cos.xml") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\frisbiiU.rpx") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\fw.img") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\fw.tmd") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\htk.bin") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\code\\nn_hai_user.rpl") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\content\\assets\\shaders\\cafe\\banner.gsh") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\content\\assets\\shaders\\cafe\\fade.gsh") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\meta\\bootMovie.h264") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\meta\\bootLogoTex.tga") == false)
-            {
-                JNUSFail = true;
-            }
-            if (File.Exists(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]\\meta\\bootSound.btsnd") == false)
-            {
-                JNUSFail = true;
-            }
-            if (JNUSFail)
-            {
-                MessageBox.Show(tr.Tr("Failed to download base files using JNUSTool, conversion will not continue"));
-                MainTabs.Enabled = true;
-                BuildStatus.Text = "";
-                BuildProgress.Value = 0;
-                goto BuildProcessFin;
-            }
-            Directory.SetCurrentDirectory(TempRootPath);
-        SkipJNUS:;
-            ///////////////////////////////////
-
-            //Copy downloaded files to the build directory
-            BuildStatus.Text = tr.Tr("Copying base files to temporary build directory...");
-            BuildStatus.Refresh();
-            FileSystem.CopyDirectory(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]", TempBuildPath);
-            if (C2WPatchFlag.Checked)
-            {
-                FileSystem.CopyDirectory(JNUSToolDownloads + "0005001010004000", TempBuildPath);
-                FileSystem.CopyDirectory(JNUSToolDownloads + "0005001010004001", TempBuildPath);
-                string[] AncastKeyCopy = { AncastKey.Text };
-                File.WriteAllLines(TempToolsPath + "C2W\\starbuck_key.txt", AncastKeyCopy);
-                File.Copy(TempBuildPath + "code\\c2w.img", TempToolsPath + "C2W\\c2w.img");
-                Directory.SetCurrentDirectory(TempToolsPath + "C2W");
-                LauncherExeFile = "c2w_patcher.exe";
-                LauncherExeArgs = "-nc";
-                LaunchProgram();
-                File.Delete(TempBuildPath + "code\\c2w.img");
-                File.Copy(TempToolsPath + "C2W\\c2p.img", TempBuildPath + "code\\c2w.img", true);
-                File.Delete(TempToolsPath + "C2W\\c2p.img");
-                File.Delete(TempToolsPath + "C2W\\c2w.img");
-                File.Delete(TempToolsPath + "C2W\\starbuck_key.txt");
-            }
-            BuildProgress.Value = 50;
-            //////////////////////////////////////////////
-
-            //Generate app.xml & meta.xml
-            BuildStatus.Text = tr.Tr("Generating app.xml and meta.xml");
-            BuildStatus.Refresh();
-            string[] AppXML = { "<?xml version=\"1.0\" encoding=\"utf-8\"?>", "<app type=\"complex\" access=\"777\">", "  <version type=\"unsignedInt\" length=\"4\">16</version>", "  <os_version type=\"hexBinary\" length=\"8\">000500101000400A</os_version>", "  <title_id type=\"hexBinary\" length=\"8\">" + PackedTitleIDLine.Text + "</title_id>", "  <title_version type=\"hexBinary\" length=\"2\">0000</title_version>", "  <sdk_version type=\"unsignedInt\" length=\"4\">21204</sdk_version>", "  <app_type type=\"hexBinary\" length=\"4\">8000002E</app_type>", "  <group_id type=\"hexBinary\" length=\"4\">" + TitleIDHex + "</group_id>", "  <os_mask type=\"hexBinary\" length=\"32\">0000000000000000000000000000000000000000000000000000000000000000</os_mask>", "  <common_id type=\"hexBinary\" length=\"8\">0000000000000000</common_id>", "</app>" };
-            File.WriteAllLines(TempBuildPath + "code\\app.xml", AppXML);
-            if (EnablePackedLine2.Checked)
-            {
-                string[] MetaXML = { "<?xml version=\"1.0\" encoding=\"utf-8\"?>", "<menu type=\"complex\" access=\"777\">", "  <version type=\"unsignedInt\" length=\"4\">33</version>", "  <product_code type=\"string\" length=\"32\">WUP-N-" + TitleIDText + "</product_code>", "  <content_platform type=\"string\" length=\"32\">WUP</content_platform>", "  <company_code type=\"string\" length=\"8\">0001</company_code>", "  <mastering_date type=\"string\" length=\"32\"></mastering_date>", "  <logo_type type=\"unsignedInt\" length=\"4\">0</logo_type>", "  <app_launch_type type=\"hexBinary\" length=\"4\">00000000</app_launch_type>", "  <invisible_flag type=\"hexBinary\" length=\"4\">00000000</invisible_flag>", "  <no_managed_flag type=\"hexBinary\" length=\"4\">00000000</no_managed_flag>", "  <no_event_log type=\"hexBinary\" length=\"4\">00000002</no_event_log>", "  <no_icon_database type=\"hexBinary\" length=\"4\">00000000</no_icon_database>", "  <launching_flag type=\"hexBinary\" length=\"4\">00000004</launching_flag>", "  <install_flag type=\"hexBinary\" length=\"4\">00000000</install_flag>", "  <closing_msg type=\"unsignedInt\" length=\"4\">0</closing_msg>", "  <title_version type=\"unsignedInt\" length=\"4\">0</title_version>", "  <title_id type=\"hexBinary\" length=\"8\">" + PackedTitleIDLine.Text + "</title_id>", "  <group_id type=\"hexBinary\" length=\"4\">" + TitleIDHex + "</group_id>", "  <boss_id type=\"hexBinary\" length=\"8\">0000000000000000</boss_id>", "  <os_version type=\"hexBinary\" length=\"8\">000500101000400A</os_version>", "  <app_size type=\"hexBinary\" length=\"8\">0000000000000000</app_size>", "  <common_save_size type=\"hexBinary\" length=\"8\">0000000000000000</common_save_size>", "  <account_save_size type=\"hexBinary\" length=\"8\">0000000000000000</account_save_size>", "  <common_boss_size type=\"hexBinary\" length=\"8\">0000000000000000</common_boss_size>", "  <account_boss_size type=\"hexBinary\" length=\"8\">0000000000000000</account_boss_size>", "  <save_no_rollback type=\"unsignedInt\" length=\"4\">0</save_no_rollback>", "  <join_game_id type=\"hexBinary\" length=\"4\">00000000</join_game_id>", "  <join_game_mode_mask type=\"hexBinary\" length=\"8\">0000000000000000</join_game_mode_mask>", "  <bg_daemon_enable type=\"unsignedInt\" length=\"4\">0</bg_daemon_enable>", "  <olv_accesskey type=\"unsignedInt\" length=\"4\">3921400692</olv_accesskey>", "  <wood_tin type=\"unsignedInt\" length=\"4\">0</wood_tin>", "  <e_manual type=\"unsignedInt\" length=\"4\">0</e_manual>", "  <e_manual_version type=\"unsignedInt\" length=\"4\">0</e_manual_version>", "  <region type=\"hexBinary\" length=\"4\">00000002</region>", "  <pc_cero type=\"unsignedInt\" length=\"4\">128</pc_cero>", "  <pc_esrb type=\"unsignedInt\" length=\"4\">6</pc_esrb>", "  <pc_bbfc type=\"unsignedInt\" length=\"4\">192</pc_bbfc>", "  <pc_usk type=\"unsignedInt\" length=\"4\">128</pc_usk>", "  <pc_pegi_gen type=\"unsignedInt\" length=\"4\">128</pc_pegi_gen>", "  <pc_pegi_fin type=\"unsignedInt\" length=\"4\">192</pc_pegi_fin>", "  <pc_pegi_prt type=\"unsignedInt\" length=\"4\">128</pc_pegi_prt>", "  <pc_pegi_bbfc type=\"unsignedInt\" length=\"4\">128</pc_pegi_bbfc>", "  <pc_cob type=\"unsignedInt\" length=\"4\">128</pc_cob>", "  <pc_grb type=\"unsignedInt\" length=\"4\">128</pc_grb>", "  <pc_cgsrr type=\"unsignedInt\" length=\"4\">128</pc_cgsrr>", "  <pc_oflc type=\"unsignedInt\" length=\"4\">128</pc_oflc>", "  <pc_reserved0 type=\"unsignedInt\" length=\"4\">192</pc_reserved0>", "  <pc_reserved1 type=\"unsignedInt\" length=\"4\">192</pc_reserved1>", "  <pc_reserved2 type=\"unsignedInt\" length=\"4\">192</pc_reserved2>", "  <pc_reserved3 type=\"unsignedInt\" length=\"4\">192</pc_reserved3>", "  <ext_dev_nunchaku type=\"unsignedInt\" length=\"4\">0</ext_dev_nunchaku>", "  <ext_dev_classic type=\"unsignedInt\" length=\"4\">0</ext_dev_classic>", "  <ext_dev_urcc type=\"unsignedInt\" length=\"4\">0</ext_dev_urcc>", "  <ext_dev_board type=\"unsignedInt\" length=\"4\">0</ext_dev_board>", "  <ext_dev_usb_keyboard type=\"unsignedInt\" length=\"4\">0</ext_dev_usb_keyboard>", "  <ext_dev_etc type=\"unsignedInt\" length=\"4\">0</ext_dev_etc>", "  <ext_dev_etc_name type=\"string\" length=\"512\"></ext_dev_etc_name>", "  <eula_version type=\"unsignedInt\" length=\"4\">0</eula_version>", "  <drc_use type=\"unsignedInt\" length=\"4\">" + DRCUSE + "</drc_use>", "  <network_use type=\"unsignedInt\" length=\"4\">0</network_use>", "  <online_account_use type=\"unsignedInt\" length=\"4\">0</online_account_use>", "  <direct_boot type=\"unsignedInt\" length=\"4\">0</direct_boot>", "  <reserved_flag0 type=\"hexBinary\" length=\"4\">00010001</reserved_flag0>", "  <reserved_flag1 type=\"hexBinary\" length=\"4\">00080023</reserved_flag1>", "  <reserved_flag2 type=\"hexBinary\" length=\"4\">" + TitleIDHex + "</reserved_flag2>", "  <reserved_flag3 type=\"hexBinary\" length=\"4\">00000000</reserved_flag3>", "  <reserved_flag4 type=\"hexBinary\" length=\"4\">00000000</reserved_flag4>", "  <reserved_flag5 type=\"hexBinary\" length=\"4\">00000000</reserved_flag5>", "  <reserved_flag6 type=\"hexBinary\" length=\"4\">00000003</reserved_flag6>", "  <reserved_flag7 type=\"hexBinary\" length=\"4\">00000005</reserved_flag7>", "  <longname_ja type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_ja>", "  <longname_en type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_en>", "  <longname_fr type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_fr>", "  <longname_de type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_de>", "  <longname_it type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_it>", "  <longname_es type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_es>", "  <longname_zhs type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_zhs>", "  <longname_ko type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_ko>", "  <longname_nl type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_nl>", "  <longname_pt type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_pt>", "  <longname_ru type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_ru>", "  <longname_zht type=\"string\" length=\"512\">" + PackedTitleLine1.Text, PackedTitleLine2.Text + "</longname_zht>", "  <shortname_ja type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_ja>", "  <shortname_en type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_en>", "  <shortname_fr type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_fr>", "  <shortname_de type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_de>", "  <shortname_it type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_it>", "  <shortname_es type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_es>", "  <shortname_zhs type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_zhs>", "  <shortname_ko type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_ko>", "  <shortname_nl type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_nl>", "  <shortname_pt type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_pt>", "  <shortname_ru type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_ru>", "  <shortname_zht type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_zht>", "  <publisher_ja type=\"string\" length=\"256\"></publisher_ja>", "  <publisher_en type=\"string\" length=\"256\"></publisher_en>", "  <publisher_fr type=\"string\" length=\"256\"></publisher_fr>", "  <publisher_de type=\"string\" length=\"256\"></publisher_de>", "  <publisher_it type=\"string\" length=\"256\"></publisher_it>", "  <publisher_es type=\"string\" length=\"256\"></publisher_es>", "  <publisher_zhs type=\"string\" length=\"256\"></publisher_zhs>", "  <publisher_ko type=\"string\" length=\"256\"></publisher_ko>", "  <publisher_nl type=\"string\" length=\"256\"></publisher_nl>", "  <publisher_pt type=\"string\" length=\"256\"></publisher_pt>", "  <publisher_ru type=\"string\" length=\"256\"></publisher_ru>", "  <publisher_zht type=\"string\" length=\"256\"></publisher_zht>", "  <add_on_unique_id0 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id0>", "  <add_on_unique_id1 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id1>", "  <add_on_unique_id2 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id2>", "  <add_on_unique_id3 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id3>", "  <add_on_unique_id4 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id4>", "  <add_on_unique_id5 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id5>", "  <add_on_unique_id6 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id6>", "  <add_on_unique_id7 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id7>", "  <add_on_unique_id8 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id8>", "  <add_on_unique_id9 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id9>", "  <add_on_unique_id10 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id10>", "  <add_on_unique_id11 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id11>", "  <add_on_unique_id12 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id12>", "  <add_on_unique_id13 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id13>", "  <add_on_unique_id14 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id14>", "  <add_on_unique_id15 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id15>", "  <add_on_unique_id16 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id16>", "  <add_on_unique_id17 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id17>", "  <add_on_unique_id18 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id18>", "  <add_on_unique_id19 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id19>", "  <add_on_unique_id20 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id20>", "  <add_on_unique_id21 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id21>", "  <add_on_unique_id22 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id22>", "  <add_on_unique_id23 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id23>", "  <add_on_unique_id24 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id24>", "  <add_on_unique_id25 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id25>", "  <add_on_unique_id26 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id26>", "  <add_on_unique_id27 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id27>", "  <add_on_unique_id28 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id28>", "  <add_on_unique_id29 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id29>", "  <add_on_unique_id30 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id30>", "  <add_on_unique_id31 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id31>", "</menu>" };
-                File.WriteAllLines(TempBuildPath + "meta\\meta.xml", MetaXML);
-            }
-            else
-            {
-                string[] MetaXML = { "<?xml version=\"1.0\" encoding=\"utf-8\"?>", "<menu type=\"complex\" access=\"777\">", "  <version type=\"unsignedInt\" length=\"4\">33</version>", "  <product_code type=\"string\" length=\"32\">WUP-N-" + TitleIDText + "</product_code>", "  <content_platform type=\"string\" length=\"32\">WUP</content_platform>", "  <company_code type=\"string\" length=\"8\">0001</company_code>", "  <mastering_date type=\"string\" length=\"32\"></mastering_date>", "  <logo_type type=\"unsignedInt\" length=\"4\">0</logo_type>", "  <app_launch_type type=\"hexBinary\" length=\"4\">00000000</app_launch_type>", "  <invisible_flag type=\"hexBinary\" length=\"4\">00000000</invisible_flag>", "  <no_managed_flag type=\"hexBinary\" length=\"4\">00000000</no_managed_flag>", "  <no_event_log type=\"hexBinary\" length=\"4\">00000002</no_event_log>", "  <no_icon_database type=\"hexBinary\" length=\"4\">00000000</no_icon_database>", "  <launching_flag type=\"hexBinary\" length=\"4\">00000004</launching_flag>", "  <install_flag type=\"hexBinary\" length=\"4\">00000000</install_flag>", "  <closing_msg type=\"unsignedInt\" length=\"4\">0</closing_msg>", "  <title_version type=\"unsignedInt\" length=\"4\">0</title_version>", "  <title_id type=\"hexBinary\" length=\"8\">" + PackedTitleIDLine.Text + "</title_id>", "  <group_id type=\"hexBinary\" length=\"4\">" + TitleIDHex + "</group_id>", "  <boss_id type=\"hexBinary\" length=\"8\">0000000000000000</boss_id>", "  <os_version type=\"hexBinary\" length=\"8\">000500101000400A</os_version>", "  <app_size type=\"hexBinary\" length=\"8\">0000000000000000</app_size>", "  <common_save_size type=\"hexBinary\" length=\"8\">0000000000000000</common_save_size>", "  <account_save_size type=\"hexBinary\" length=\"8\">0000000000000000</account_save_size>", "  <common_boss_size type=\"hexBinary\" length=\"8\">0000000000000000</common_boss_size>", "  <account_boss_size type=\"hexBinary\" length=\"8\">0000000000000000</account_boss_size>", "  <save_no_rollback type=\"unsignedInt\" length=\"4\">0</save_no_rollback>", "  <join_game_id type=\"hexBinary\" length=\"4\">00000000</join_game_id>", "  <join_game_mode_mask type=\"hexBinary\" length=\"8\">0000000000000000</join_game_mode_mask>", "  <bg_daemon_enable type=\"unsignedInt\" length=\"4\">0</bg_daemon_enable>", "  <olv_accesskey type=\"unsignedInt\" length=\"4\">3921400692</olv_accesskey>", "  <wood_tin type=\"unsignedInt\" length=\"4\">0</wood_tin>", "  <e_manual type=\"unsignedInt\" length=\"4\">0</e_manual>", "  <e_manual_version type=\"unsignedInt\" length=\"4\">0</e_manual_version>", "  <region type=\"hexBinary\" length=\"4\">00000002</region>", "  <pc_cero type=\"unsignedInt\" length=\"4\">128</pc_cero>", "  <pc_esrb type=\"unsignedInt\" length=\"4\">6</pc_esrb>", "  <pc_bbfc type=\"unsignedInt\" length=\"4\">192</pc_bbfc>", "  <pc_usk type=\"unsignedInt\" length=\"4\">128</pc_usk>", "  <pc_pegi_gen type=\"unsignedInt\" length=\"4\">128</pc_pegi_gen>", "  <pc_pegi_fin type=\"unsignedInt\" length=\"4\">192</pc_pegi_fin>", "  <pc_pegi_prt type=\"unsignedInt\" length=\"4\">128</pc_pegi_prt>", "  <pc_pegi_bbfc type=\"unsignedInt\" length=\"4\">128</pc_pegi_bbfc>", "  <pc_cob type=\"unsignedInt\" length=\"4\">128</pc_cob>", "  <pc_grb type=\"unsignedInt\" length=\"4\">128</pc_grb>", "  <pc_cgsrr type=\"unsignedInt\" length=\"4\">128</pc_cgsrr>", "  <pc_oflc type=\"unsignedInt\" length=\"4\">128</pc_oflc>", "  <pc_reserved0 type=\"unsignedInt\" length=\"4\">192</pc_reserved0>", "  <pc_reserved1 type=\"unsignedInt\" length=\"4\">192</pc_reserved1>", "  <pc_reserved2 type=\"unsignedInt\" length=\"4\">192</pc_reserved2>", "  <pc_reserved3 type=\"unsignedInt\" length=\"4\">192</pc_reserved3>", "  <ext_dev_nunchaku type=\"unsignedInt\" length=\"4\">0</ext_dev_nunchaku>", "  <ext_dev_classic type=\"unsignedInt\" length=\"4\">0</ext_dev_classic>", "  <ext_dev_urcc type=\"unsignedInt\" length=\"4\">0</ext_dev_urcc>", "  <ext_dev_board type=\"unsignedInt\" length=\"4\">0</ext_dev_board>", "  <ext_dev_usb_keyboard type=\"unsignedInt\" length=\"4\">0</ext_dev_usb_keyboard>", "  <ext_dev_etc type=\"unsignedInt\" length=\"4\">0</ext_dev_etc>", "  <ext_dev_etc_name type=\"string\" length=\"512\"></ext_dev_etc_name>", "  <eula_version type=\"unsignedInt\" length=\"4\">0</eula_version>", "  <drc_use type=\"unsignedInt\" length=\"4\">" + DRCUSE + "</drc_use>", "  <network_use type=\"unsignedInt\" length=\"4\">0</network_use>", "  <online_account_use type=\"unsignedInt\" length=\"4\">0</online_account_use>", "  <direct_boot type=\"unsignedInt\" length=\"4\">0</direct_boot>", "  <reserved_flag0 type=\"hexBinary\" length=\"4\">00010001</reserved_flag0>", "  <reserved_flag1 type=\"hexBinary\" length=\"4\">00080023</reserved_flag1>", "  <reserved_flag2 type=\"hexBinary\" length=\"4\">" + TitleIDHex + "</reserved_flag2>", "  <reserved_flag3 type=\"hexBinary\" length=\"4\">00000000</reserved_flag3>", "  <reserved_flag4 type=\"hexBinary\" length=\"4\">00000000</reserved_flag4>", "  <reserved_flag5 type=\"hexBinary\" length=\"4\">00000000</reserved_flag5>", "  <reserved_flag6 type=\"hexBinary\" length=\"4\">00000003</reserved_flag6>", "  <reserved_flag7 type=\"hexBinary\" length=\"4\">00000005</reserved_flag7>", "  <longname_ja type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_ja>", "  <longname_en type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_en>", "  <longname_fr type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_fr>", "  <longname_de type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_de>", "  <longname_it type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_it>", "  <longname_es type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_es>", "  <longname_zhs type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_zhs>", "  <longname_ko type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_ko>", "  <longname_nl type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_nl>", "  <longname_pt type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_pt>", "  <longname_ru type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_ru>", "  <longname_zht type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</longname_zht>", "  <shortname_ja type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_ja>", "  <shortname_en type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_en>", "  <shortname_fr type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_fr>", "  <shortname_de type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_de>", "  <shortname_it type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_it>", "  <shortname_es type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_es>", "  <shortname_zhs type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_zhs>", "  <shortname_ko type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_ko>", "  <shortname_nl type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_nl>", "  <shortname_pt type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_pt>", "  <shortname_ru type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_ru>", "  <shortname_zht type=\"string\" length=\"512\">" + PackedTitleLine1.Text + "</shortname_zht>", "  <publisher_ja type=\"string\" length=\"256\"></publisher_ja>", "  <publisher_en type=\"string\" length=\"256\"></publisher_en>", "  <publisher_fr type=\"string\" length=\"256\"></publisher_fr>", "  <publisher_de type=\"string\" length=\"256\"></publisher_de>", "  <publisher_it type=\"string\" length=\"256\"></publisher_it>", "  <publisher_es type=\"string\" length=\"256\"></publisher_es>", "  <publisher_zhs type=\"string\" length=\"256\"></publisher_zhs>", "  <publisher_ko type=\"string\" length=\"256\"></publisher_ko>", "  <publisher_nl type=\"string\" length=\"256\"></publisher_nl>", "  <publisher_pt type=\"string\" length=\"256\"></publisher_pt>", "  <publisher_ru type=\"string\" length=\"256\"></publisher_ru>", "  <publisher_zht type=\"string\" length=\"256\"></publisher_zht>", "  <add_on_unique_id0 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id0>", "  <add_on_unique_id1 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id1>", "  <add_on_unique_id2 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id2>", "  <add_on_unique_id3 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id3>", "  <add_on_unique_id4 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id4>", "  <add_on_unique_id5 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id5>", "  <add_on_unique_id6 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id6>", "  <add_on_unique_id7 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id7>", "  <add_on_unique_id8 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id8>", "  <add_on_unique_id9 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id9>", "  <add_on_unique_id10 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id10>", "  <add_on_unique_id11 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id11>", "  <add_on_unique_id12 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id12>", "  <add_on_unique_id13 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id13>", "  <add_on_unique_id14 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id14>", "  <add_on_unique_id15 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id15>", "  <add_on_unique_id16 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id16>", "  <add_on_unique_id17 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id17>", "  <add_on_unique_id18 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id18>", "  <add_on_unique_id19 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id19>", "  <add_on_unique_id20 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id20>", "  <add_on_unique_id21 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id21>", "  <add_on_unique_id22 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id22>", "  <add_on_unique_id23 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id23>", "  <add_on_unique_id24 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id24>", "  <add_on_unique_id25 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id25>", "  <add_on_unique_id26 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id26>", "  <add_on_unique_id27 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id27>", "  <add_on_unique_id28 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id28>", "  <add_on_unique_id29 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id29>", "  <add_on_unique_id30 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id30>", "  <add_on_unique_id31 type=\"hexBinary\" length=\"4\">00000000</add_on_unique_id31>", "</menu>" };
-                File.WriteAllLines(TempBuildPath + "meta\\meta.xml", MetaXML);
-            }
-            BuildProgress.Value = 52;
-            /////////////////////////////
-
-            //Convert PNG files to TGA
-            BuildStatus.Text = tr.Tr("Converting all image sources to expected TGA specification...");
-            BuildStatus.Refresh();
-            LauncherExeFile = TempToolsPath + "IMG\\png2tgacmd.exe";
-            LauncherExeArgs = "-i \"" + TempIconPath + "\" -o \"" + TempBuildPath + "meta\" --width=128 --height=128 --tga-bpp=32 --tga-compression=none";
-            LaunchProgram();
-            LauncherExeFile = TempToolsPath + "IMG\\png2tgacmd.exe";
-            LauncherExeArgs = "-i \"" + TempBannerPath + "\" -o \"" + TempBuildPath + "meta\" --width=1280 --height=720 --tga-bpp=24 --tga-compression=none";
-            LaunchProgram();
-            if (FlagDrcSpecified == false)
-            {
-                File.Copy(TempBannerPath, TempDrcPath);
-            }
-            LauncherExeFile = TempToolsPath + "IMG\\png2tgacmd.exe";
-            LauncherExeArgs = "-i \"" + TempDrcPath + "\" -o \"" + TempBuildPath + "meta\" --width=854 --height=480 --tga-bpp=24 --tga-compression=none";
-            LaunchProgram();
-            if (FlagLogoSpecified)
-            {
-                LauncherExeFile = TempToolsPath + "IMG\\png2tgacmd.exe";
-                LauncherExeArgs = "-i \"" + TempLogoPath + "\" -o \"" + TempBuildPath + "meta\" --width=170 --height=42 --tga-bpp=32 --tga-compression=none";
-                LaunchProgram();
-            }
-            if (FlagDrcSpecified == false) { File.Delete(TempDrcPath); }
-            BuildProgress.Value = 55;
-            //////////////////////////
-
-            //Convert Boot Sound if provided by user
-            if (FlagBootSoundSpecified)
-            {
-                BuildStatus.Text = tr.Tr("Converting user provided sound to btsnd format...");
-                BuildStatus.Refresh();
-                LauncherExeFile = TempToolsPath + "SOX\\sox.exe";
-                LauncherExeArgs = "\"" + OpenBootSound.FileName + "\" -b 16 \"" + TempSoundPath + "\" channels 2 rate 48k trim 0 6";
-                LaunchProgram();
-                File.Delete(TempBuildPath + "meta\\bootSound.btsnd");
-                LauncherExeFile = TempToolsPath + "JAR\\wav2btsnd.exe";
-                LauncherExeArgs = "-in \"" + TempSoundPath + "\" -out \"" + TempBuildPath + "meta\\bootSound.btsnd\"" + LoopString;
-                LaunchProgram();
-                File.Delete(TempSoundPath);
-            }
-            BuildProgress.Value = 60;
-            ////////////////////////////////////////
-
-            //Build ISO based on type and user specification
-            BuildStatus.Text = tr.Tr("Processing game for NFS Conversion...");
-            BuildStatus.Refresh();
-            if (OpenGame.FileName != null) { OGfilepath = OpenGame.FileName; }
-            if (SystemType == "wii")
-            {
-                if (FlagWBFS)
-                {
-                    LauncherExeFile = TempToolsPath + "EXE\\wbfs_file.exe";
-                    LauncherExeArgs = "\"" + OpenGame.FileName + "\" convert \"" + TempSourcePath + "wbfsconvert.iso\"";
-                    LaunchProgram();
-                    OpenGame.FileName = TempSourcePath + "wbfsconvert.iso";
-                }
-                if (DisableTrimming.Checked == false)
-                {
-                    LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                    LauncherExeArgs = "extract " + NormalizeCmdlineArg(OpenGame.FileName) + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "ISOEXTRACT") + " --psel data -vv1";
-                    LaunchProgram();
-                    MessageBox.Show("");
-                    if (ForceCC.Checked)
-                    {
-                        LauncherExeFile = TempToolsPath + "EXE\\GetExtTypePatcher.exe";
-                        LauncherExeArgs = "\"" + TempSourcePath + "ISOEXTRACT\\sys\\main.dol\" -nc";
-                        LaunchProgram();
-                    }
-                    if (WiiVMC.Checked)
-                    {
-                        MessageBox.Show(tr.Tr("The Wii Video Mode Changer will now be launched. I recommend using the Smart Patcher option. \n\nIf you're scared and don't know what you're doing, close the patcher window and nothing will be patched. \n\nClick OK to continue..."));
-                        HideProcess = false;
-                        LauncherExeFile = TempToolsPath + "EXE\\wii-vmc.exe";
-                        LauncherExeArgs = "\"" + TempSourcePath + "ISOEXTRACT\\sys\\main.dol\"";
-                        LaunchProgram();
-                        HideProcess = true;
-                        MessageBox.Show(tr.Tr("Conversion will now continue..."));
-                    }
-                    LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                    LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "ISOEXTRACT") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
-                    LaunchProgram();
-                    Directory.Delete(TempSourcePath + "ISOEXTRACT", true);
-                    if (File.Exists(TempSourcePath + "wbfsconvert.iso")) { File.Delete(TempSourcePath + "wbfsconvert.iso"); }
-                    OpenGame.FileName = TempSourcePath + "game.iso";
-                }
-            }
-            if (SystemType == "dol")
-            {
-                FileSystem.CreateDirectory(TempSourcePath + "TEMPISOBASE");
-                FileSystem.CopyDirectory(TempToolsPath + "BASE", TempSourcePath + "TEMPISOBASE");
-                File.Copy(OpenGame.FileName, TempSourcePath + "TEMPISOBASE\\sys\\main.dol");
-                LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
-                LaunchProgram();
-                Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
-                OpenGame.FileName = TempSourcePath + "game.iso";
-            }
-            if (SystemType == "wiiware")
-            {
-                FileSystem.CreateDirectory(TempSourcePath + "TEMPISOBASE");
-                FileSystem.CopyDirectory(TempToolsPath + "BASE", TempSourcePath + "TEMPISOBASE");
-                if (Force43NAND.Checked)
-                {
-                    File.Copy(TempToolsPath + "DOL\\FIX94_wiivc_chan_booter_force43.dol", TempSourcePath + "TEMPISOBASE\\sys\\main.dol");
-                }
-                else
-                {
-                    File.Copy(TempToolsPath + "DOL\\FIX94_wiivc_chan_booter.dol", TempSourcePath + "TEMPISOBASE\\sys\\main.dol");
-                }
-                string[] TitleTXT = { GameSourceDirectory.Text };
-                File.WriteAllLines(TempSourcePath + "TEMPISOBASE\\files\\title.txt", TitleTXT);
-                LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
-                LaunchProgram();
-                Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
-                OpenGame.FileName = TempSourcePath + "game.iso";
-            }
-            if (SystemType == "gcn")
-            {
-                FileSystem.CreateDirectory(TempSourcePath + "TEMPISOBASE");
-                FileSystem.CopyDirectory(TempToolsPath + "BASE", TempSourcePath + "TEMPISOBASE");
-                if (Force43NINTENDONT.Checked)
-                {
-                    File.Copy(TempToolsPath + "DOL\\FIX94_nintendont_force43_autoboot.dol", TempSourcePath + "TEMPISOBASE\\sys\\main.dol");
-                }
-                else if (CustomMainDol.Checked)
-                {
-                    File.Copy(OpenMainDol.FileName, TempSourcePath + "TEMPISOBASE\\sys\\main.dol");
-                }
-                else if (DisableNintendontAutoboot.Checked)
-                {
-                    File.Copy(TempToolsPath + "DOL\\FIX94_nintendont_forwarder.dol", TempSourcePath + "TEMPISOBASE\\sys\\main.dol");
-                }
-                else
-                {
-                    File.Copy(TempToolsPath + "DOL\\FIX94_nintendont_default_autoboot.dol", TempSourcePath + "TEMPISOBASE\\sys\\main.dol");
-                }
-                File.Copy(OpenGame.FileName, TempSourcePath + "TEMPISOBASE\\files\\game.iso");
-                if (FlagGC2Specified) { File.Copy(OpenGC2.FileName, TempSourcePath + "TEMPISOBASE\\files\\disc2.iso"); }
-                LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
-                MessageBox.Show(LauncherExeArgs);
-                LaunchProgram();
-                Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
-                OpenGame.FileName = TempSourcePath + "game.iso";
-            }
-            LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-            LauncherExeArgs = "extract " + NormalizeCmdlineArg(OpenGame.FileName) + " --psel data --files +tmd.bin --files +ticket.bin --dest " + NormalizeCmdlineArg(TempSourcePath + "TIKTEMP") + " -vv1";
-            LaunchProgram();
-            File.Copy(TempSourcePath + "TIKTEMP\\tmd.bin", TempBuildPath + "code\\rvlt.tmd");
-            File.Copy(TempSourcePath + "TIKTEMP\\ticket.bin", TempBuildPath + "code\\rvlt.tik");
-            Directory.Delete(TempSourcePath + "TIKTEMP", true);
-            BuildProgress.Value = 70;
-            ////////////////////////////////////////////////
-
-            //Convert ISO to NFS format
-            BuildStatus.Text = tr.Tr("Converting processed game to NFS format...");
-            Directory.SetCurrentDirectory(TempBuildPath + "content");
-            BuildStatus.Refresh();
-            string lrpatchflag = "";
-            if (LRPatch.Checked)
-            {
-                lrpatchflag = " -lrpatch";
-            }
-            if (SystemType == "wii")
-            {
-                LauncherExeFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
-                LauncherExeArgs = "-enc" + nfspatchflag + lrpatchflag + " -iso \"" + OpenGame.FileName + "\"";
-                LaunchProgram();
-            }
-            if (SystemType == "dol")
-            {
-                LauncherExeFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
-                LauncherExeArgs = "-enc -homebrew" + passpatch + " -iso \"" + OpenGame.FileName + "\"";
-                LaunchProgram();
-            }
-            if (SystemType == "wiiware")
-            {
-                LauncherExeFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
-                LauncherExeArgs = "-enc -homebrew" + nfspatchflag + lrpatchflag + " -iso \"" + OpenGame.FileName + "\"";
-                LaunchProgram();
-            }
-            if (SystemType == "gcn")
-            {
-                LauncherExeFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
-                LauncherExeArgs = "-enc -homebrew -passthrough -iso \"" + OpenGame.FileName + "\"";
-                LaunchProgram();
-            }
-            if (DisableTrimming.Checked == false) { File.Delete(OpenGame.FileName); } else if (FlagWBFS) { File.Delete(OpenGame.FileName); }
-            BuildProgress.Value = 85;
-            ///////////////////////////
-
-            //Encrypt contents with NUSPacker
-            BuildStatus.Text = tr.Tr("Encrypting contents into installable WUP Package...");
-            BuildStatus.Refresh();
-            Directory.SetCurrentDirectory(TempRootPath);
-            LauncherExeFile = TempToolsPath + "JAR\\NUSPacker.exe";
-            LauncherExeArgs = "-in BUILDDIR -out \"" + OutputDirectory.Text + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text + "\" -encryptKeyWith " + WiiUCommonKey.Text;
-            LaunchProgram();
-            BuildProgress.Value = 100;
-            /////////////////////////////////
-
-            //Delete Temp Directories
-            Directory.SetCurrentDirectory(Application.StartupPath);
-            Directory.Delete(TempBuildPath, true);
-            Directory.Delete(TempRootPath + "output", true);
-            Directory.Delete(TempRootPath + "tmp", true);
-            Directory.CreateDirectory(TempBuildPath);
-            /////////////////////////
-
-            //END
-            BuildStatus.Text = tr.Tr("Conversion complete...");
-            BuildStatus.Refresh();
-            if (PropmtForSucceed && !InClosing)
-            {
-                MessageBox.Show(tr.Tr("Conversion Complete! Your packed game can be found here: ")
-                    + OutputDirectory.Text + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text
-                    + tr.Tr(".\n\nInstall your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.\n\n Click OK to continue..."),
-                    PackedTitleLine1.Text + tr.Tr(" Conversion Complete"));
-            }
-            if (OGfilepath != null) { OpenGame.FileName = OGfilepath; }
-            BuildStatus.Text = "";
-            MainTabs.Enabled = true;
-            MainTabs.SelectedTab = SourceFilesTab;
-        BuildProcessFin:;
-            /////
         }
 
         private struct WiiVcGenerateImage
@@ -3897,16 +3300,6 @@ namespace TeconMoon_s_WiiVC_Injector
             FlagRepo = false;
         }
 
-        private void BrowseOutputDir_Click(object sender, EventArgs e)
-        {
-            if (OutputFolderSelect.ShowDialog() == DialogResult.OK)
-            {
-                OutputDirectory.Text = OutputFolderSelect.SelectedPath;
-                Registry.CurrentUser.CreateSubKey("WiiVCInjector")
-                    .SetValue("OutputDirectory", OutputDirectory.Text);
-            }
-        }
-
         private void AutoBuildDragDrop(DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -3942,6 +3335,38 @@ namespace TeconMoon_s_WiiVC_Injector
         private void AutoScrollBuildOutput_Click(object sender, EventArgs e)
         {
             AutoScrollBuildOutput.Checked = !AutoScrollBuildOutput.Checked;
+        }
+
+        private void BrowseOutputDir_Click(object sender, EventArgs e)
+        {
+            if (OutputFolderSelect.ShowDialog() == DialogResult.OK)
+            {
+                OutputDirectory.Text = OutputFolderSelect.SelectedPath;
+                Registry.CurrentUser.CreateSubKey("WiiVCInjector")
+                    .SetValue("OutputDirectory", OutputDirectory.Text);
+            }
+        }
+
+        private bool MoveTempDir(string source, string destination)
+        {
+            if (source.Equals(destination, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            try
+            {
+                FileSystem.MoveDirectory(
+                    source, destination, 
+                    UIOption.AllDialogs, 
+                    UICancelOption.ThrowException);
+            }
+            catch (Exception)
+            {
+                return false;
+            }           
+
+            return true;
         }
 
         private void BrowseTempDir_Click(object sender, EventArgs e)
