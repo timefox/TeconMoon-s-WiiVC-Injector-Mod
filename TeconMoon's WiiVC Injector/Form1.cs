@@ -491,7 +491,6 @@ namespace TeconMoon_s_WiiVC_Injector
         string TempDrcPath = TempRootPath + "SOURCETEMP\\bootDrcTex.png";
         string TempLogoPath = TempRootPath + "SOURCETEMP\\bootLogoTex.png";
         string TempSoundPath = TempRootPath + "SOURCETEMP\\bootSound.wav";
-        string OGfilepath;
 
         enum BuildOutputType
         {
