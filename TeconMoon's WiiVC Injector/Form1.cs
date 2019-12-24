@@ -743,6 +743,18 @@ namespace TeconMoon_s_WiiVC_Injector
             }
         }
 
+        private void DeleteTempDir()
+        {
+            try
+            {
+                Directory.Delete(TempRootPath, true);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
         //Cleanup when program is closed
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
@@ -762,7 +774,7 @@ namespace TeconMoon_s_WiiVC_Injector
                     BuildCompletedEx = null;
                     BuildCompletedEx += ((s, a) =>
                     {
-                        Directory.Delete(TempRootPath, true);
+                        DeleteTempDir();
                         Close();
                     });
 
@@ -780,26 +792,20 @@ namespace TeconMoon_s_WiiVC_Injector
                         try
                         {
                             BuilderThread.Abort();
-                            Directory.Delete(TempRootPath, true);
                         }
                         catch (Exception)
                         {
 
                         }
 
+                        DeleteTempDir();
+
                         break;
                     }
                 }
                 else
                 {
-                    try
-                    {
-                        Directory.Delete(TempRootPath, true);
-                    }
-                    catch (Exception)
-                    {
-
-                    }
+                    DeleteTempDir();
                 }
 
                 return;
@@ -819,8 +825,8 @@ namespace TeconMoon_s_WiiVC_Injector
                     {
                         BuildCompletedEx = null;
                         BuildCompletedEx += ((s, a) =>
-                        {                           
-                            Directory.Delete(TempRootPath, true);
+                        {
+                            DeleteTempDir();
                             InClosing = true;
                             Close();
                         });
@@ -829,7 +835,8 @@ namespace TeconMoon_s_WiiVC_Injector
                         e.Cancel = true;
                         break;
                     }
-                    Directory.Delete(TempRootPath, true);
+
+                    DeleteTempDir();
                     break;
             }
         }
@@ -3377,6 +3384,22 @@ namespace TeconMoon_s_WiiVC_Injector
                 TemporaryDirectory.Text = tempFolderSelect.SelectedPath;
                 Registry.CurrentUser.CreateSubKey("WiiVCInjector")
                     .SetValue("TemporaryDirectory", TemporaryDirectory.Text);
+            }
+        }
+
+        private void OpenOutputDirButton_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(OutputDirectory.Text))
+            {
+                System.Diagnostics.Process.Start(OutputDirectory.Text);
+            }
+        }
+
+        private void OpenTempDirButton_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(TemporaryDirectory.Text))
+            {
+                System.Diagnostics.Process.Start(TemporaryDirectory.Text);
             }
         }
     }
