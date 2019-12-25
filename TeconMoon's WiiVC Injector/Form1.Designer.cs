@@ -143,7 +143,6 @@
             this.OpenLogo = new System.Windows.Forms.OpenFileDialog();
             this.OpenBootSound = new System.Windows.Forms.OpenFileDialog();
             this.OpenMainDol = new System.Windows.Forms.OpenFileDialog();
-            this.OutputFolderSelect = new System.Windows.Forms.FolderBrowserDialog();
             this.OpenGC2 = new System.Windows.Forms.OpenFileDialog();
             this.MainTableLayout.SuspendLayout();
             this.MainTabs.SuspendLayout();
@@ -1668,7 +1667,6 @@
         private System.Windows.Forms.ProgressBar BuildProgress;
         private System.Windows.Forms.Label BuildStatus;
         private System.Windows.Forms.Label AdvanceCheck;
-        private System.Windows.Forms.FolderBrowserDialog OutputFolderSelect;
         private System.Windows.Forms.Button SDCardStuff;
         private System.Windows.Forms.Label GC2SourceDirectory;
         private System.Windows.Forms.Button GC2SourceButton;

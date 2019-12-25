@@ -11,7 +11,7 @@ namespace TeconMoon_s_WiiVC_Injector
 {
     static class Program
     {
-        private static int _ModVersion = 8;
+        private static int _ModVersion = 9;
 
         public static int ModVersion
         {

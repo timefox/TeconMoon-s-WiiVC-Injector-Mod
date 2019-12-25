@@ -45,6 +45,8 @@ namespace TeconMoon_s_WiiVC_Injector
             this.DebugButton.Visible = false;
 #endif
 
+            LoadSettings();
+
             // 
             // Initlize actions for build thread.
             //
@@ -176,6 +178,25 @@ namespace TeconMoon_s_WiiVC_Injector
                     File.Move(tempPath, tempImagePath);
                 }
             }
+        }
+
+        private void LoadSettings()
+        {
+            //Initialize Registry values if they don't exist and pull values from them if they do
+            RegistryKey appKey = Registry.CurrentUser.CreateSubKey("WiiVCInjector");
+            if (appKey.GetValue("WiiUCommonKey") == null)
+            {
+                appKey.SetValue("WiiUCommonKey", "00000000000000000000000000000000");
+            }
+            WiiUCommonKey.Text = appKey.GetValue("WiiUCommonKey").ToString();
+            if (appKey.GetValue("TitleKey") == null)
+            {
+                appKey.SetValue("TitleKey", "00000000000000000000000000000000");
+            }
+            TitleKey.Text = appKey.GetValue("TitleKey").ToString();
+            OutputDirectory.Text = appKey.GetValue("OutputDirectory") as string;
+            TemporaryDirectory.Text = GetTempRootPath(false);
+            appKey.Close();
         }
 
         void ApplyTranslation()
@@ -1090,22 +1111,6 @@ namespace TeconMoon_s_WiiVC_Injector
 
         void CheckBuildRequirements()
         {
-            //Initialize Registry values if they don't exist and pull values from them if they do
-            RegistryKey appKey = Registry.CurrentUser.CreateSubKey("WiiVCInjector");
-            if (appKey.GetValue("WiiUCommonKey") == null)
-            {
-                appKey.SetValue("WiiUCommonKey", "00000000000000000000000000000000");
-            }
-            WiiUCommonKey.Text = appKey.GetValue("WiiUCommonKey").ToString();
-            if (appKey.GetValue("TitleKey") == null)
-            {
-                appKey.SetValue("TitleKey", "00000000000000000000000000000000");
-            }
-            TitleKey.Text = appKey.GetValue("TitleKey").ToString();
-            OutputDirectory.Text = appKey.GetValue("OutputDirectory") as string;
-            TemporaryDirectory.Text = GetTempRootPath(false);
-            appKey.Close();
-
             //Generate MD5 hashes for loaded keys and check them
             WiiUCommonKey.Text = WiiUCommonKey.Text.ToUpper();
             sSourceData = WiiUCommonKey.Text;
@@ -2274,16 +2279,13 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private bool PrepareTemporaryDirectory()
         {
+            TemporaryDirectory.Text = TemporaryDirectory.Text.Trim();
+
             string tempDir = TemporaryDirectory.Text;
 
             if (String.IsNullOrWhiteSpace(tempDir))
             {
-                tempDir = TempRootPath;
-            }
-
-            if (String.IsNullOrWhiteSpace(tempDir))
-            {
-                tempDir = GetTempRootPath() + "WiiVCInjector\\";
+                tempDir = GetTempRootPath();
             }
 
             if (!tempDir.EndsWith("\\"))
@@ -2291,15 +2293,13 @@ namespace TeconMoon_s_WiiVC_Injector
                 tempDir += "\\";
             }
 
-            if (!tempDir.EndsWith("WiiVCInjector\\", StringComparison.OrdinalIgnoreCase))
+            string newTempRootPath = tempDir + "WiiVCInjector\\";
+            if (MoveTempDir(TempRootPath, newTempRootPath))
             {
-                tempDir += "WiiVCInjector\\";
-            }
-
-            if (MoveTempDir(TempRootPath, tempDir))
-            {
-                TempRootPath = tempDir;
+                TempRootPath = newTempRootPath;
                 UpdateTempDirs();
+                Registry.CurrentUser.CreateSubKey("WiiVCInjector")
+                    .SetValue("TemporaryDirectory", tempDir);
                 return true;
             }
 
@@ -2350,8 +2350,10 @@ namespace TeconMoon_s_WiiVC_Injector
         private bool PrepareOutputDirectory()
         {
             // Specify Path Variables to be called later
-            if (String.IsNullOrWhiteSpace(OutputDirectory.Text))
+            OutputDirectory.Text = OutputDirectory.Text.Trim();
+            if (String.IsNullOrEmpty(OutputDirectory.Text))
             {
+                FolderBrowserDialog OutputFolderSelect = new FolderBrowserDialog();
                 if (OutputFolderSelect.ShowDialog() == DialogResult.Cancel)
                 {
                     MessageBox.Show(tr.Tr("Output folder selection has been cancelled, conversion will not continue."));
@@ -2359,6 +2361,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
                 Invoke(new Action<string>((s) => { OutputDirectory.Text = s; }), OutputFolderSelect.SelectedPath);
             }
+
             if (!Directory.Exists(OutputDirectory.Text))
             {
                 try
@@ -3357,6 +3360,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private void BrowseOutputDir_Click(object sender, EventArgs e)
         {
+            FolderBrowserDialog OutputFolderSelect = new FolderBrowserDialog();
             if (OutputFolderSelect.ShowDialog() == DialogResult.OK)
             {
                 OutputDirectory.Text = OutputFolderSelect.SelectedPath;
