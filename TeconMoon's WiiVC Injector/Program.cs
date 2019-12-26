@@ -26,7 +26,7 @@ namespace TeconMoon_s_WiiVC_Injector
             get
             {
                 return System.Reflection.Assembly.GetExecutingAssembly()
-                    .GetName().Version.ToString() + "mod" + ModVersion;
+                    .GetName().Version.ToString() + " mod " + ModVersion;
             }
         }
 

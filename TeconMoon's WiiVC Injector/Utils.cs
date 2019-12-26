@@ -325,6 +325,14 @@ namespace TeconMoon_s_WiiVC_Injector
             protected const string KeyVerion = "verion";
             protected const string KeyAuthor = "author";
 
+            private delegate void TrControl(Control control);
+
+            private struct SpecialControlTr
+            {
+                public Type      controlType;
+                public TrControl trControl;
+            };
+
             private IniFile TemplateFile
             {
                 get;
@@ -456,12 +464,31 @@ namespace TeconMoon_s_WiiVC_Injector
                     TranslateControl(subControl);
                 }
 
-                ToolStrip toolStrip = control as ToolStrip;
-                if (toolStrip != null)
+                SpecialControlTr[] specialControlTrs = new SpecialControlTr[]
                 {
-                    foreach (ToolStripItem item in toolStrip.Items)
+                    new SpecialControlTr
                     {
-                        TranslateToolStripItem(item);
+                        controlType = typeof(ToolStrip),
+                        trControl   = TranslateToolStrip
+                    },
+                    new SpecialControlTr
+                    {
+                        controlType = typeof(ComboBox),
+                        trControl   = TranslateComboBox
+                    },
+                    new SpecialControlTr
+                    {
+                        controlType = typeof(CheckedListBox),
+                        trControl   = TranslateCheckedListBox
+                    },
+                };
+
+                foreach (SpecialControlTr sTr in specialControlTrs)
+                {
+                    if (control.GetType() == sTr.controlType)
+                    {
+                        sTr.trControl(control);
+                        break;
                     }
                 }
             }
@@ -481,6 +508,19 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
             }
 
+            private void TranslateToolStrip(Control control)
+            {
+                ToolStrip toolStrip = control as ToolStrip;
+
+                if (toolStrip != null)
+                {
+                    foreach (ToolStripItem item in toolStrip.Items)
+                    {
+                        TranslateToolStripItem(item);
+                    }
+                }
+            }
+
             private void TranslateToolStripItem(ToolStripItem item)
             {
                 TranslateToolStripItem(item, item.Name);
@@ -493,6 +533,36 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (!String.IsNullOrEmpty(translation))
                 {
                     item.Text = translation;
+                }
+            }
+
+            private void TranslateComboBox(Control control)
+            {
+                ComboBox comboBox = control as ComboBox;
+
+                if (comboBox == null || comboBox.Items == null)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < comboBox.Items.Count; ++i)
+                {
+                    comboBox.Items[i] = Tr(comboBox.Items[i] as string);
+                }
+            }
+
+            private void TranslateCheckedListBox(Control control)
+            {
+                CheckedListBox checkedListBox = control as CheckedListBox;
+
+                if (checkedListBox == null || checkedListBox.Items == null)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < checkedListBox.Items.Count; ++i)
+                {
+                    checkedListBox.Items[i] = Tr(checkedListBox.Items[i] as string);
                 }
             }
 

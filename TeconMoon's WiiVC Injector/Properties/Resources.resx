@@ -488,4 +488,85 @@ Additional error information:</value>
   <data name="String112" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="String113" xml:space="preserve">
+    <value>Force</value>
+  </data>
+  <data name="String114" xml:space="preserve">
+    <value>Force (Deflicker)</value>
+  </data>
+  <data name="String115" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="String116" xml:space="preserve">
+    <value>507 (Unstable)</value>
+  </data>
+  <data name="String117" xml:space="preserve">
+    <value>1019 (Unstable)</value>
+  </data>
+  <data name="String118" xml:space="preserve">
+    <value>2043 (Unstable)</value>
+  </data>
+  <data name="String119" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="String120" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="String121" xml:space="preserve">
+    <value>German</value>
+  </data>
+  <data name="String122" xml:space="preserve">
+    <value>French</value>
+  </data>
+  <data name="String123" xml:space="preserve">
+    <value>Spanish</value>
+  </data>
+  <data name="String124" xml:space="preserve">
+    <value>Italian</value>
+  </data>
+  <data name="String125" xml:space="preserve">
+    <value>Dutch</value>
+  </data>
+  <data name="String126" xml:space="preserve">
+    <value>Cheats</value>
+  </data>
+  <data name="String127" xml:space="preserve">
+    <value>Memcard Emulation</value>
+  </data>
+  <data name="String128" xml:space="preserve">
+    <value>Cheat Path</value>
+  </data>
+  <data name="String129" xml:space="preserve">
+    <value>Force Widescreen</value>
+  </data>
+  <data name="String130" xml:space="preserve">
+    <value>Force Progressive</value>
+  </data>
+  <data name="String131" xml:space="preserve">
+    <value>Unlock Read Speed</value>
+  </data>
+  <data name="String132" xml:space="preserve">
+    <value>OSReport</value>
+  </data>
+  <data name="String133" xml:space="preserve">
+    <value>WiiU Widescreen</value>
+  </data>
+  <data name="String134" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="String135" xml:space="preserve">
+    <value>Auto Video Width</value>
+  </data>
+  <data name="String136" xml:space="preserve">
+    <value>Patch PAL50</value>
+  </data>
+  <data name="String137" xml:space="preserve">
+    <value>TRI Arcade Mode</value>
+  </data>
+  <data name="String138" xml:space="preserve">
+    <value>Wiimote CC Rumble</value>
+  </data>
+  <data name="String139" xml:space="preserve">
+    <value>Skip IPL</value>
+  </data>
 </root>

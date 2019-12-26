@@ -229,6 +229,69 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Force.
+        /// </summary>
+        internal static string String113 {
+            get {
+                return ResourceManager.GetString("String113", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Force (Deflicker).
+        /// </summary>
+        internal static string String114 {
+            get {
+                return ResourceManager.GetString("String114", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        internal static string String115 {
+            get {
+                return ResourceManager.GetString("String115", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 507 (Unstable).
+        /// </summary>
+        internal static string String116 {
+            get {
+                return ResourceManager.GetString("String116", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1019 (Unstable).
+        /// </summary>
+        internal static string String117 {
+            get {
+                return ResourceManager.GetString("String117", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2043 (Unstable).
+        /// </summary>
+        internal static string String118 {
+            get {
+                return ResourceManager.GetString("String118", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatic.
+        /// </summary>
+        internal static string String119 {
+            get {
+                return ResourceManager.GetString("String119", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to TitleID....
         /// </summary>
         internal static string String12 {
@@ -238,11 +301,191 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to English.
+        /// </summary>
+        internal static string String120 {
+            get {
+                return ResourceManager.GetString("String120", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to German.
+        /// </summary>
+        internal static string String121 {
+            get {
+                return ResourceManager.GetString("String121", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to French.
+        /// </summary>
+        internal static string String122 {
+            get {
+                return ResourceManager.GetString("String122", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spanish.
+        /// </summary>
+        internal static string String123 {
+            get {
+                return ResourceManager.GetString("String123", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Italian.
+        /// </summary>
+        internal static string String124 {
+            get {
+                return ResourceManager.GetString("String124", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dutch.
+        /// </summary>
+        internal static string String125 {
+            get {
+                return ResourceManager.GetString("String125", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cheats.
+        /// </summary>
+        internal static string String126 {
+            get {
+                return ResourceManager.GetString("String126", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Memcard Emulation.
+        /// </summary>
+        internal static string String127 {
+            get {
+                return ResourceManager.GetString("String127", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cheat Path.
+        /// </summary>
+        internal static string String128 {
+            get {
+                return ResourceManager.GetString("String128", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Force Widescreen.
+        /// </summary>
+        internal static string String129 {
+            get {
+                return ResourceManager.GetString("String129", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to NULL.
         /// </summary>
         internal static string String13 {
             get {
                 return ResourceManager.GetString("String13", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Force Progressive.
+        /// </summary>
+        internal static string String130 {
+            get {
+                return ResourceManager.GetString("String130", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unlock Read Speed.
+        /// </summary>
+        internal static string String131 {
+            get {
+                return ResourceManager.GetString("String131", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OSReport.
+        /// </summary>
+        internal static string String132 {
+            get {
+                return ResourceManager.GetString("String132", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WiiU Widescreen.
+        /// </summary>
+        internal static string String133 {
+            get {
+                return ResourceManager.GetString("String133", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log.
+        /// </summary>
+        internal static string String134 {
+            get {
+                return ResourceManager.GetString("String134", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Video Width.
+        /// </summary>
+        internal static string String135 {
+            get {
+                return ResourceManager.GetString("String135", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patch PAL50.
+        /// </summary>
+        internal static string String136 {
+            get {
+                return ResourceManager.GetString("String136", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TRI Arcade Mode.
+        /// </summary>
+        internal static string String137 {
+            get {
+                return ResourceManager.GetString("String137", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wiimote CC Rumble.
+        /// </summary>
+        internal static string String138 {
+            get {
+                return ResourceManager.GetString("String138", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip IPL.
+        /// </summary>
+        internal static string String139 {
+            get {
+                return ResourceManager.GetString("String139", resourceCulture);
             }
         }
         
