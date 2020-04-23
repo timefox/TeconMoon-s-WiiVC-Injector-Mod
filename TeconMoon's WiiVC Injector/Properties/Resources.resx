@@ -569,4 +569,10 @@ Additional error information:</value>
   <data name="String139" xml:space="preserve">
     <value>Skip IPL</value>
   </data>
+  <data name="String140" xml:space="preserve">
+    <value>Download Error</value>
+  </data>
+  <data name="String141" xml:space="preserve">
+    <value>Failed to connect to Cucholix's Repo.</value>
+  </data>
 </root>

@@ -603,9 +603,10 @@ namespace TeconMoon_s_WiiVC_Injector
             BeginInvoke(ActBuildOutput, new BuildOutputItem()
             {
                 s = tr.Tr("Executing:") + ' ' + LauncherExeFile + '\n' 
-                + tr.Tr("Args:") + ' ' + LauncherExeArgs + '\n',
+                  + tr.Tr("Args:") + ' ' + LauncherExeArgs + '\n',
                 buildOutputType = BuildOutputType.botExec
             });
+
 
             try
             {
@@ -614,18 +615,33 @@ namespace TeconMoon_s_WiiVC_Injector
                 AsyncStreamReader standardOutput = new AsyncStreamReader(process.StandardOutput);
                 AsyncStreamReader standardError = new AsyncStreamReader(process.StandardError);
 
+                string OutputReceived = "";
+
+                System.Timers.Timer OutputPumpTimer = new System.Timers.Timer();
+                OutputPumpTimer.Interval = 100;
+                OutputPumpTimer.Elapsed += (sender, e) =>
+                {
+                    if (!String.IsNullOrEmpty(OutputReceived))
+                    {
+                        BeginInvoke(ActBuildOutput, new BuildOutputItem()
+                        {
+                            s = OutputReceived,
+                            buildOutputType = BuildOutputType.botNormal
+                        });
+
+                        OutputReceived = "";
+                    }
+                };
+                OutputPumpTimer.Start();
+
                 standardOutput.DataReceived += (sender, data) =>
                 {
                     if (String.IsNullOrEmpty(data))
                     {
                         return;
                     }
-
-                    BeginInvoke(ActBuildOutput, new BuildOutputItem() 
-                    { 
-                        s = data.Replace("\0", ""), 
-                        buildOutputType = BuildOutputType.botNormal
-                    });
+                    
+                    OutputReceived += data.Replace("\0", "");
                 };
 
                 standardError.DataReceived += (sender, data) =>
@@ -633,6 +649,17 @@ namespace TeconMoon_s_WiiVC_Injector
                     if (String.IsNullOrEmpty(data))
                     {
                         return;
+                    }
+
+                    if (!String.IsNullOrEmpty(OutputReceived))
+                    {
+                        BeginInvoke(ActBuildOutput, new BuildOutputItem()
+                        {
+                            s = OutputReceived,
+                            buildOutputType = BuildOutputType.botNormal
+                        });
+
+                        OutputReceived = "";
                     }
 
                     BeginInvoke(ActBuildOutput, new BuildOutputItem()
@@ -657,6 +684,19 @@ namespace TeconMoon_s_WiiVC_Injector
 
                         exitNormally = false;
                     }
+                }
+
+                OutputPumpTimer.Stop();
+
+                if (!String.IsNullOrEmpty(OutputReceived))
+                {
+                    BeginInvoke(ActBuildOutput, new BuildOutputItem()
+                    {
+                        s = OutputReceived,
+                        buildOutputType = BuildOutputType.botNormal
+                    });
+
+                    OutputReceived = "";
                 }
 
                 process.Close();
@@ -735,19 +775,12 @@ namespace TeconMoon_s_WiiVC_Injector
         }
         //Called from RepoDownload_Click to check if files exist before downloading
         private bool RemoteFileExists(string url)
-        {
-            try
-            {
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                request.Method = "HEAD";
-                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-                response.Close();
-                return (response.StatusCode == HttpStatusCode.OK);
-            }
-            catch
-            {
-                return false;
-            }
+        {          
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            request.Method = "HEAD";
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            response.Close();
+            return (response.StatusCode == HttpStatusCode.OK);
         }
         private void CheckForNet35()
         {
@@ -1524,75 +1557,83 @@ namespace TeconMoon_s_WiiVC_Injector
         }
         private void RepoDownload_Click(object sender, EventArgs e)
         {
-            if (CucholixRepoID == "")
+            if (String.IsNullOrWhiteSpace(CucholixRepoID))
             {
                 MessageBox.Show(tr.Tr("Please select your game before using this option"));
                 FlagRepo = false;
+                return;
             }
-            else
+
+            string AreaID = CucholixRepoID.Substring(0, 3);
+            string SubID = CucholixRepoID.Substring(4, 2);
+
+            string[] RepoId =
             {
-                if (SystemType == "wiiware")
+                CucholixRepoID,
+                AreaID + "E",
+                AreaID + "P",
+                AreaID + "J",
+            };
+
+            if (SystemType != "wiiware")
+            {
+                for (int i = 1; i < RepoId.Length; ++i)
                 {
-                    if (RemoteFileExists("https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID + "/iconTex.png") == true)
+                    RepoId[i] += SubID;
+                }
+            }
+
+            for (int i = 0; i < RepoId.Length; ++i)
+            {
+                string Url;
+
+                Url = "https://raw.githubusercontent.com/cucholix/wiivc-bis/master/";
+                Url += SystemType + "/image/" + RepoId[i] + "/iconTex.png";
+
+                try
+                {
+                    if (RemoteFileExists(Url))
                     {
+                        CucholixRepoID = RepoId[i];
                         DownloadFromRepo();
-                    }
-                    else if (RemoteFileExists("https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID.Substring(0, 3) + "E" + "/iconTex.png") == true)
-                    {
-                        CucholixRepoID = CucholixRepoID.Substring(0, 3) + "E";
-                        DownloadFromRepo();
-                    }
-                    else if (RemoteFileExists("https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID.Substring(0, 3) + "P" + "/iconTex.png") == true)
-                    {
-                        CucholixRepoID = CucholixRepoID.Substring(0, 3) + "P";
-                        DownloadFromRepo();
-                    }
-                    else if (RemoteFileExists("https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID.Substring(0, 3) + "J" + "/iconTex.png") == true)
-                    {
-                        CucholixRepoID = CucholixRepoID.Substring(0, 3) + "J";
-                        DownloadFromRepo();
-                    }
-                    else
-                    {
-                        FlagRepo = false;
-                        if (MessageBox.Show(tr.Tr("Cucholix's Repo does not have assets for your game. You will need to provide your own. Would you like to visit the GBAtemp request thread?"),
-                            tr.Tr("Game not found on Repo"), MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
-                        {
-                            System.Diagnostics.Process.Start("https://gbatemp.net/threads/483080/");
-                        }
+                        return;
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    if (RemoteFileExists("https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID + "/iconTex.png") == true)
+                    bool NotFound = false;
+
+                    if (ex is WebException)
                     {
-                        DownloadFromRepo();
-                    }
-                    else if (RemoteFileExists("https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID.Substring(0, 3) + "E" + CucholixRepoID.Substring(4, 2) + "/iconTex.png") == true)
-                    {
-                        CucholixRepoID = CucholixRepoID.Substring(0, 3) + "E" + CucholixRepoID.Substring(4, 2);
-                        DownloadFromRepo();
-                    }
-                    else if (RemoteFileExists("https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID.Substring(0, 3) + "P" + CucholixRepoID.Substring(4, 2) + "/iconTex.png") == true)
-                    {
-                        CucholixRepoID = CucholixRepoID.Substring(0, 3) + "P" + CucholixRepoID.Substring(4, 2);
-                        DownloadFromRepo();
-                    }
-                    else if (RemoteFileExists("https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID.Substring(0, 3) + "J" + CucholixRepoID.Substring(4, 2) + "/iconTex.png") == true)
-                    {
-                        CucholixRepoID = CucholixRepoID.Substring(0, 3) + "J" + CucholixRepoID.Substring(4, 2);
-                        DownloadFromRepo();
-                    }
-                    else
-                    {
-                        FlagRepo = false;
-                        if (MessageBox.Show(tr.Tr("Cucholix's Repo does not have assets for your game. You will need to provide your own. Would you like to visit the GBAtemp request thread?"), 
-                            tr.Tr("Game not found on Repo"), MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
+                        WebException wex = ex as WebException;
+                        HttpWebResponse response = wex.Response as HttpWebResponse;
+                        if (response != null && response.StatusCode == HttpStatusCode.NotFound)
                         {
-                            System.Diagnostics.Process.Start("https://gbatemp.net/threads/483080/");
+                            NotFound = true;
                         }
                     }
+                    
+                    if (!NotFound)
+                    {
+                        FlagRepo = false;
+                        MessageBox.Show(
+                            tr.Tr("Failed to connect to Cucholix's Repo."),
+                            tr.Tr("Download Error"),
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        return;
+                    }
                 }
+            }
+
+            FlagRepo = false;
+            if (MessageBox.Show(
+                tr.Tr("Cucholix's Repo does not have assets for your game. You will need to provide your own. Would you like to visit the GBAtemp request thread?"),
+                tr.Tr("Game not found on Repo"), 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) 
+                == DialogResult.Yes)
+            {
+                System.Diagnostics.Process.Start("https://gbatemp.net/threads/483080/");
             }
         }
         
@@ -2244,22 +2285,23 @@ namespace TeconMoon_s_WiiVC_Injector
             if (!InClosing)
             {
                 BuildOutputItem buildResult = new BuildOutputItem();
+                buildResult.s = "\n";
 
                 if (succeed)
                 {
-                    buildResult.s = tr.Tr("Build succeed.");
+                    buildResult.s += tr.Tr("Build succeed.");
                     buildResult.buildOutputType = BuildOutputType.botSucceed;
                 }
                 else
                 {
                     if (LastBuildCancelled)
                     {
-                        buildResult.s = tr.Tr("Build cancelled.");
+                        buildResult.s += tr.Tr("Build cancelled.");
                         buildResult.buildOutputType = BuildOutputType.botError;
                     }
                     else
                     {
-                        buildResult.s = tr.Tr("Build failed.");
+                        buildResult.s += tr.Tr("Build failed.");
                         buildResult.buildOutputType = BuildOutputType.botError;
                     }
                 }
@@ -3205,7 +3247,7 @@ namespace TeconMoon_s_WiiVC_Injector
             Font arialFont = new Font("Arial", 10);
 
             // Setup temp directory for generated images.
-            string saveDir = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\";
+            string saveDir = GetTempRootPath() + "WiiVCInjector\\SOURCETEMP\\";
             if (!Directory.Exists(saveDir))
             {
                 Directory.CreateDirectory(saveDir);

@@ -444,10 +444,10 @@
             this.SourceFilesTab2.Controls.Add(this.DrcSourceButton);
             this.SourceFilesTab2.Controls.Add(this.BootSoundPreviewButton);
             this.SourceFilesTab2.Location = new System.Drawing.Point(4, 22);
-            this.SourceFilesTab2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SourceFilesTab2.Margin = new System.Windows.Forms.Padding(4);
             this.SourceFilesTab2.Name = "SourceFilesTab2";
-            this.SourceFilesTab2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.SourceFilesTab2.Size = new System.Drawing.Size(568, 358);
+            this.SourceFilesTab2.Padding = new System.Windows.Forms.Padding(4);
+            this.SourceFilesTab2.Size = new System.Drawing.Size(567, 357);
             this.SourceFilesTab2.TabIndex = 5;
             this.SourceFilesTab2.Text = "Optional Source Files";
             // 
@@ -638,10 +638,10 @@
             this.MetaTab.Controls.Add(this.PackedTitleLine1);
             this.MetaTab.Controls.Add(this.PackedTitleText);
             this.MetaTab.Location = new System.Drawing.Point(4, 22);
-            this.MetaTab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MetaTab.Margin = new System.Windows.Forms.Padding(4);
             this.MetaTab.Name = "MetaTab";
-            this.MetaTab.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.MetaTab.Size = new System.Drawing.Size(568, 358);
+            this.MetaTab.Padding = new System.Windows.Forms.Padding(4);
+            this.MetaTab.Size = new System.Drawing.Size(567, 357);
             this.MetaTab.TabIndex = 2;
             this.MetaTab.Text = "GamePad/Meta Options";
             // 
@@ -868,10 +868,10 @@
             this.AdvancedTab.Controls.Add(this.AncastKey);
             this.AdvancedTab.Controls.Add(this.AdvancedLabel1);
             this.AdvancedTab.Location = new System.Drawing.Point(4, 22);
-            this.AdvancedTab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AdvancedTab.Margin = new System.Windows.Forms.Padding(4);
             this.AdvancedTab.Name = "AdvancedTab";
-            this.AdvancedTab.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.AdvancedTab.Size = new System.Drawing.Size(568, 358);
+            this.AdvancedTab.Padding = new System.Windows.Forms.Padding(4);
+            this.AdvancedTab.Size = new System.Drawing.Size(567, 357);
             this.AdvancedTab.TabIndex = 3;
             this.AdvancedTab.Text = "Advanced";
             // 
@@ -1101,9 +1101,9 @@
             this.BuildTab.Controls.Add(this.CommonLabel);
             this.BuildTab.Controls.Add(this.WiiUCommonKey);
             this.BuildTab.Location = new System.Drawing.Point(4, 22);
-            this.BuildTab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BuildTab.Margin = new System.Windows.Forms.Padding(4);
             this.BuildTab.Name = "BuildTab";
-            this.BuildTab.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BuildTab.Padding = new System.Windows.Forms.Padding(4);
             this.BuildTab.Size = new System.Drawing.Size(567, 357);
             this.BuildTab.TabIndex = 4;
             this.BuildTab.Text = "Build Title";
@@ -1227,7 +1227,7 @@
             // 
             this.BuildProgress.BackColor = System.Drawing.Color.Gainsboro;
             this.BuildProgress.Location = new System.Drawing.Point(7, 283);
-            this.BuildProgress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.BuildProgress.Margin = new System.Windows.Forms.Padding(4);
             this.BuildProgress.Name = "BuildProgress";
             this.BuildProgress.Size = new System.Drawing.Size(557, 26);
             this.BuildProgress.TabIndex = 14;
@@ -1352,9 +1352,9 @@
             // 
             this.BuildOutputTab.Controls.Add(this.BuildOutputContainer);
             this.BuildOutputTab.Location = new System.Drawing.Point(4, 22);
-            this.BuildOutputTab.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.BuildOutputTab.Margin = new System.Windows.Forms.Padding(2);
             this.BuildOutputTab.Name = "BuildOutputTab";
-            this.BuildOutputTab.Size = new System.Drawing.Size(568, 358);
+            this.BuildOutputTab.Size = new System.Drawing.Size(567, 357);
             this.BuildOutputTab.TabIndex = 6;
             this.BuildOutputTab.Text = "Build Output";
             this.BuildOutputTab.UseVisualStyleBackColor = true;
@@ -1378,7 +1378,7 @@
             // 
             this.BuildOutputContainer.Panel2.Controls.Add(this.BuildOutput);
             this.BuildOutputContainer.Panel2MinSize = 0;
-            this.BuildOutputContainer.Size = new System.Drawing.Size(568, 358);
+            this.BuildOutputContainer.Size = new System.Drawing.Size(567, 357);
             this.BuildOutputContainer.SplitterDistance = 25;
             this.BuildOutputContainer.SplitterWidth = 1;
             this.BuildOutputContainer.TabIndex = 0;
@@ -1394,7 +1394,7 @@
             this.BuildOutputToolStrip.Location = new System.Drawing.Point(0, 0);
             this.BuildOutputToolStrip.Name = "BuildOutputToolStrip";
             this.BuildOutputToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.BuildOutputToolStrip.Size = new System.Drawing.Size(568, 25);
+            this.BuildOutputToolStrip.Size = new System.Drawing.Size(567, 25);
             this.BuildOutputToolStrip.TabIndex = 0;
             this.BuildOutputToolStrip.Text = "toolStrip1";
             // 
@@ -1422,12 +1422,13 @@
             // 
             // BuildOutput
             // 
+            this.BuildOutput.BackColor = System.Drawing.Color.White;
             this.BuildOutput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.BuildOutput.Location = new System.Drawing.Point(0, 0);
-            this.BuildOutput.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.BuildOutput.Margin = new System.Windows.Forms.Padding(2);
             this.BuildOutput.Name = "BuildOutput";
             this.BuildOutput.ReadOnly = true;
-            this.BuildOutput.Size = new System.Drawing.Size(568, 332);
+            this.BuildOutput.Size = new System.Drawing.Size(567, 331);
             this.BuildOutput.TabIndex = 0;
             this.BuildOutput.Text = "";
             // 
@@ -1539,7 +1540,7 @@
             this.Controls.Add(this.MainTableLayout);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "WiiVC_Injector";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

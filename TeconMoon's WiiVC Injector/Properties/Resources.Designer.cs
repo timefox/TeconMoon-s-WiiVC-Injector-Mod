@@ -499,6 +499,24 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download Error.
+        /// </summary>
+        internal static string String140 {
+            get {
+                return ResourceManager.GetString("String140", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to connect to Cucholix&apos;s Repo..
+        /// </summary>
+        internal static string String141 {
+            get {
+                return ResourceManager.GetString("String141", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter your WAD&apos;s Title ID.
         /// </summary>
         internal static string String15 {
