@@ -756,18 +756,36 @@ namespace TeconMoon_s_WiiVC_Injector
             }
             return null;
         }
-        public void DownloadFromRepo()
+        public void DownloadImageFromRepo()
         {
             var client = new WebClient();
-            IconPreviewBox.Load("https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID + "/iconTex.png");
-            if (File.Exists(Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png")) { File.Delete(Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png"); }
-            client.DownloadFile(IconPreviewBox.ImageLocation, Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png");
+
+            string RepoSrc = "https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID + "/iconTex.png";
+            string LocalDst = GetTempRootPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png";
+
+            if (File.Exists(LocalDst))
+            {
+                File.Delete(LocalDst);
+            }
+
+            client.DownloadFile(RepoSrc, LocalDst);
+
+            IconPreviewBox.Load(LocalDst);
             IconSourceDirectory.Text = tr.Tr("iconTex.png downloaded from Cucholix's Repo");
             IconSourceDirectory.ForeColor = Color.Black;
             FlagIconSpecified = true;
-            BannerPreviewBox.Load("https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID + "/bootTvTex.png");
-            if (File.Exists(Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png")) { File.Delete(Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png"); }
-            client.DownloadFile(BannerPreviewBox.ImageLocation, Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png");
+
+            RepoSrc = "https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID + "/bootTvTex.png";
+            LocalDst = GetTempRootPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png";
+
+            if (File.Exists(LocalDst))
+            {
+                File.Delete(LocalDst);
+            }
+
+            client.DownloadFile(RepoSrc, LocalDst);
+
+            BannerPreviewBox.Load(LocalDst);
             BannerSourceDirectory.Text = tr.Tr("bootTvTex.png downloaded from Cucholix's Repo");
             BannerSourceDirectory.ForeColor = Color.Black;
             FlagBannerSpecified = true;
@@ -1595,7 +1613,7 @@ namespace TeconMoon_s_WiiVC_Injector
                     if (RemoteFileExists(Url))
                     {
                         CucholixRepoID = RepoId[i];
-                        DownloadFromRepo();
+                        DownloadImageFromRepo();
                         return;
                     }
                 }
