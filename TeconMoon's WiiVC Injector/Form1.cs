@@ -195,7 +195,7 @@ namespace TeconMoon_s_WiiVC_Injector
             }
             TitleKey.Text = appKey.GetValue("TitleKey").ToString();
             OutputDirectory.Text = appKey.GetValue("OutputDirectory") as string;
-            TemporaryDirectory.Text = GetTempRootPath(false);
+            TemporaryDirectory.Text = GetAppTempPath(false);
             appKey.Close();
         }
 
@@ -504,7 +504,7 @@ namespace TeconMoon_s_WiiVC_Injector
         string LauncherExeArgs;
         string JNUSToolDownloads = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\JNUSToolDownloads\\";
         static string DefaultTempRootPath = Path.GetTempPath() + "WiiVCInjector\\";
-        static string TempRootPath = GetTempRootPath() + "WiiVCInjector\\";
+        static string TempRootPath = GetAppTempPath() + "WiiVCInjector\\";
         string TempSourcePath = TempRootPath + "SOURCETEMP\\";
         string TempBuildPath = TempRootPath + "BUILDDIR\\";
         string TempToolsPath = TempRootPath + "TOOLDIR\\";
@@ -554,7 +554,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private event EventHandler<bool> BuildCompletedEx;
 
-        private static string GetTempRootPath(bool hasBackslash = true)
+        private static string GetAppTempPath(bool hasBackslash = true)
         {
             RegistryKey key = Registry.CurrentUser.OpenSubKey("WiiVCInjector");
             string path = Path.GetTempPath();
@@ -761,7 +761,7 @@ namespace TeconMoon_s_WiiVC_Injector
             var client = new WebClient();
 
             string RepoSrc = "https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID + "/iconTex.png";
-            string LocalDst = GetTempRootPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png";
+            string LocalDst = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png";
 
             if (File.Exists(LocalDst))
             {
@@ -776,7 +776,7 @@ namespace TeconMoon_s_WiiVC_Injector
             FlagIconSpecified = true;
 
             RepoSrc = "https://raw.githubusercontent.com/cucholix/wiivc-bis/master/" + SystemType + "/image/" + CucholixRepoID + "/bootTvTex.png";
-            LocalDst = GetTempRootPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png";
+            LocalDst = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png";
 
             if (File.Exists(LocalDst))
             {
@@ -1465,7 +1465,7 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 if (Path.GetExtension(filePath) == ".tga")
                 {
-                    pngtemppath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png";
+                    pngtemppath = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png";
                     if (File.Exists(pngtemppath)) { File.Delete(pngtemppath); }
                     LauncherExeFile = TempToolsPath + "IMG\\tga2pngcmd.exe";
                     LauncherExeArgs = "-i \"" + filePath + "\" -o \"" + Path.GetDirectoryName(pngtemppath) + "\"";
@@ -1476,7 +1476,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
                 else
                 {
-                    pngtemppath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png";
+                    pngtemppath = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\iconTex.png";
                     if (File.Exists(pngtemppath)) { File.Delete(pngtemppath); }
                     Image.FromFile(filePath).Save(pngtemppath, System.Drawing.Imaging.ImageFormat.Png);
                 }
@@ -1528,7 +1528,7 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 if (Path.GetExtension(filePath) == ".tga")
                 {
-                    pngtemppath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png";
+                    pngtemppath = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png";
                     if (File.Exists(pngtemppath)) { File.Delete(pngtemppath); }
                     LauncherExeFile = TempToolsPath + "IMG\\tga2pngcmd.exe";
                     LauncherExeArgs = "-i \"" + filePath + "\" -o \"" + Path.GetDirectoryName(pngtemppath) + "\"";
@@ -1537,7 +1537,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
                 else
                 {
-                    pngtemppath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png";
+                    pngtemppath = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\bootTvTex.png";
                     if (File.Exists(pngtemppath)) { File.Delete(pngtemppath); }
                     Image.FromFile(filePath).Save(pngtemppath, System.Drawing.Imaging.ImageFormat.Png);
                 }
@@ -1701,7 +1701,7 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 if (Path.GetExtension(filePath) == ".tga")
                 {
-                    pngtemppath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootDrcTex.png";
+                    pngtemppath = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\bootDrcTex.png";
                     if (File.Exists(pngtemppath)) { File.Delete(pngtemppath); }
                     LauncherExeFile = TempToolsPath + "IMG\\tga2pngcmd.exe";
                     LauncherExeArgs = "-i \"" + filePath + "\" -o \"" + Path.GetDirectoryName(pngtemppath) + "\"";
@@ -1710,7 +1710,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
                 else
                 {
-                    pngtemppath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootDrcTex.png";
+                    pngtemppath = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\bootDrcTex.png";
                     if (File.Exists(pngtemppath)) { File.Delete(pngtemppath); }
                     Image.FromFile(filePath).Save(pngtemppath, System.Drawing.Imaging.ImageFormat.Png);
                 }
@@ -1751,7 +1751,7 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 if (Path.GetExtension(filePath) == ".tga")
                 {
-                    pngtemppath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootLogoTex.png";
+                    pngtemppath = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\bootLogoTex.png";
                     if (File.Exists(pngtemppath)) { File.Delete(pngtemppath); }
                     LauncherExeFile = TempToolsPath + "IMG\\tga2pngcmd.exe";
                     LauncherExeArgs = "-i \"" + filePath + "\" -o \"" + Path.GetDirectoryName(pngtemppath) + "\"";
@@ -1760,7 +1760,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
                 else
                 {
-                    pngtemppath = Path.GetTempPath() + "WiiVCInjector\\SOURCETEMP\\bootLogoTex.png";
+                    pngtemppath = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\bootLogoTex.png";
                     if (File.Exists(pngtemppath)) { File.Delete(pngtemppath); }
                     Image.FromFile(filePath).Save(pngtemppath, System.Drawing.Imaging.ImageFormat.Png);
                 }
@@ -2345,7 +2345,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
             if (String.IsNullOrWhiteSpace(tempDir))
             {
-                tempDir = GetTempRootPath();
+                tempDir = GetAppTempPath();
             }
 
             if (!tempDir.EndsWith("\\"))
@@ -3265,7 +3265,7 @@ namespace TeconMoon_s_WiiVC_Injector
             Font arialFont = new Font("Arial", 10);
 
             // Setup temp directory for generated images.
-            string saveDir = GetTempRootPath() + "WiiVCInjector\\SOURCETEMP\\";
+            string saveDir = GetAppTempPath() + "WiiVCInjector\\SOURCETEMP\\";
             if (!Directory.Exists(saveDir))
             {
                 Directory.CreateDirectory(saveDir);
