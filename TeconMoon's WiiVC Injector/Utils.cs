@@ -573,9 +573,18 @@ namespace TeconMoon_s_WiiVC_Injector
                     return s;
                 }
 
+                //
+                // issue#3: Reported by @JueLuo99 at github.com.
+                // Use CultureInfo.InvariantCulture instead of 
+                // CultureInfo.CurrentCulture when call 
+                // ResourceManager.GetResourceSet, because
+                // ResourceManager.GetResourceSet may return
+                // null which is influenced by the language
+                // setting of OS.
+                //
                 foreach (DictionaryEntry dictionaryEntry 
                     in Properties.Resources.ResourceManager.GetResourceSet(
-                        CultureInfo.CurrentCulture, false, false))
+                        CultureInfo.InvariantCulture, false, false))
                 {
                     if (dictionaryEntry.Value is string)
                     {
