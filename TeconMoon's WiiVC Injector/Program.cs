@@ -11,7 +11,7 @@ namespace TeconMoon_s_WiiVC_Injector
 {
     static class Program
     {
-        private static int _ModVersion = 10;
+        private static int _ModVersion = 11;
 
         public static int ModVersion
         {
@@ -86,7 +86,7 @@ namespace TeconMoon_s_WiiVC_Injector
                     translationTemplate.AppendFormTranslation(new SDCardMenu());
                     translationTemplate.AppendStringResourceTranslation(
                         Properties.Resources.ResourceManager.GetResourceSet(
-                            CultureInfo.CurrentCulture, false, false));
+                            CultureInfo.InvariantCulture, false, false));
                     return;
                 }
             }
