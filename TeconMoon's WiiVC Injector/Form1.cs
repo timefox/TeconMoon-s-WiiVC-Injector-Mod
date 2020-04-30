@@ -203,7 +203,7 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             if (tr.IsValidate)
             {
-                tr.TranslationForm(this);
+                tr.TranslateForm(this);
             }
 
             // 
@@ -439,7 +439,7 @@ namespace TeconMoon_s_WiiVC_Injector
                     font = new Font(BuildOutput.Font, FontStyle.Bold);
                     break;
                 case BuildOutputType.botStep:
-                    color = Color.AliceBlue;
+                    color = Color.DarkOliveGreen;
                     font = new Font(BuildOutput.Font.FontFamily, BuildOutput.Font.Size + 1, FontStyle.Bold);
                     break;
                 case BuildOutputType.botExec:
@@ -550,7 +550,7 @@ namespace TeconMoon_s_WiiVC_Injector
             }
         }
 
-        private delegate bool BuildStep();
+        private delegate bool BuildAction();
 
         private event EventHandler<bool> BuildCompletedEx;
 
@@ -2325,7 +2325,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
 
                 
-                buildResult.s += String.Format("({0})", TimeSpan.FromMilliseconds(BuildStopwatch.ElapsedMilliseconds).Duration().ToString());
+                buildResult.s += String.Format("({0})", BuildStopwatch.Elapsed.Duration().ToString());
 
                 AppendBuildOutput(buildResult);
             }
@@ -2431,7 +2431,9 @@ namespace TeconMoon_s_WiiVC_Injector
                 catch (Exception ex)
                 {
                     MessageBox.Show(
-                        tr.Tr("Can't create the specified output directory, conversion will not continue.\nAdditional error information:")
+                        tr.Tr("Can't create the specified output directory, " 
+                        + "conversion will not continue.\n" 
+                        + "Additional error information: ")
                         + ex.Message);
 
                     Invoke(new Action(() => { OutputDirectory.Text = ""; }));
@@ -2694,8 +2696,6 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             // Copy downloaded files to the build directory
             //
-            Invoke(ActBuildStatus, tr.Tr("Copying base files to temporary build directory..."));
-
             Directory.SetCurrentDirectory(TempRootPath);
             FileSystem.CopyDirectory(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]", TempBuildPath);
 
@@ -2727,8 +2727,6 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             // Generate app.xml & meta.xml
             //
-            Invoke(ActBuildStatus, tr.Tr("Generating app.xml and meta.xml"));
-
             string[] AppXML = {
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
                 "<app type=\"complex\" access=\"777\">",
@@ -2905,8 +2903,6 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             // Convert PNG files to TGA
             //
-            Invoke(ActBuildStatus, tr.Tr("Converting all image sources to expected TGA specification..."));
-
             LauncherExeFile = TempToolsPath + "IMG\\png2tgacmd.exe";
             LauncherExeArgs = "-i \"" + TempIconPath + "\" -o \"" + TempBuildPath + "meta\" --width=128 --height=128 --tga-bpp=32 --tga-compression=none";
             LaunchProgram();
@@ -2946,8 +2942,6 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             if (FlagBootSoundSpecified)
             {
-                Invoke(ActBuildStatus, tr.Tr("Converting user provided sound to btsnd format..."));
-
                 LauncherExeFile = TempToolsPath + "SOX\\sox.exe";
                 LauncherExeArgs = "\"" + OpenBootSound.FileName + "\" -b 16 \"" + TempSoundPath + "\" channels 2 rate 48k trim 0 6";
                 LaunchProgram();
@@ -2968,8 +2962,6 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             // Build ISO based on type and user specification
             //
-            Invoke(ActBuildStatus, tr.Tr("Processing game for NFS Conversion..."));
-
             GameIso = GameSourceDirectory.Text;
 
             if (SystemType == "wii")
@@ -2998,7 +2990,12 @@ namespace TeconMoon_s_WiiVC_Injector
 
                     if (WiiVMC.Checked)
                     {
-                        MessageBox.Show(tr.Tr("The Wii Video Mode Changer will now be launched. I recommend using the Smart Patcher option. \n\nIf you're scared and don't know what you're doing, close the patcher window and nothing will be patched. \n\nClick OK to continue..."));
+                        MessageBox.Show(
+                            tr.Tr("The Wii Video Mode Changer will now be launched. "
+                            + "I recommend using the Smart Patcher option. \n\n"
+                            + "If you're scared and don't know what you're doing, " 
+                            + "close the patcher window and nothing will be patched. \n\n" 
+                            + "Click OK to continue..."));
                         HideProcess = false;
                         LauncherExeFile = TempToolsPath + "EXE\\wii-vmc.exe";
                         LauncherExeArgs = "\"" + TempSourcePath + "ISOEXTRACT\\sys\\main.dol\"";
@@ -3110,8 +3107,6 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             // Convert ISO to NFS format
             //
-            Invoke(ActBuildStatus, tr.Tr("Converting processed game to NFS format..."));
-
             Directory.SetCurrentDirectory(TempBuildPath + "content");
 
             string lrpatchflag = "";
@@ -3159,8 +3154,6 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             // Encrypt contents with NUSPacker
             //
-            Invoke(ActBuildStatus, tr.Tr("Encrypting contents into installable WUP Package..."));
-
             Directory.SetCurrentDirectory(TempRootPath);
             LauncherExeFile = TempToolsPath + "JAR\\NUSPacker.exe";
             LauncherExeArgs = "-in BUILDDIR -out \"" + OutputDirectory.Text 
@@ -3189,28 +3182,100 @@ namespace TeconMoon_s_WiiVC_Injector
             Directory.CreateDirectory(TempBuildPath);
         }
 
+        private struct BuildStep
+        {
+            public BuildAction buildAction;
+            public string description;
+            public int progressWeight;
+        };
+
         private bool BuildPack()
         {
             BuildStep[] buildSteps = new BuildStep[]
             {
-                PrepareTemporaryDirectory,
-                CheckFreeDiskSpaceForPack,
-                PrepareOutputDirectory,
-                PrepareJNUSStuffs,
-                PrepareBasicFilesForPack,
-                GeneratePackXmls,
-                ConvertImagesFormat,
-                ConvertBootSoundFormat,
-                BuildIso,
-                ConvertIsoToNFS,
-                NUSPackerEncrypt
+                new BuildStep
+                {
+                    buildAction = PrepareTemporaryDirectory,
+                    description = tr.Tr("Checking temporary directory"),
+                    progressWeight = 1,
+                },
+                new BuildStep
+                {
+                    buildAction = CheckFreeDiskSpaceForPack,
+                    description = tr.Tr("Checking free disk space"),
+                    progressWeight = 1,
+                },
+                new BuildStep
+                {
+                    buildAction = PrepareOutputDirectory,
+                    description = tr.Tr("Checking output directory"),
+                    progressWeight = 1,
+                },
+                new BuildStep
+                {
+                    buildAction = PrepareJNUSStuffs,
+                    description = tr.Tr("Checking JNUS stuffs"),
+                    progressWeight = 3,
+                },
+                new BuildStep
+                {
+                    buildAction = PrepareBasicFilesForPack,
+                    description = tr.Tr("Copying base files to temporary build directory"),
+                    progressWeight = 1,
+                },
+                new BuildStep
+                {
+                    buildAction = GeneratePackXmls,
+                    description = tr.Tr("Generating app.xml and meta.xml"),
+                    progressWeight = 1,
+                },
+                new BuildStep
+                {
+                    buildAction = ConvertImagesFormat,
+                    description = tr.Tr("Converting all image sources to expected TGA specification"),
+                    progressWeight = 1,
+                },
+                new BuildStep
+                {
+                    buildAction = ConvertBootSoundFormat,
+                    description = tr.Tr("Converting user provided sound to btsnd format"),
+                    progressWeight = 1,
+                },
+                new BuildStep
+                {
+                    buildAction = BuildIso,
+                    description = tr.Tr("Processing game for NFS Conversion"),
+                    progressWeight = 30,
+                },
+                new BuildStep
+                {
+                    buildAction = ConvertIsoToNFS,
+                    description = tr.Tr("Converting processed game to NFS format"),
+                    progressWeight = 15,
+                },
+                new BuildStep
+                {
+                    buildAction = NUSPackerEncrypt,
+                    description = tr.Tr("Encrypting contents into installable WUP Package"),
+                    progressWeight = 30,
+                },
             };
 
             ThrowProcessException = true;
             int succeed = 0;
+            int totalProgress = 0;
 
             foreach (BuildStep buildStep in buildSteps)
             {
+                totalProgress += buildStep.progressWeight;
+            }
+
+            Stopwatch stepStopwatch = new Stopwatch();
+
+            for (int i = 0; i < buildSteps.Length; ++i)
+            {
+                BuildStep buildStep = buildSteps[i];
+
                 if (LastBuildCancelled)
                 {
                     break;
@@ -3218,10 +3283,41 @@ namespace TeconMoon_s_WiiVC_Injector
 
                 try
                 {
-                    if (!buildStep())
+                    string buildStatus = string.Format(
+                        "({0}/{1}){2}...", 
+                        i + 1, 
+                        buildSteps.Length, 
+                        buildStep.description);
+
+                    BeginInvoke(ActBuildStatus, buildStatus);
+
+                    BeginInvoke(ActBuildOutput, new BuildOutputItem()
                     {
+                        s = buildStatus + "\r\n",
+                        buildOutputType = BuildOutputType.botStep,
+                    });
+
+                    stepStopwatch.Restart();
+
+                    if (!buildStep.buildAction())
+                    {
+                        BeginInvoke(ActBuildOutput, new BuildOutputItem()
+                        {
+                            s = buildStatus + tr.Tr("failed.") + "\r\n\r\n",
+                            buildOutputType = BuildOutputType.botError,
+                        });
                         break;
                     }
+
+                    stepStopwatch.Stop();
+                    
+                    BeginInvoke(ActBuildOutput, new BuildOutputItem()
+                    {
+                        s = buildStep.description + "..." + tr.Tr("done.") 
+                            + String.Format("({0})\r\n\r\n", 
+                            stepStopwatch.Elapsed.Duration().ToString()),
+                        buildOutputType = BuildOutputType.botStep,
+                    });
 
                     ++succeed;
                 }
@@ -3255,7 +3351,7 @@ namespace TeconMoon_s_WiiVC_Injector
         private void GenerateImage_Click(object sender, EventArgs e)
         {
             // Check if the required fields are fullfilled.
-            if (GameNameLabel.Text == "")
+            if (String.IsNullOrWhiteSpace(GameNameLabel.Text))
             {
                 MessageBox.Show(tr.Tr("Please select your game before using this option"));
                 return;

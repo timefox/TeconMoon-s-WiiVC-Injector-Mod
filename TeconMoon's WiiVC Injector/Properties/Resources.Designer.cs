@@ -517,6 +517,60 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to failed..
+        /// </summary>
+        internal static string String142 {
+            get {
+                return ResourceManager.GetString("String142", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to done..
+        /// </summary>
+        internal static string String143 {
+            get {
+                return ResourceManager.GetString("String143", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking temporary directory.
+        /// </summary>
+        internal static string String144 {
+            get {
+                return ResourceManager.GetString("String144", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking free disk space.
+        /// </summary>
+        internal static string String145 {
+            get {
+                return ResourceManager.GetString("String145", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking output directory.
+        /// </summary>
+        internal static string String146 {
+            get {
+                return ResourceManager.GetString("String146", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking JNUS stuffs.
+        /// </summary>
+        internal static string String147 {
+            get {
+                return ResourceManager.GetString("String147", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter your WAD&apos;s Title ID.
         /// </summary>
         internal static string String15 {
@@ -1070,7 +1124,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copying base files to temporary build directory....
+        ///   Looks up a localized string similar to Copying base files to temporary build directory.
         /// </summary>
         internal static string String70 {
             get {
@@ -1088,7 +1142,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Converting all image sources to expected TGA specification....
+        ///   Looks up a localized string similar to Converting all image sources to expected TGA specification.
         /// </summary>
         internal static string String72 {
             get {
@@ -1097,7 +1151,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Converting user provided sound to btsnd format....
+        ///   Looks up a localized string similar to Converting user provided sound to btsnd format.
         /// </summary>
         internal static string String73 {
             get {
@@ -1106,7 +1160,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Processing game for NFS Conversion....
+        ///   Looks up a localized string similar to Processing game for NFS Conversion.
         /// </summary>
         internal static string String74 {
             get {
@@ -1137,7 +1191,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Converting processed game to NFS format....
+        ///   Looks up a localized string similar to Converting processed game to NFS format.
         /// </summary>
         internal static string String77 {
             get {
@@ -1146,7 +1200,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Encrypting contents into installable WUP Package....
+        ///   Looks up a localized string similar to Encrypting contents into installable WUP Package.
         /// </summary>
         internal static string String78 {
             get {
@@ -1349,7 +1403,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t create the specified output directory, conversion will not continue.
-        ///Additional error information:.
+        ///Additional error information: .
         /// </summary>
         internal static string String98 {
             get {

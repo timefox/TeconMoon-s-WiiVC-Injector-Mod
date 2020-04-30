@@ -444,7 +444,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
             }
 
-            public void TranslationForm(Form form)
+            public void TranslateForm(Form form)
             {
                 TemplateFile.CurrentSection = form.Name;
                 _TranslateControl(form, KeyFormTitle);

@@ -146,7 +146,7 @@ Consider converting it with something like Audacity.</value>
     <value>The Wii U Common Key has been verified.</value>
   </data>
   <data name="String72" xml:space="preserve">
-    <value>Converting all image sources to expected TGA specification...</value>
+    <value>Converting all image sources to expected TGA specification</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="clearbuildoutput" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -287,13 +287,13 @@ Install your title using WUP Installer GX2 with signature patches enabled (CBHC,
     <value>(Optional) Line 2</value>
   </data>
   <data name="String74" xml:space="preserve">
-    <value>Processing game for NFS Conversion...</value>
+    <value>Processing game for NFS Conversion</value>
   </data>
   <data name="String77" xml:space="preserve">
-    <value>Converting processed game to NFS format...</value>
+    <value>Converting processed game to NFS format</value>
   </data>
   <data name="String70" xml:space="preserve">
-    <value>Copying base files to temporary build directory...</value>
+    <value>Copying base files to temporary build directory</value>
   </data>
   <data name="String63" xml:space="preserve">
     <value>(One-Time Download) Downloading base files from Nintendo... (nn_hai_user.rpl)</value>
@@ -417,7 +417,7 @@ Failed: {1}.</value>
 (MD5 Hash verification failed)</value>
   </data>
   <data name="String73" xml:space="preserve">
-    <value>Converting user provided sound to btsnd format...</value>
+    <value>Converting user provided sound to btsnd format</value>
   </data>
   <data name="String14" xml:space="preserve">
     <value>Enter your installed Wii Channel's 4-letter Title ID. If you don't know it, open a WAD for the channel in something like ShowMiiWads to view it.</value>
@@ -436,7 +436,7 @@ Failed: {1}.</value>
   </data>
   <data name="String98" xml:space="preserve">
     <value>Can't create the specified output directory, conversion will not continue.
-Additional error information:</value>
+Additional error information: </value>
   </data>
   <data name="String11" xml:space="preserve">
     <value>DOL Files (*.dol)|*.dol</value>
@@ -448,7 +448,7 @@ Additional error information:</value>
     <value>Downloading...</value>
   </data>
   <data name="String78" xml:space="preserve">
-    <value>Encrypting contents into installable WUP Package...</value>
+    <value>Encrypting contents into installable WUP Package</value>
   </data>
   <data name="String46" xml:space="preserve">
     <value>The Title Key you have provided is incorrect
@@ -574,5 +574,23 @@ Additional error information:</value>
   </data>
   <data name="String141" xml:space="preserve">
     <value>Failed to connect to Cucholix's Repo.</value>
+  </data>
+  <data name="String142" xml:space="preserve">
+    <value>failed.</value>
+  </data>
+  <data name="String143" xml:space="preserve">
+    <value>done.</value>
+  </data>
+  <data name="String144" xml:space="preserve">
+    <value>Checking temporary directory</value>
+  </data>
+  <data name="String145" xml:space="preserve">
+    <value>Checking free disk space</value>
+  </data>
+  <data name="String146" xml:space="preserve">
+    <value>Checking output directory</value>
+  </data>
+  <data name="String147" xml:space="preserve">
+    <value>Checking JNUS stuffs</value>
   </data>
 </root>

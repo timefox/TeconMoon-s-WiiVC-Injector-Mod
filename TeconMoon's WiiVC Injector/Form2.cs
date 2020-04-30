@@ -25,7 +25,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
             if (tr.IsValidate)
             {
-                tr.TranslationForm(this);
+                tr.TranslateForm(this);
             }
         }
         string SelectedDriveLetter;
