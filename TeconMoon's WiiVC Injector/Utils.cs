@@ -588,7 +588,9 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     if (dictionaryEntry.Value is string)
                     {
-                        if (s.Equals(dictionaryEntry.Value))
+                        // .resx file prefers "\r\n" for newline which cause
+                        // our string mismatching.
+                        if (s.Equals((dictionaryEntry.Value as string).Replace("\r\n", "\n")))
                         {
                             return TrId(dictionaryEntry.Key.ToString());
                         }

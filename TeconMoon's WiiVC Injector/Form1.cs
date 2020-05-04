@@ -2350,7 +2350,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private bool PrepareTemporaryDirectory()
         {
-            TemporaryDirectory.Text = TemporaryDirectory.Text.Trim();
+            Invoke(new Action(() => { TemporaryDirectory.Text = TemporaryDirectory.Text.Trim(); }));
 
             string tempDir = TemporaryDirectory.Text;
 
@@ -2382,7 +2382,7 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             // Restore the default temp dir location on failed.
             //
-            TemporaryDirectory.Text = Path.GetTempPath();
+            Invoke(new Action(() => { TemporaryDirectory.Text = Path.GetTempPath(); }));
             Registry.CurrentUser.CreateSubKey("WiiVCInjector")
                 .DeleteValue("TemporaryDirectory");
 
@@ -2420,8 +2420,9 @@ namespace TeconMoon_s_WiiVC_Injector
 
         private bool PrepareOutputDirectory()
         {
-            // Specify Path Variables to be called later
-            OutputDirectory.Text = OutputDirectory.Text.Trim();
+            // Specify Path Variables to be called later           
+            Invoke(new Action(() => { OutputDirectory.Text = OutputDirectory.Text.Trim(); }));
+
             if (String.IsNullOrEmpty(OutputDirectory.Text))
             {
                 FolderBrowserDialog OutputFolderSelect = new FolderBrowserDialog();
@@ -3210,7 +3211,7 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             BuildStep[] buildSteps = new BuildStep[]
             {
-new BuildStep
+                new BuildStep
                 {
                     buildAction = PrepareTemporaryDirectory,
                     description = tr.Tr("Checking temporary directory"),
@@ -3280,12 +3281,6 @@ new BuildStep
 
             ThrowProcessException = true;
             int succeed = 0;
-            int totalProgress = 0;
-
-            foreach (BuildStep buildStep in buildSteps)
-            {
-                totalProgress += buildStep.progressWeight;
-            }
 
             Stopwatch stepStopwatch = new Stopwatch();
 
@@ -3320,7 +3315,7 @@ new BuildStep
                     {
                         BeginInvoke(ActBuildOutput, new BuildOutputItem()
                         {
-                            s = buildStatus + tr.Tr("failed.") + "\r\n\r\n",
+                            s = buildStep.description + tr.Tr("failed.") + "\r\n\r\n",
                             buildOutputType = BuildOutputType.botError,
                         });
                         break;
@@ -3341,6 +3336,12 @@ new BuildStep
                 catch (Exception ex)
                 {
                     Console.Write("buildStep throws an exception: " + ex.Message);
+                    BeginInvoke(ActBuildOutput, new BuildOutputItem()
+                    {
+                        s = buildStep.description + tr.Tr(" terminated unexpectedly: ") + ex.Message + tr.Tr(".") + "\r\n\r\n",
+                        buildOutputType = BuildOutputType.botError,
+                    });
+
                     break;
                 }
             }
@@ -3501,12 +3502,11 @@ new BuildStep
                 String[] files = (String[])e.Data.GetData(DataFormats.FileDrop);
                 foreach (String s in files)
                 {
-                    FileAttributes attr = File.GetAttributes(s);
-
                     //detect whether its a directory or file
-                    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                    if (Directory.Exists(s))
                     {
-                        foreach (string file in "*.iso|*.wbfs".Split(',', ';', '|').SelectMany(_ => Directory.EnumerateFiles(s, "*" + _, System.IO.SearchOption.AllDirectories)))
+                        foreach (string file in "*.iso|*.wbfs".Split('|').SelectMany(
+                            pattern => Directory.EnumerateFiles(s, pattern, System.IO.SearchOption.AllDirectories)))
                         {
                             Program.AppendAutoBuildList(file);
                         }

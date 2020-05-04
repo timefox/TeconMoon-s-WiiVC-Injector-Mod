@@ -593,4 +593,10 @@ Additional error information: </value>
   <data name="String147" xml:space="preserve">
     <value>Checking JNUS stuffs</value>
   </data>
+  <data name="String148" xml:space="preserve">
+    <value> terminated unexpectedly: </value>
+  </data>
+  <data name="String149" xml:space="preserve">
+    <value>.</value>
+  </data>
 </root>
