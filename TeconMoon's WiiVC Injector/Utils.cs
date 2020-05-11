@@ -8,6 +8,9 @@ using System.Windows.Forms;
 using System.Linq;
 using System.Resources;
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Drawing.Text;
 
 namespace TeconMoon_s_WiiVC_Injector
 {
@@ -225,8 +228,8 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (font != null)
                 {
                     box.SelectionFont = font;
-                }                
-                
+                }
+
                 box.AppendText(text);
                 box.SelectionColor = box.ForeColor;
                 box.SelectionFont = box.Font;
@@ -329,7 +332,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
             private struct SpecialControlTr
             {
-                public Type      controlType;
+                public Type controlType;
                 public TrControl trControl;
             };
 
@@ -582,7 +585,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 // null which is influenced by the language
                 // setting of OS.
                 //
-                foreach (DictionaryEntry dictionaryEntry 
+                foreach (DictionaryEntry dictionaryEntry
                     in Properties.Resources.ResourceManager.GetResourceSet(
                         CultureInfo.InvariantCulture, false, false))
                 {
@@ -640,9 +643,9 @@ namespace TeconMoon_s_WiiVC_Injector
             public bool WriteStringValue(string section, string key, string value)
             {
                 return Win32Native.WritePrivateProfileString(
-                    section, 
-                    key, 
-                    value.Replace("\\r", "\r").Replace("\\n", "\n"), 
+                    section,
+                    key,
+                    value.Replace("\\r", "\r").Replace("\\n", "\n"),
                     FileName);
             }
 
@@ -665,7 +668,7 @@ namespace TeconMoon_s_WiiVC_Injector
                     FileName);
                 return value.Substring(0, length)
                     .Replace("\\r", "\r")
-                    .Replace("\\n", "\n");                
+                    .Replace("\\n", "\n");
             }
 
             public string[] GetSections()
@@ -683,7 +686,60 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 string[] raw = s.Split('\0');
                 return raw.Take(raw.Length - 2).ToArray();
-             }
+            }
+        }
+
+        class TitleIdMap
+        {
+            public static Dictionary<string, string[]> BuildIdMap()
+            {
+                Dictionary<string, string[]> result = new Dictionary<string, string[]>();
+
+                using (var stream = Resources.getResouceStream("ids.csv"))
+                using (var reader = new StreamReader(stream))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        string line = reader.ReadLine();
+                        string[] ids = line.Split(',');
+                        foreach(string id in ids)
+                        {
+                            string[] mappedIds = ids.Where(val => val != id).ToArray();
+                            result.Add(id, mappedIds);
+
+                        }
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        class Resources
+        {
+            public static Stream getResouceStream(string fileName)
+            { 
+                string resourceName = Assembly.GetExecutingAssembly().GetManifestResourceNames().Single(str => str.EndsWith("Resources." + fileName));
+                return Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+            }
+        }
+
+        class Fonts
+        {
+            public static PrivateFontCollection craeteNewFontCollection(string fontName)
+            {
+                PrivateFontCollection result = new PrivateFontCollection();
+                using (var stream = Resources.getResouceStream(fontName))
+                {
+                    IntPtr data = Marshal.AllocCoTaskMem((int)stream.Length);
+                    byte[] fontdata = new byte[stream.Length];
+                    stream.Read(fontdata, 0, (int)stream.Length);
+                    Marshal.Copy(fontdata, 0, data, (int)stream.Length);
+                    result.AddMemoryFont(data, (int)stream.Length);
+                }
+
+                return result;
+            }
         }
     }
 }
