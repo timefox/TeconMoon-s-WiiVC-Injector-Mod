@@ -349,6 +349,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
             AutoBuildSucceedList.Clear();
             AutoBuildFailedList.Clear();
+            AutoBuildInvalidList.Clear();
             AutoBuildSkippedList.Clear();
 
             BuildCompletedEx += WiiVC_Injector_BuildCompletedEx;
@@ -359,7 +360,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
         void AutoBuildNext()
         {
-            if (Program.AutoBuildList.Count() != 0)
+            while (Program.AutoBuildList.Any())
             {
                 string game = Program.AutoBuildList[0];
 
@@ -378,18 +379,29 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (SelectGameSource(game, true))
                 {
                     BuildCurrent();
+                    break;
                 }
+
+                AppendBuildOutput(new BuildOutputItem(){
+                    s = String.Format(tr.Tr("Invalid Title: {0}."), game),
+                    buildOutputType = BuildOutputType.botError
+                    }
+                );
+                AutoBuildInvalidList.Add(game);
+                Program.AutoBuildList.RemoveAt(0);
             }
-            else
+
+            if(!Program.AutoBuildList.Any())
             {
                 BuildCompletedEx -= WiiVC_Injector_BuildCompletedEx;
 
                 if (!InClosing)
                 {
                     string s = String.Format(
-                        tr.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}."),
+                        tr.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}.\nInvalid: {2}."),
                         AutoBuildSucceedList.Count,
-                        AutoBuildFailedList.Count);
+                        AutoBuildFailedList.Count,
+                        AutoBuildInvalidList.Count);
 
                     MessageBox.Show(s);
                 }
@@ -629,6 +641,7 @@ namespace TeconMoon_s_WiiVC_Injector
         string GameIso;
         List<string> AutoBuildSucceedList = new List<string>();
         List<string> AutoBuildFailedList = new List<string>();
+        List<string> AutoBuildInvalidList = new List<string>();
         List<string> AutoBuildSkippedList = new List<string>();
         Dictionary<String, bool> ControlEnabledStatus = new Dictionary<String, bool>();
         Thread BuilderThread;
