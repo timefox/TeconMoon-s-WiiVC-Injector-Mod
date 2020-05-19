@@ -1,28 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using TeconMoon_s_WiiVC_Injector;
 
 namespace LogLevels
 {
     public class LogLevel : IEquatable<LogLevel>
     {
-        private static Dictionary<string, byte> levels = new Dictionary<string, byte>(){
-            {"Debug", 1},
-            {"Info", 2}
+        private static Dictionary<string, int> levels = new Dictionary<string, int>(){
+            {Trt.Tr("Debug"), 1},
+            {Trt.Tr("Info"), 2}
         };
 
-        private LogLevel(string name, byte level) { Name = name; Level = level; }
+        private LogLevel(string name)
+        {
+            Name = name;
+            Level = levels[name];
+        }
 
         public string Name { get; set; }
         public int Level { get; set; }
 
-        public static LogLevel Debug { get { return new LogLevel("Debug", levels["Debug"]); } }
-        public static LogLevel Info { get { return new LogLevel("Info", levels["Info"]); } }
+        public static LogLevel Debug { get { return new LogLevel(Trt.Tr("Debug")); } }
+        public static LogLevel Info { get { return new LogLevel(Trt.Tr("Info")); } }
 
         public static LogLevel getLogLevelByName(string name)
         {
             LogLevel result = null;
             if(levels.ContainsKey(name)) 
-                result = new LogLevel(name, levels[name]);
+                result = new LogLevel(name);
+
+            return result;
+        }
+
+        public static LogLevel getLogLevelByLevel(int level)
+        {
+            LogLevel result = null;
+            if (levels.ContainsValue(level))
+            {
+                foreach (string k in levels.Keys)
+                {
+                    if (levels[k] == level)
+                    {
+                        result = new LogLevel(k);
+                    }
+                }
+            }
 
             return result;
         }

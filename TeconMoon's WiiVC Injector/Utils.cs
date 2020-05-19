@@ -490,6 +490,11 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     if (control.GetType() == sTr.controlType)
                     {
+                        if (control.Name == "LogLevelBox")
+                        {
+                            int a = 0;
+                            a++;
+                        }
                         sTr.trControl(control);
                         break;
                     }
@@ -536,6 +541,15 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (!String.IsNullOrEmpty(translation))
                 {
                     item.Text = translation;
+                }
+
+                if (item is ToolStripComboBox)
+                {
+                    ToolStripComboBox comboBox = item as ToolStripComboBox;
+                    for (int i = 0; i < comboBox.Items.Count; ++i)
+                    {
+                        comboBox.Items[i] = Tr(comboBox.Items[i] as string);
+                    }
                 }
             }
 
@@ -603,7 +617,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 return s;
             }
 
-            public string TrId(string id)
+            private string TrId(string id)
             {
                 string s = TemplateFile.ReadStringValue(SectionResource, id, 1024);
 
@@ -695,7 +709,8 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 Dictionary<string, string[]> result = new Dictionary<string, string[]>();
 
-                using (var stream = Resources.getResouceStream("ids.csv"))
+                // McAfee dislikes ids.csv...
+                using (var stream = new MemoryStream(Properties.Resources.ids))
                 using (var reader = new StreamReader(stream))
                 {
                     while (!reader.EndOfStream)
@@ -706,7 +721,6 @@ namespace TeconMoon_s_WiiVC_Injector
                         {
                             string[] mappedIds = ids.Where(val => val != id).ToArray();
                             result.Add(id, mappedIds);
-
                         }
                     }
                 }

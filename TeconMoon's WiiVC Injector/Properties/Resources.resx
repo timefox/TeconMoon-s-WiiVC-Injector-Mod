@@ -593,4 +593,13 @@ Additional error information: </value>
   <data name="String149" xml:space="preserve">
     <value>.</value>
   </data>
+  <data name="ids" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ids.csv;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="String150" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="String151" xml:space="preserve">
+    <value>Info</value>
+  </data>
 </root>

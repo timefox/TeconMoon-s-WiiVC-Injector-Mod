@@ -193,7 +193,7 @@
             // 
             // WiiRetail
             // 
-            this.WiiRetail.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.WiiRetail.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.WiiRetail.AutoSize = true;
             this.WiiRetail.Checked = true;
@@ -704,7 +704,7 @@
             // 
             // ForceCC
             // 
-            this.ForceCC.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.ForceCC.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.ForceCC.AutoSize = true;
             this.ForceCC.Location = new System.Drawing.Point(6, 58);
@@ -717,7 +717,7 @@
             // 
             // NoGamePadEmu
             // 
-            this.NoGamePadEmu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.NoGamePadEmu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.NoGamePadEmu.AutoSize = true;
             this.NoGamePadEmu.Checked = true;
@@ -732,7 +732,7 @@
             // 
             // CCEmu
             // 
-            this.CCEmu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.CCEmu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.CCEmu.AutoSize = true;
             this.CCEmu.Location = new System.Drawing.Point(299, 6);
@@ -745,7 +745,7 @@
             // 
             // ForceNoCC
             // 
-            this.ForceNoCC.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.ForceNoCC.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.ForceNoCC.AutoSize = true;
             this.ForceNoCC.Location = new System.Drawing.Point(299, 58);
@@ -758,7 +758,7 @@
             // 
             // HorWiiMote
             // 
-            this.HorWiiMote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.HorWiiMote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.HorWiiMote.AutoSize = true;
             this.HorWiiMote.Location = new System.Drawing.Point(299, 32);
@@ -771,7 +771,7 @@
             // 
             // VerWiiMote
             // 
-            this.VerWiiMote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.VerWiiMote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.VerWiiMote.AutoSize = true;
             this.VerWiiMote.Location = new System.Drawing.Point(6, 32);
@@ -1391,10 +1391,10 @@
             this.BuildOutputToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.BuildOutputToolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.BuildOutputToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ClearBuildOuput,
-            this.AutoScrollBuildOutput,
             this.LogLevelLabel,
-            this.LogLevelBox});
+            this.LogLevelBox,
+            this.ClearBuildOuput,
+            this.AutoScrollBuildOutput});
             this.BuildOutputToolStrip.Location = new System.Drawing.Point(0, 0);
             this.BuildOutputToolStrip.Name = "BuildOutputToolStrip";
             this.BuildOutputToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
@@ -1406,9 +1406,10 @@
             // 
             this.ClearBuildOuput.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.ClearBuildOuput.Image = global::TeconMoon_s_WiiVC_Injector.Properties.Resources.clearbuildoutput;
+            this.ClearBuildOuput.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.ClearBuildOuput.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ClearBuildOuput.Name = "ClearBuildOuput";
-            this.ClearBuildOuput.Size = new System.Drawing.Size(28, 22);
+            this.ClearBuildOuput.Size = new System.Drawing.Size(23, 22);
             this.ClearBuildOuput.Text = "Clear Output";
             this.ClearBuildOuput.Click += new System.EventHandler(this.ClearBuildOuput_Click);
             // 
@@ -1418,24 +1419,27 @@
             this.AutoScrollBuildOutput.CheckState = System.Windows.Forms.CheckState.Checked;
             this.AutoScrollBuildOutput.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.AutoScrollBuildOutput.Image = global::TeconMoon_s_WiiVC_Injector.Properties.Resources.autoscroll;
+            this.AutoScrollBuildOutput.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.AutoScrollBuildOutput.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.AutoScrollBuildOutput.Name = "AutoScrollBuildOutput";
-            this.AutoScrollBuildOutput.Size = new System.Drawing.Size(28, 22);
+            this.AutoScrollBuildOutput.Size = new System.Drawing.Size(23, 22);
             this.AutoScrollBuildOutput.Text = "Autoscroll";
             this.AutoScrollBuildOutput.Click += new System.EventHandler(this.AutoScrollBuildOutput_Click);
             // 
             // LogLevelLabel
             // 
             this.LogLevelLabel.Name = "LogLevelLabel";
-            this.LogLevelLabel.Size = new System.Drawing.Size(86, 20);
+            this.LogLevelLabel.Size = new System.Drawing.Size(63, 22);
             this.LogLevelLabel.Text = "Log level:";
             // 
             // LogLevelBox
             // 
             this.LogLevelBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.LogLevelBox.Items.AddRange(new object[] {
+            "Debug",
+            "Info"});
             this.LogLevelBox.Name = "LogLevelBox";
             this.LogLevelBox.Size = new System.Drawing.Size(135, 25);
-            this.LogLevelBox.ComboBox.Items.AddRange(LogLevels.LogLevel.getNames());
             this.LogLevelBox.SelectedIndexChanged += new System.EventHandler(this.LogLevelBox_SelectedIndexChanged);
             // 
             // BuildOutput
@@ -1451,7 +1455,7 @@
             // 
             // SDCardStuff
             // 
-            this.SDCardStuff.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.SDCardStuff.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.SDCardStuff.Location = new System.Drawing.Point(389, 32);
             this.SDCardStuff.Name = "SDCardStuff";
@@ -1463,7 +1467,7 @@
             // 
             // GCRetail
             // 
-            this.GCRetail.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.GCRetail.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.GCRetail.AutoSize = true;
             this.GCRetail.Location = new System.Drawing.Point(389, 3);
@@ -1476,7 +1480,7 @@
             // 
             // WiiNAND
             // 
-            this.WiiNAND.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.WiiNAND.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.WiiNAND.AutoSize = true;
             this.WiiNAND.Location = new System.Drawing.Point(3, 32);
@@ -1489,7 +1493,7 @@
             // 
             // WiiHomebrew
             // 
-            this.WiiHomebrew.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.WiiHomebrew.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.WiiHomebrew.AutoSize = true;
             this.WiiHomebrew.Location = new System.Drawing.Point(196, 3);

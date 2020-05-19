@@ -108,6 +108,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Trt.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Win32Native.cs" />
     <EmbeddedResource Include="Form1.resx">
