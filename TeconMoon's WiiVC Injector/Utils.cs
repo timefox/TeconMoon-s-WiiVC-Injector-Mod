@@ -490,11 +490,6 @@ namespace TeconMoon_s_WiiVC_Injector
                 {
                     if (control.GetType() == sTr.controlType)
                     {
-                        if (control.Name == "LogLevelBox")
-                        {
-                            int a = 0;
-                            a++;
-                        }
                         sTr.trControl(control);
                         break;
                     }
