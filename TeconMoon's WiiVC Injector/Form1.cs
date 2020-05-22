@@ -47,10 +47,18 @@ namespace TeconMoon_s_WiiVC_Injector
             this.DebugButton.Visible = false;
 #endif
 
+            //
+            // Initialize log levels.
+            //
+            foreach (string logLevel in LogLevel.getNames())
+            {
+                LogLevelBox.Items.Add(logLevel);
+            }
+
             LoadSettings();
 
             // 
-            // Initlize actions for build thread.
+            // Initialize actions for build thread.
             //
             ActBuildStatus = new Action<string>((s) =>
             {
@@ -388,7 +396,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
 
                 AppendBuildOutput(new BuildOutputItem(){
-                    s = String.Format(tr.Tr("Invalid Title: {0}."), game),
+                    s = String.Format(Trt.Tr("Invalid Title: {0}."), game),
                     buildOutputType = BuildOutputType.botError
                     }
                 );
@@ -403,7 +411,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (!InClosing)
                 {
                     string s = String.Format(
-                        Trt.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}."),
+                        Trt.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}.\nInvalid: {2}."),
                         AutoBuildSucceedList.Count,
                         AutoBuildFailedList.Count,
                         AutoBuildInvalidList.Count);

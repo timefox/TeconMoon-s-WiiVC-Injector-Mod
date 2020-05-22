@@ -353,7 +353,8 @@ Click OK to close the injector and open "Programs and Features"...</value>
   <data name="String99" xml:space="preserve">
     <value>All conversions have been completed.
 Succeed: {0}.
-Failed: {1}.</value>
+Failed: {1}.
+Invalid: {2}.</value>
   </data>
   <data name="String32" xml:space="preserve">
     <value>Make sure your GamePad Banner is 854x480 (16:9) to prevent distortion</value>
@@ -601,5 +602,8 @@ Additional error information: </value>
   </data>
   <data name="String151" xml:space="preserve">
     <value>Info</value>
+  </data>
+  <data name="String152" xml:space="preserve">
+    <value>Invalid Title: {0}.</value>
   </data>
 </root>

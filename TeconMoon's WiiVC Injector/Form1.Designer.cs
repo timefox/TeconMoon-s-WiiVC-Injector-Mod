@@ -129,10 +129,10 @@
             this.BuildOutputTab = new System.Windows.Forms.TabPage();
             this.BuildOutputContainer = new System.Windows.Forms.SplitContainer();
             this.BuildOutputToolStrip = new System.Windows.Forms.ToolStrip();
-            this.ClearBuildOuput = new System.Windows.Forms.ToolStripButton();
-            this.AutoScrollBuildOutput = new System.Windows.Forms.ToolStripButton();
             this.LogLevelLabel = new System.Windows.Forms.ToolStripLabel();
             this.LogLevelBox = new System.Windows.Forms.ToolStripComboBox();
+            this.ClearBuildOuput = new System.Windows.Forms.ToolStripButton();
+            this.AutoScrollBuildOutput = new System.Windows.Forms.ToolStripButton();
             this.BuildOutput = new System.Windows.Forms.RichTextBox();
             this.SDCardStuff = new System.Windows.Forms.Button();
             this.GCRetail = new System.Windows.Forms.RadioButton();
@@ -1402,6 +1402,19 @@
             this.BuildOutputToolStrip.TabIndex = 0;
             this.BuildOutputToolStrip.Text = "toolStrip1";
             // 
+            // LogLevelLabel
+            // 
+            this.LogLevelLabel.Name = "LogLevelLabel";
+            this.LogLevelLabel.Size = new System.Drawing.Size(63, 22);
+            this.LogLevelLabel.Text = "Log level:";
+            // 
+            // LogLevelBox
+            // 
+            this.LogLevelBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.LogLevelBox.Name = "LogLevelBox";
+            this.LogLevelBox.Size = new System.Drawing.Size(135, 25);
+            this.LogLevelBox.SelectedIndexChanged += new System.EventHandler(this.LogLevelBox_SelectedIndexChanged);
+            // 
             // ClearBuildOuput
             // 
             this.ClearBuildOuput.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -1425,22 +1438,6 @@
             this.AutoScrollBuildOutput.Size = new System.Drawing.Size(23, 22);
             this.AutoScrollBuildOutput.Text = "Autoscroll";
             this.AutoScrollBuildOutput.Click += new System.EventHandler(this.AutoScrollBuildOutput_Click);
-            // 
-            // LogLevelLabel
-            // 
-            this.LogLevelLabel.Name = "LogLevelLabel";
-            this.LogLevelLabel.Size = new System.Drawing.Size(63, 22);
-            this.LogLevelLabel.Text = "Log level:";
-            // 
-            // LogLevelBox
-            // 
-            this.LogLevelBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.LogLevelBox.Items.AddRange(new object[] {
-            "Debug",
-            "Info"});
-            this.LogLevelBox.Name = "LogLevelBox";
-            this.LogLevelBox.Size = new System.Drawing.Size(135, 25);
-            this.LogLevelBox.SelectedIndexChanged += new System.EventHandler(this.LogLevelBox_SelectedIndexChanged);
             // 
             // BuildOutput
             // 

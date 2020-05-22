@@ -1,6 +1,6 @@
 [TeconMoon-s-WiiVC-Injector-Mod-Language]
 language=简体中文(zh-cn)
-verion=3.0.1mod11
+verion=3.0.1mod12
 author=robin
 date=4/30/2020
 [WiiVC_Injector]
@@ -90,6 +90,7 @@ TempDirLabel=临时目录
 BrowseTempDir=浏览...
 OpenTempDirButton=打开目录
 BuildOutputTab=生成输出（详细的转换过程信息）
+LogLevelLabel=日志级别
 ClearBuildOuput=全部清除
 AutoScrollBuildOutput=自动滚动
 [SDCardMenu]
@@ -204,7 +205,7 @@ String94=Nintendont Forwarder (*.dol)|*.dol
 String97=指定游戏的第二张光盘镜像
 String96=GameCube游戏的第二张光盘镜像 (*.gcm,*.iso)|*.gcm;*.iso
 String98=无法创建指定的输出目录，转换过程无法继续。\n详细的错误信息：
-String99=所有转换都已完成。\n成功: {0}.\n失败: {1}.
+String99=所有转换都已完成。\n成功: {0}。\n失败: {1}。\n不正确的镜像：{2}。
 String100=生成
 String101=停止
 String102=您确定要停止当前的生成过程吗？
@@ -255,3 +256,6 @@ String146=正在检查输出目录的设定
 String147=正在检查基础文件的完整性
 String148=时意外中止：
 String149=。
+String150=详细
+String151=简要
+String152=不正确的镜像：{0}

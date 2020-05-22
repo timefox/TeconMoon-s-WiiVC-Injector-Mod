@@ -626,6 +626,15 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid Title: {0}..
+        /// </summary>
+        internal static string String152 {
+            get {
+                return ResourceManager.GetString("String152", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to XXXX.
         /// </summary>
         internal static string String16 {
@@ -1460,7 +1469,8 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         /// <summary>
         ///   Looks up a localized string similar to All conversions have been completed.
         ///Succeed: {0}.
-        ///Failed: {1}..
+        ///Failed: {1}.
+        ///Invalid: {2}..
         /// </summary>
         internal static string String99 {
             get {

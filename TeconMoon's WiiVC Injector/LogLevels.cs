@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TeconMoon_s_WiiVC_Injector;
 
 namespace LogLevels
@@ -36,14 +37,10 @@ namespace LogLevels
         {
             LogLevel result = null;
             if (levels.ContainsValue(level))
-            {
-                foreach (string k in levels.Keys)
-                {
-                    if (levels[k] == level)
-                    {
-                        result = new LogLevel(k);
-                    }
-                }
+            {               
+                result = new LogLevel((from k in levels.Keys
+                                       where (levels[k] == level)
+                                       select k).First());
             }
 
             return result;
