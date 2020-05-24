@@ -286,7 +286,7 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 ControlEnabledStatus.Add(control.Name, control.Enabled);
             }
-
+            
             foreach (Control subControl in control.Controls)
             {
                 EnableControl(subControl, enabled);
@@ -335,6 +335,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 EnsureEnableControl(TheBigOneTM, true);
                 EnsureEnableControl(BuildOutput, true);
                 EnsureEnableControl(BuildOutputToolStrip, true);
+                EnsureEnableControl(LogLevelBox.Control, true);
             }
             else
             {
@@ -396,8 +397,8 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
 
                 AppendBuildOutput(new BuildOutputItem(){
-                    s = String.Format(Trt.Tr("Invalid Title: {0}."), game),
-                    buildOutputType = BuildOutputType.botError
+                    Output = String.Format(Trt.Tr("Invalid Title: {0}."), game),
+                    OutputType = BuildOutputType.Error
                     }
                 );
                 AutoBuildInvalidList.Add(game);
@@ -541,29 +542,29 @@ namespace TeconMoon_s_WiiVC_Injector
             Color color = BuildOutput.ForeColor;
             Font font = null;
 
-            switch (item.buildOutputType)
+            switch (item.OutputType)
             {
-                case BuildOutputType.botSucceed:
+                case BuildOutputType.Succeed:
                     color = Color.Green;
                     font = new Font(BuildOutput.Font, FontStyle.Bold);
                     break;
-                case BuildOutputType.botError:
+                case BuildOutputType.Error:
                     color = Color.DarkRed;
                     font = new Font(BuildOutput.Font, FontStyle.Bold);
                     break;
-                case BuildOutputType.botStep:
+                case BuildOutputType.Step:
                     color = Color.DarkOliveGreen;
                     font = new Font(BuildOutput.Font.FontFamily, BuildOutput.Font.Size + 1, FontStyle.Bold);
                     break;
-                case BuildOutputType.botExec:
+                case BuildOutputType.Exec:
                     color = Color.Blue;
                     font = new Font(BuildOutput.Font, FontStyle.Bold);
                     break;
-                case BuildOutputType.botNormal:
+                case BuildOutputType.Normal:
                 default:
                     break;
             }
-            BuildOutput.AppendText(item.s, color, font);
+            BuildOutput.AppendText(item.Output, color, font);
 
             if (AutoScrollBuildOutput.Checked)
             {
@@ -638,18 +639,87 @@ namespace TeconMoon_s_WiiVC_Injector
 
         enum BuildOutputType
         {
-            botNormal,
-            botSucceed,
-            botError,
-            botStep,
-            botExec,
+            Normal,
+            Succeed,
+            Error,
+            Step,
+            Exec,
         };
 
-        struct BuildOutputItem
+        class BuildOutputItem
         {
-            public string s;
-            public BuildOutputType buildOutputType;
+            public string Output { get; set; }
+            public BuildOutputType OutputType { get; set; }
         };
+
+        class BuildOutputBuffer
+        {
+            private WiiVC_Injector owner = null;
+
+            public BuildOutputBuffer(WiiVC_Injector outputOwner) 
+            {
+                owner = outputOwner;
+            }
+
+            private List<BuildOutputItem> buildOutputItems = new List<BuildOutputItem>();
+            private StringBuilder stringBuilder = new StringBuilder();
+
+
+            private bool OutputCanbeCached(BuildOutputType outputType)
+            {
+                if (buildOutputItems.Any())
+                {
+                    return buildOutputItems.Last().OutputType == outputType;
+                }
+
+                return false;
+            }
+
+            private void FlushCache()
+            {
+                if (buildOutputItems.Any())
+                {
+                    buildOutputItems.Last().Output = stringBuilder.ToString();
+                }
+
+                stringBuilder.Clear();
+            }
+
+            public void AppendOutput(string output, BuildOutputType outputType, bool appendNewline = true)
+            {
+                if (!OutputCanbeCached(outputType))
+                {
+                    FlushCache();
+
+                    buildOutputItems.Add(new BuildOutputItem()
+                    {
+                        OutputType = outputType
+                    });
+                }
+
+                stringBuilder.Append(output);
+                if (appendNewline)
+                {
+                    stringBuilder.Append(Environment.NewLine);
+                }
+            }
+
+            public void Flush()
+            {
+                FlushCache();
+
+                while (buildOutputItems.Any())
+                {
+                    BuildOutputItem item = buildOutputItems.First();
+                    owner.BeginInvoke(owner.ActBuildOutput, new BuildOutputItem()
+                    {
+                        Output = item.Output,
+                        OutputType = item.OutputType
+                    });
+                    buildOutputItems.Remove(item);
+                }                
+            }
+        }
 
         string GameIso;
         List<string> AutoBuildSucceedList = new List<string>();
@@ -704,10 +774,6 @@ namespace TeconMoon_s_WiiVC_Injector
             return path;
         }
 
-        private int outputBufferSize = 4096;
-        private StringBuilder outputBuffer;
-        private StringBuilder errorBuffer;
-
         //call options
         public bool LaunchProgram()
         {
@@ -725,16 +791,15 @@ namespace TeconMoon_s_WiiVC_Injector
             Launcher.RedirectStandardOutput = true;
             Launcher.RedirectStandardError = true;
 
+            BuildOutputBuffer buildOutputBuffer = new BuildOutputBuffer(this);
+
             if (currentLogLevel <= LogLevel.Debug)
             {
-                outputBuffer = new StringBuilder(outputBufferSize);
-                errorBuffer = new StringBuilder(outputBufferSize);
-
                 BeginInvoke(ActBuildOutput, new BuildOutputItem()
                 {
-                    s = Trt.Tr("Executing:") + ' ' + LauncherExeFile + '\n'
+                    Output = Trt.Tr("Executing:") + ' ' + LauncherExeFile + '\n'
                     + Trt.Tr("Args:") + ' ' + LauncherExeArgs + '\n',
-                    buildOutputType = BuildOutputType.botExec
+                    OutputType = BuildOutputType.Exec
                 });
             }
 
@@ -743,23 +808,37 @@ namespace TeconMoon_s_WiiVC_Injector
                 Process process = Process.Start(Launcher);
                 System.Timers.Timer OutputPumpTimer = new System.Timers.Timer();
 
-                if (currentLogLevel <= LogLevel.Debug)
+                process.OutputDataReceived += (s, d) =>
                 {
-                    process.OutputDataReceived += outputBufferHandler;
-                    process.ErrorDataReceived += errorBufferHandler;
-
-                    OutputPumpTimer.Interval = 100;
-                    OutputPumpTimer.Elapsed += (sender, e) =>
+                    if (currentLogLevel <= LogLevel.Debug)
                     {
-                        lock (outputBuffer)
-                            printToOutputBox(outputBuffer, BuildOutputType.botNormal);
+                        lock(buildOutputBuffer)
+                        {
+                            buildOutputBuffer.AppendOutput(d.Data, BuildOutputType.Normal);
+                        }                       
+                    }
+                };
 
-                        lock (errorBuffer)
-                            printToOutputBox(errorBuffer, BuildOutputType.botError);
+                process.ErrorDataReceived += (s, d) =>
+                {
+                    //
+                    // Whatever, the error information should be printed.
+                    //
+                    lock(buildOutputBuffer)
+                    {
+                        buildOutputBuffer.AppendOutput(d.Data, BuildOutputType.Error);
+                    }                    
+                };
 
-                    };
-                    OutputPumpTimer.Start();
-                }
+                OutputPumpTimer.Interval = 100;
+                OutputPumpTimer.Elapsed += (sender, e) =>
+                {
+                    lock (buildOutputBuffer)
+                    {
+                        buildOutputBuffer.Flush();
+                    }
+                };
+                OutputPumpTimer.Start();
 
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
@@ -778,17 +857,14 @@ namespace TeconMoon_s_WiiVC_Injector
                     }
                 }
 
-                if (currentLogLevel <= LogLevel.Debug)
-                {
-                    OutputPumpTimer.Stop();
-
-                    lock (outputBuffer)
-                        printToOutputBox(outputBuffer, BuildOutputType.botNormal);
-                    lock (errorBuffer)
-                        printToOutputBox(errorBuffer, BuildOutputType.botError);
-                }
+                OutputPumpTimer.Stop();               
 
                 process.Close();
+
+                lock (buildOutputBuffer)
+                {
+                    buildOutputBuffer.Flush();
+                }
             }
             catch (Exception ex)
             {
@@ -809,62 +885,6 @@ namespace TeconMoon_s_WiiVC_Injector
             }
 
             return exitNormally;
-        }
-
-
-        private void outputBufferHandler(object sendingProcess, DataReceivedEventArgs outLine)
-        {
-            outputHandler(outLine.Data, outputBuffer, BuildOutputType.botNormal);
-        }
-
-        private void errorBufferHandler(object sendingProcess, DataReceivedEventArgs outLine)
-        {
-            outputHandler(outLine.Data, errorBuffer, BuildOutputType.botError);
-        }
-
-        private void outputHandler(string output, StringBuilder buffer, BuildOutputType outputType)
-        {
-            if (!String.IsNullOrEmpty(output))
-            {
-                lock (buffer)
-                {
-                    if (buffer.Length + output.Length >= outputBufferSize)
-                    {
-                        printToOutputBox(buffer, outputType);
-                    }
-
-                    if (output.Length >= outputBufferSize)
-                    {
-                        int cur = 0;
-                        int chunkSize = outputBufferSize;
-                        string chunk;
-                        while ((chunk = output.Substring(cur, chunkSize)).Length > 0)
-                        {
-                            buffer.Append(chunk + Environment.NewLine);
-                            printToOutputBox(buffer, outputType);
-                            cur += chunkSize;
-                            if ((cur + chunkSize) > output.Length)
-                                chunkSize = output.Length - cur;
-                        }
-                    }
-
-                    buffer.Append(output + Environment.NewLine);
-                }
-            }
-        }
-
-        private void printToOutputBox(StringBuilder buffer, BuildOutputType outputType)
-        {
-            if (buffer.Length > 0)
-            {
-                BeginInvoke(ActBuildOutput, new BuildOutputItem()
-                {
-                    s = buffer.ToString(),
-                    buildOutputType = outputType
-                });
-
-                buffer.Clear();
-            }
         }
 
         public static bool CheckForInternetConnection()
@@ -2553,32 +2573,32 @@ namespace TeconMoon_s_WiiVC_Injector
             if (!InClosing)
             {
                 BuildOutputItem buildResult = new BuildOutputItem();
-                buildResult.s = "\n";
+                buildResult.Output = "\n";
 
                 if (succeed)
                 {
-                    buildResult.s += Trt.Tr("Build succeed.");
+                    buildResult.Output += Trt.Tr("Build succeed.");
                     if (Program.AutoBuildList.Count > 1)
-                        buildResult.s += Trt.Tr(String.Format("Left [{0}].", Program.AutoBuildList.Count));
-                    buildResult.buildOutputType = BuildOutputType.botSucceed;
+                        buildResult.Output += Trt.Tr(String.Format("Left [{0}].", Program.AutoBuildList.Count));
+                    buildResult.OutputType = BuildOutputType.Succeed;
                 }
                 else
                 {
                     if (LastBuildCancelled)
                     {
-                        buildResult.s += Trt.Tr("Build cancelled.");
-                        buildResult.buildOutputType = BuildOutputType.botError;
+                        buildResult.Output += Trt.Tr("Build cancelled.");
+                        buildResult.OutputType = BuildOutputType.Error;
                     }
                     else
                     {
-                        buildResult.s += Trt.Tr("Build failed.");
-                        buildResult.buildOutputType = BuildOutputType.botError;
+                        buildResult.Output += Trt.Tr("Build failed.");
+                        buildResult.OutputType = BuildOutputType.Error;
                     }
                 }
 
 
-                buildResult.s += String.Format("({0})", BuildStopwatch.Elapsed.Duration().ToString());
-                buildResult.s += Environment.NewLine;
+                buildResult.Output += String.Format("({0})", BuildStopwatch.Elapsed.Duration().ToString());
+                buildResult.Output += Environment.NewLine;
                 AppendBuildOutput(buildResult);
             }
         }
@@ -3538,8 +3558,8 @@ namespace TeconMoon_s_WiiVC_Injector
 
             BeginInvoke(ActBuildOutput, new BuildOutputItem()
             {
-                s = String.Format(Trt.Tr("Processing [{0}] [{1}]..."), GameNameLabel.Text, GameSourceDirectory.Text) + Environment.NewLine,
-                buildOutputType = BuildOutputType.botStep,
+                Output = String.Format(Trt.Tr("Processing [{0}] [{1}]..."), GameNameLabel.Text, GameSourceDirectory.Text) + Environment.NewLine,
+                OutputType = BuildOutputType.Step,
             });
 
             Stopwatch stepStopwatch = new Stopwatch();
@@ -3565,8 +3585,8 @@ namespace TeconMoon_s_WiiVC_Injector
 
                     BeginInvoke(ActBuildOutput, new BuildOutputItem()
                     {
-                        s = buildStatus + Environment.NewLine,
-                        buildOutputType = BuildOutputType.botStep,
+                        Output = buildStatus + Environment.NewLine,
+                        OutputType = BuildOutputType.Step,
                     });
 
                     stepStopwatch.Restart();
@@ -3575,8 +3595,8 @@ namespace TeconMoon_s_WiiVC_Injector
                     {
                         BeginInvoke(ActBuildOutput, new BuildOutputItem()
                         {
-                            s = buildStep.description + Trt.Tr("failed.") + Environment.NewLine + Environment.NewLine,
-                            buildOutputType = BuildOutputType.botError,
+                            Output = buildStep.description + Trt.Tr("failed.") + Environment.NewLine + Environment.NewLine,
+                            OutputType = BuildOutputType.Error,
                         });
                         break;
                     }
@@ -3585,10 +3605,10 @@ namespace TeconMoon_s_WiiVC_Injector
 
                     BeginInvoke(ActBuildOutput, new BuildOutputItem()
                     {
-                        s = buildStep.description + "..." + Trt.Tr("done.")
-                            + String.Format("({0})",
-                            stepStopwatch.Elapsed.Duration().ToString()) + Environment.NewLine + Environment.NewLine,
-                        buildOutputType = BuildOutputType.botStep,
+                        Output = buildStep.description + "..." + Trt.Tr("done.")
+                               + String.Format("({0})", stepStopwatch.Elapsed.Duration().ToString())
+                               + Environment.NewLine + Environment.NewLine,
+                        OutputType = BuildOutputType.Step,
                     });
 
                     ++succeed;
@@ -3598,8 +3618,9 @@ namespace TeconMoon_s_WiiVC_Injector
                     Console.Write("buildStep throws an exception: " + ex.Message);
                     BeginInvoke(ActBuildOutput, new BuildOutputItem()
                     {
-                        s = buildStep.description + Trt.Tr(" terminated unexpectedly: ") + ex.Message + Trt.Tr(".") + Environment.NewLine + Environment.NewLine,
-                        buildOutputType = BuildOutputType.botError,
+                        Output = buildStep.description + Trt.Tr(" terminated unexpectedly: ") 
+                               + ex.Message + Environment.NewLine + Environment.NewLine,
+                        OutputType = BuildOutputType.Error,
                     });
 
                     break;

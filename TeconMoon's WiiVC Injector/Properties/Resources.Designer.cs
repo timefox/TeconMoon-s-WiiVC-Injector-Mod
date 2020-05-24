@@ -635,6 +635,15 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to  does not exit normally..
+        /// </summary>
+        internal static string String153 {
+            get {
+                return ResourceManager.GetString("String153", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to XXXX.
         /// </summary>
         internal static string String16 {
