@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using ImageUtils;
 using LogLevels;
 using TeconMoon_s_WiiVC_Injector.Utils;
+using TeconMoon_s_WiiVC_Injector.Utils.Build;
 using System.Drawing.Imaging;
 
 namespace TeconMoon_s_WiiVC_Injector
@@ -26,9 +27,15 @@ namespace TeconMoon_s_WiiVC_Injector
         public WiiVC_Injector()
         {
             InitializeComponent();
-            //Check for if .Net v3.5 component is installed
+            
+            //
+            // Check for if .Net v3.5 component is installed.
+            //
             CheckForNet35();
 
+            //
+            // Extract tool chains to temp dir.
+            //
             if (!ExtractToolChainsToTemp())
             {
                 MessageBox.Show(
@@ -39,10 +46,19 @@ namespace TeconMoon_s_WiiVC_Injector
                 Environment.Exit(0);
             }
 
+            //
+            // Apply GUI translation.
+            //
             ApplyTranslation();
 
+            //
+            // Print verion information to main window's title.
+            //
             this.Text += String.Format(" - [{0}]", Program.Version);
 
+            //
+            // Hide 'Debug' button for release version.
+            //
 #if !DEBUG
             this.DebugButton.Visible = false;
 #endif
@@ -55,6 +71,9 @@ namespace TeconMoon_s_WiiVC_Injector
                 LogLevelBox.Items.Add(logLevel);
             }
 
+            //
+            // Load program settings.
+            //
             LoadSettings();
 
             // 
@@ -76,7 +95,9 @@ namespace TeconMoon_s_WiiVC_Injector
                 AppendBuildOutput(item);
             });
 
+            //
             // Process any pending build requests.
+            //
             AutoBuild();
         }
 
@@ -637,90 +658,6 @@ namespace TeconMoon_s_WiiVC_Injector
         string[] coverLanguages = { "US", "EN", "FR", "DE", "IT", "NL", "AU" };
         Dictionary<string, string[]> idMap = TitleIdMap.BuildIdMap();
 
-        enum BuildOutputType
-        {
-            Normal,
-            Succeed,
-            Error,
-            Step,
-            Exec,
-        };
-
-        class BuildOutputItem
-        {
-            public string Output { get; set; }
-            public BuildOutputType OutputType { get; set; }
-        };
-
-        class BuildOutputBuffer
-        {
-            private WiiVC_Injector owner = null;
-
-            public BuildOutputBuffer(WiiVC_Injector outputOwner) 
-            {
-                owner = outputOwner;
-            }
-
-            private List<BuildOutputItem> buildOutputItems = new List<BuildOutputItem>();
-            private StringBuilder stringBuilder = new StringBuilder();
-
-
-            private bool OutputCanbeCached(BuildOutputType outputType)
-            {
-                if (buildOutputItems.Any())
-                {
-                    return buildOutputItems.Last().OutputType == outputType;
-                }
-
-                return false;
-            }
-
-            private void FlushCache()
-            {
-                if (buildOutputItems.Any())
-                {
-                    buildOutputItems.Last().Output = stringBuilder.ToString();
-                }
-
-                stringBuilder.Clear();
-            }
-
-            public void AppendOutput(string output, BuildOutputType outputType, bool appendNewline = true)
-            {
-                if (!OutputCanbeCached(outputType))
-                {
-                    FlushCache();
-
-                    buildOutputItems.Add(new BuildOutputItem()
-                    {
-                        OutputType = outputType
-                    });
-                }
-
-                stringBuilder.Append(output);
-                if (appendNewline)
-                {
-                    stringBuilder.Append(Environment.NewLine);
-                }
-            }
-
-            public void Flush()
-            {
-                FlushCache();
-
-                while (buildOutputItems.Any())
-                {
-                    BuildOutputItem item = buildOutputItems.First();
-                    owner.BeginInvoke(owner.ActBuildOutput, new BuildOutputItem()
-                    {
-                        Output = item.Output,
-                        OutputType = item.OutputType
-                    });
-                    buildOutputItems.Remove(item);
-                }                
-            }
-        }
-
         string GameIso;
         List<string> AutoBuildSucceedList = new List<string>();
         List<string> AutoBuildFailedList = new List<string>();
@@ -791,14 +728,18 @@ namespace TeconMoon_s_WiiVC_Injector
             Launcher.RedirectStandardOutput = true;
             Launcher.RedirectStandardError = true;
 
-            BuildOutputBuffer buildOutputBuffer = new BuildOutputBuffer(this);
+            BuildOutputBuffer buildOutputBuffer = new BuildOutputBuffer();
+            buildOutputBuffer.FlushBuffer += (s, e) =>
+            {
+                BeginInvoke(ActBuildOutput, e);
+            };
 
             if (currentLogLevel <= LogLevel.Debug)
             {
                 BeginInvoke(ActBuildOutput, new BuildOutputItem()
                 {
-                    Output = Trt.Tr("Executing:") + ' ' + LauncherExeFile + '\n'
-                    + Trt.Tr("Args:") + ' ' + LauncherExeArgs + '\n',
+                    Output = Trt.Tr("Executing:") + ' ' + LauncherExeFile + Environment.NewLine
+                           + Trt.Tr("Args:") + ' ' + LauncherExeArgs + Environment.NewLine,
                     OutputType = BuildOutputType.Exec
                 });
             }

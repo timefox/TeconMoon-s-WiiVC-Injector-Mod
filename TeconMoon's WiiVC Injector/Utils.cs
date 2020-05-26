@@ -11,11 +11,106 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Drawing.Text;
+using System.Threading;
 
 namespace TeconMoon_s_WiiVC_Injector
 {
     namespace Utils
     {
+        namespace Build
+        {
+            enum BuildOutputType
+            {
+                Normal,
+                Succeed,
+                Error,
+                Step,
+                Exec,
+            };
+
+            class BuildOutputItem
+            {
+                public string Output { get; set; }
+                public BuildOutputType OutputType { get; set; }
+            };
+
+            class BuildOutputBuffer
+            {
+                public BuildOutputBuffer(int initialCapacity = 16 * 1024)
+                {
+                    stringBuilder = new StringBuilder(initialCapacity);
+                }
+
+                public event EventHandler<BuildOutputItem> FlushBuffer;
+
+                private List<BuildOutputItem> buildOutputItems = new List<BuildOutputItem>();
+                private StringBuilder stringBuilder;
+
+                private bool OutputCanbeCached(BuildOutputType outputType)
+                {
+                    if (buildOutputItems.Any())
+                    {
+                        return buildOutputItems.Last().OutputType == outputType;
+                    }
+
+                    return false;
+                }
+
+                private void FlushCache()
+                {
+                    if (buildOutputItems.Any())
+                    {
+                        buildOutputItems.Last().Output = stringBuilder.ToString();
+                    }
+
+                    stringBuilder.Clear();
+                }
+
+                public void AppendOutput(string output, BuildOutputType outputType, bool appendNewline = true)
+                {
+                    if (String.IsNullOrEmpty(output))
+                    {
+                        return;
+                    }
+
+                    if (!OutputCanbeCached(outputType))
+                    {
+                        FlushCache();
+
+                        buildOutputItems.Add(new BuildOutputItem()
+                        {
+                            OutputType = outputType
+                        });
+                    }
+
+                    stringBuilder.Append(output);
+                    if (appendNewline)
+                    {
+                        stringBuilder.Append(Environment.NewLine);
+                    }
+                }
+
+                public void Flush()
+                {
+                    FlushCache();
+
+                    EventHandler<BuildOutputItem> handler = FlushBuffer;
+                    if (handler == null)
+                    {
+                        buildOutputItems.Clear();
+                        return;
+                    }
+
+                    while (buildOutputItems.Any())
+                    {
+                        BuildOutputItem item = buildOutputItems.First();
+                        handler.Invoke(this, item);
+                        buildOutputItems.Remove(item);
+                    }
+                }
+            }
+        }
+
         class Draw
         {
             // Get a adjusted font which is fit to specified width and height.
@@ -328,6 +423,10 @@ namespace TeconMoon_s_WiiVC_Injector
             protected const string KeyVerion = "verion";
             protected const string KeyAuthor = "author";
 
+            private readonly bool cacheEnabled = false;
+            private ReaderWriterLockSlim trStrResCacheLock = new ReaderWriterLockSlim();
+            private Dictionary<string, string> trStrResCache = new Dictionary<string, string>();
+
             private delegate void TrControl(Control control);
 
             private struct SpecialControlTr
@@ -363,14 +462,15 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
             }
 
-            private TranslationTemplate(string templateFile)
+            private TranslationTemplate(string templateFile, bool enableCache)
             {
                 TemplateFile = new IniFile(templateFile);
+                cacheEnabled = enableCache;
             }
 
-            static public TranslationTemplate LoadTemplate(string templateFilePath)
+            static public TranslationTemplate LoadTemplate(string templateFilePath, bool enableCache)
             {
-                return new TranslationTemplate(templateFilePath);
+                return new TranslationTemplate(templateFilePath, enableCache);
             }
 
             static public TranslationTemplate CreateTemplate(
@@ -381,7 +481,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 string author
                 )
             {
-                TranslationTemplate template = new TranslationTemplate(templateFilePath);
+                TranslationTemplate template = new TranslationTemplate(templateFilePath, false);
 
                 template.TemplateFile.CurrentSection = appName;
                 template.TemplateFile.WriteStringValue(KeyLanguage, defaultLanguageName);
@@ -580,9 +680,26 @@ namespace TeconMoon_s_WiiVC_Injector
 
             public string Tr(string s)
             {
-                if (String.IsNullOrEmpty(s) || !IsValidate)
+                if (!IsValidate || String.IsNullOrEmpty(s))
                 {
                     return s;
+                }
+
+                if (cacheEnabled)
+                {
+                    trStrResCacheLock.EnterReadLock();
+
+                    try
+                    {
+                        if (trStrResCache.ContainsKey(s))
+                        {
+                            return trStrResCache[s];
+                        }
+                    }
+                    finally
+                    {
+                        trStrResCacheLock.ExitReadLock();
+                    }
                 }
 
                 //
@@ -604,7 +721,21 @@ namespace TeconMoon_s_WiiVC_Injector
                         // our string mismatching.
                         if (s.Equals((dictionaryEntry.Value as string).Replace("\r\n", "\n")))
                         {
-                            return TrId(dictionaryEntry.Key.ToString());
+                            string trS = TrId(dictionaryEntry.Key.ToString());
+                            if (cacheEnabled)
+                            {
+                                trStrResCacheLock.EnterWriteLock();
+
+                                try
+                                {
+                                    trStrResCache.Add(s, trS);
+                                }
+                                finally
+                                {
+                                    trStrResCacheLock.ExitWriteLock();
+                                }
+                            }
+                            return trS;
                         }
                     }
                 }

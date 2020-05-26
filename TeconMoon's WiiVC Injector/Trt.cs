@@ -5,33 +5,25 @@ namespace TeconMoon_s_WiiVC_Injector
 {
     static class Trt
     {
-        private static TranslationTemplate _tt = TranslationTemplate.LoadTemplate(
-            Application.StartupPath + @"\language.lang");
-
-        private static TranslationTemplate tt
-        {
-            get
-            {
-                return _tt;
-            }
-        }
+        private static TranslationTemplate Tt { get; } = TranslationTemplate.LoadTemplate(
+            Application.StartupPath + @"\language.lang", true);
 
         public static bool IsValidate
         {
             get
             {                
-                return tt.IsValidate;
+                return Tt.IsValidate;
             }
         }
 
         static public void TranslateForm(Form form)
         {
-            tt.TranslateForm(form);
+            Tt.TranslateForm(form);
         }
 
         static public string Tr(string s)
         {
-            return tt.Tr(s);
+            return Tt.Tr(s);
         }
     }
 }
