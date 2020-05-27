@@ -19,6 +19,7 @@ using LogLevels;
 using TeconMoon_s_WiiVC_Injector.Utils;
 using TeconMoon_s_WiiVC_Injector.Utils.Build;
 using System.Drawing.Imaging;
+using System.Text.RegularExpressions;
 
 namespace TeconMoon_s_WiiVC_Injector
 {
@@ -413,12 +414,25 @@ namespace TeconMoon_s_WiiVC_Injector
 
                 if (SelectGameSource(game, true))
                 {
-                    BuildCurrent();
-                    break;
+                    if (Directory.Exists(getOutputFolder()))
+                    {
+                        AppendBuildOutput(new BuildOutputItem()
+                        {
+                            Output = String.Format(Trt.Tr("Title output folder already exists: {0}\nSkipping: {1}.\n"), getOutputFolder(), game),
+                            OutputType = BuildOutputType.Error
+                        });
+                        AutoBuildSkippedList.Add(game);
+                        Program.AutoBuildList.RemoveAt(0);
+                        continue;
+                    } else
+                    {
+                        BuildCurrent();
+                        break;
+                    }
                 }
 
                 AppendBuildOutput(new BuildOutputItem(){
-                    Output = String.Format(Trt.Tr("Invalid Title: {0}."), game),
+                    Output = String.Format(Trt.Tr("Invalid Title: {0}.\n"), game),
                     OutputType = BuildOutputType.Error
                     }
                 );
@@ -433,9 +447,10 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (!InClosing)
                 {
                     string s = String.Format(
-                        Trt.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}.\nInvalid: {2}."),
+                        Trt.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}.\nSkipped: {2}.\nInvalid: {3}."),
                         AutoBuildSucceedList.Count,
                         AutoBuildFailedList.Count,
+                        AutoBuildSkippedList.Count,
                         AutoBuildInvalidList.Count);
 
                     MessageBox.Show(s);
@@ -2481,7 +2496,7 @@ namespace TeconMoon_s_WiiVC_Injector
             if (succeed && PropmtForSucceed && !InClosing)
             {
                 MessageBox.Show(Trt.Tr("Conversion Complete! Your packed game can be found here: ")
-                    + OutputDirectory.Text + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text
+                    + getOutputFolder()
                     + Trt.Tr(".\n\nInstall your title using WUP Installer GX2 with signature patches enabled (CBHC, Haxchi, etc). Make sure you have signature patches enabled when launching your title.\n\n Click OK to continue..."),
                     PackedTitleLine1.Text + Trt.Tr(" Conversion Complete..."));
             }
@@ -3382,6 +3397,15 @@ namespace TeconMoon_s_WiiVC_Injector
             return true;
         }
 
+        private string getOutputFolder()
+        {
+            string regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            Regex r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
+            string escapedGameName = r.Replace(GameNameLabel.Text, "");
+
+            return OutputDirectory.Text + Path.DirectorySeparatorChar + escapedGameName + " [" + PackedTitleIDLine.Text + "]";
+        }
+
         private bool NUSPackerEncrypt()
         {
             //
@@ -3389,9 +3413,7 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             Directory.SetCurrentDirectory(TempRootPath);
             LauncherExeFile = TempToolsPath + "JAR\\NUSPacker.exe";
-            LauncherExeArgs = "-in BUILDDIR -out \"" + OutputDirectory.Text
-                + "\\WUP-N-" + TitleIDText + "_" + PackedTitleIDLine.Text
-                + "\" -encryptKeyWith " + WiiUCommonKey.Text;
+            LauncherExeArgs = "-in BUILDDIR -out \"" + getOutputFolder() + "\" -encryptKeyWith " + WiiUCommonKey.Text;
             LaunchProgram();
 
             Invoke(ActBuildProgress, 100);
