@@ -3487,7 +3487,10 @@ namespace TeconMoon_s_WiiVC_Injector
 
             BeginInvoke(ActBuildOutput, new BuildOutputItem()
             {
-                Output = string.Format(Trt.Tr("Processing [{0}] [{1}]..."), GameNameLabel.Text, GameSourceDirectory.Text) + Environment.NewLine,
+                Output = string.Format(
+                    Trt.Tr("Processing [{0}] [{1}]..."), 
+                    GameNameLabel.Text, GameSourceDirectory.Text)
+                    + Environment.NewLine,
                 OutputType = BuildOutputType.Step,
             });
 

@@ -662,6 +662,15 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fail to download images from GameTDB.com..
+        /// </summary>
+        internal static string String156 {
+            get {
+                return ResourceManager.GetString("String156", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to XXXX.
         /// </summary>
         internal static string String16 {
@@ -1497,7 +1506,8 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         ///   Looks up a localized string similar to All conversions have been completed.
         ///Succeed: {0}.
         ///Failed: {1}.
-        ///Invalid: {2}..
+        ///Skipped: {2}.
+        ///Invalid: {3}..
         /// </summary>
         internal static string String99 {
             get {
