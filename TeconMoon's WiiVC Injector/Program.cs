@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TeconMoon_s_WiiVC_Injector.Utils;
 
@@ -11,36 +11,14 @@ namespace TeconMoon_s_WiiVC_Injector
 {
     static class Program
     {
-        private static int _ModVersion = 12;
+        public static int ModVersion { get; } = 12;
 
-        public static int ModVersion
-        {
-            get
-            {
-                return _ModVersion;
-            }
-        }
-
-        public static string Version
-        {
-            get
-            {
-                return System.Reflection.Assembly.GetExecutingAssembly()
+        public static string Version => System.Reflection.Assembly.GetExecutingAssembly()
                     .GetName().Version.ToString() + " mod " + ModVersion;
-            }
-        }
 
-        static private List<string> _AutoBuildList = new List<string>();
+        public static List<string> AutoBuildList { get; } = new List<string>();
 
-        static public List<string> AutoBuildList
-        {
-            get
-            {
-                return _AutoBuildList;
-            }
-        }
-
-        static public bool AppendAutoBuildList(string item)
+        public static bool AppendAutoBuildList(string item)
         {
             if (File.Exists(item))
             {
@@ -55,6 +33,34 @@ namespace TeconMoon_s_WiiVC_Injector
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Check for if .Net v3.5 component is installed.
+        /// </summary>
+        private static bool CheckForNet35()
+        {
+            if (Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v3.5") == null)
+            {
+                MessageBox.Show(
+                    Trt.Tr(".NET Framework 3.5 was not detected on your machine, which is required by programs used during the build process.\n\nYou should be able to enable this in \"Programs and Features\" under \"Turn Windows features on or off\", or download it from Microsoft.\n\nClick OK to close the injector and open \"Programs and Features\"..."),
+                    Trt.Tr(".NET Framework v3.5 not found..."));
+
+                Process.Start("appwiz.cpl");
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool CheckRuntimeEnvironment()
+        {
+            if (!CheckForNet35())
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -89,6 +95,11 @@ namespace TeconMoon_s_WiiVC_Injector
                             CultureInfo.InvariantCulture, false, false));
                     return;
                 }
+            }
+
+            if (!CheckRuntimeEnvironment())
+            {
+                return;
             }
 
             Application.Run(new WiiVC_Injector());

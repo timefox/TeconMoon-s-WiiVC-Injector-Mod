@@ -644,6 +644,24 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download background from GameTDB.com.
+        /// </summary>
+        internal static string String154 {
+            get {
+                return ResourceManager.GetString("String154", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use default background.
+        /// </summary>
+        internal static string String155 {
+            get {
+                return ResourceManager.GetString("String155", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to XXXX.
         /// </summary>
         internal static string String16 {
@@ -1494,6 +1512,26 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
             get {
                 object obj = ResourceManager.GetObject("TOOLDIR", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap universal_Wii_WiiWare_template_bootTvTex {
+            get {
+                object obj = ResourceManager.GetObject("universal_Wii_WiiWare_template_bootTvTex", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap universal_Wii_WiiWare_template_iconTex {
+            get {
+                object obj = ResourceManager.GetObject("universal_Wii_WiiWare_template_iconTex", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

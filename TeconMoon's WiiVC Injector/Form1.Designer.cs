@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WiiVC_Injector));
             this.MainTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.WiiRetail = new System.Windows.Forms.RadioButton();
             this.MainTabs = new System.Windows.Forms.TabControl();
             this.SourceFilesTab = new System.Windows.Forms.TabPage();
-            this.GenerateImage = new System.Windows.Forms.Button();
+            this.GenerateImage = new TeconMoon_s_WiiVC_Injector.Utils.WinForms.SplitButton();
             this.RepoDownload = new System.Windows.Forms.Button();
             this.TitleIDLabel = new System.Windows.Forms.Label();
             this.GameNameLabel = new System.Windows.Forms.Label();
@@ -146,6 +147,7 @@
             this.OpenBootSound = new System.Windows.Forms.OpenFileDialog();
             this.OpenMainDol = new System.Windows.Forms.OpenFileDialog();
             this.OpenGC2 = new System.Windows.Forms.OpenFileDialog();
+            this.GenerateImageMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.MainTableLayout.SuspendLayout();
             this.MainTabs.SuspendLayout();
             this.SourceFilesTab.SuspendLayout();
@@ -256,10 +258,12 @@
             // 
             this.GenerateImage.Location = new System.Drawing.Point(454, 86);
             this.GenerateImage.Name = "GenerateImage";
-            this.GenerateImage.Size = new System.Drawing.Size(103, 59);
-            this.GenerateImage.TabIndex = 15;
+            this.GenerateImage.Size = new System.Drawing.Size(102, 59);
+            this.GenerateImage.SplitMenu = null;
+            this.GenerateImage.TabIndex = 16;
             this.GenerateImage.Text = "Generate images by game name";
-            this.GenerateImage.UseVisualStyleBackColor = false;
+            this.GenerateImage.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.GenerateImage.UseVisualStyleBackColor = true;
             this.GenerateImage.Click += new System.EventHandler(this.GenerateImage_Click);
             // 
             // RepoDownload
@@ -1550,6 +1554,13 @@
             this.OpenGC2.Filter = "GameCube Disk 2 (*.gcm,*.iso)|*.gcm;*.iso";
             this.OpenGC2.Title = "Specify your GameCube game\'s 2nd disc";
             // 
+            // GenerateImageMenu
+            // 
+            this.GenerateImageMenu.Name = "GenerateImageMenu";
+            this.GenerateImageMenu.Size = new System.Drawing.Size(181, 26);
+            this.GenerateImageMenu.Opening += new System.ComponentModel.CancelEventHandler(this.GenerateImageMenu_Opening);
+            this.GenerateImageMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.GenerateImageMenu_ItemClicked);
+            // 
             // WiiVC_Injector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1695,7 +1706,6 @@
         private System.Windows.Forms.CheckBox LRPatch;
         private System.Windows.Forms.Button DebugButton;
         private System.Windows.Forms.CheckBox WiiVMC;
-        private System.Windows.Forms.Button GenerateImage;
         private System.Windows.Forms.Button BrowseOutputDir;
         private System.Windows.Forms.TextBox OutputDirectory;
         private System.Windows.Forms.Label OutputDirLabel;
@@ -1712,6 +1722,8 @@
         private System.Windows.Forms.Button OpenOutputDirButton;
         private System.Windows.Forms.ToolStripComboBox LogLevelBox;
         private System.Windows.Forms.ToolStripLabel LogLevelLabel;
+        private Utils.WinForms.SplitButton GenerateImage;
+        private System.Windows.Forms.ContextMenuStrip GenerateImageMenu;
     }
 }
 

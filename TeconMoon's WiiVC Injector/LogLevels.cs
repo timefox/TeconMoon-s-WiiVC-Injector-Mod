@@ -35,23 +35,12 @@ namespace LogLevels
 
         public static LogLevel getLogLevelByLevel(int level)
         {
-            LogLevel result = null;
-            if (levels.ContainsValue(level))
-            {               
-                result = new LogLevel((from k in levels.Keys
-                                       where (levels[k] == level)
-                                       select k).First());
-            }
-
-            return result;
+            return (from k in levels.Keys
+                    where levels[k] == level
+                    select new LogLevel(k)).DefaultIfEmpty(null).First();
         }
 
-        public static string[] getNames()
-        {
-            string[] keys = new string[levels.Keys.Count];
-            levels.Keys.CopyTo(keys, 0);
-            return keys;
-        }
+        public static string[] Names => levels.Keys.ToArray();
 
         public override bool Equals(object obj)
         {

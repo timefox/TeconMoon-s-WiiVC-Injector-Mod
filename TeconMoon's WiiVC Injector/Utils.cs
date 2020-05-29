@@ -2,16 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Text;
-using System.Windows.Forms;
-using System.Linq;
-using System.Resources;
-using System.Globalization;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Drawing.Text;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Resources;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace TeconMoon_s_WiiVC_Injector
 {
@@ -473,7 +473,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 return new TranslationTemplate(templateFilePath, enableCache);
             }
 
-            static public TranslationTemplate CreateTemplate(
+            public static TranslationTemplate CreateTemplate(
                 string templateFilePath,
                 string appName,
                 string defaultLanguageName,
@@ -711,36 +711,28 @@ namespace TeconMoon_s_WiiVC_Injector
                 // null which is influenced by the language
                 // setting of OS.
                 //
-                foreach (DictionaryEntry dictionaryEntry
-                    in Properties.Resources.ResourceManager.GetResourceSet(
-                        CultureInfo.InvariantCulture, false, false))
-                {
-                    if (dictionaryEntry.Value is string)
-                    {
-                        // .resx file prefers "\r\n" for newline which cause
-                        // our string mismatching.
-                        if (s.Equals((dictionaryEntry.Value as string).Replace("\r\n", "\n")))
-                        {
-                            string trS = TrId(dictionaryEntry.Key.ToString());
-                            if (cacheEnabled)
-                            {
-                                trStrResCacheLock.EnterWriteLock();
+                ResourceSet resourceSet = Properties.Resources.ResourceManager.GetResourceSet(
+                        CultureInfo.InvariantCulture, true, false);
 
-                                try
-                                {
-                                    trStrResCache.Add(s, trS);
-                                }
-                                finally
-                                {
-                                    trStrResCacheLock.ExitWriteLock();
-                                }
-                            }
-                            return trS;
-                        }
+                string trS = (from DictionaryEntry r in resourceSet
+                              where r.Value is string 
+                              && s.Equals((r.Value as string).Replace("\r\n", "\n"))
+                              select TrId(r.Key.ToString())).DefaultIfEmpty(s).First();
+
+                if (cacheEnabled)
+                {
+                    trStrResCacheLock.EnterWriteLock();
+
+                    try
+                    {
+                        trStrResCache.Add(s, trS);
+                    }
+                    finally
+                    {
+                        trStrResCacheLock.ExitWriteLock();
                     }
                 }
-
-                return s;
+                return trS;
             }
 
             private string TrId(string id)
@@ -785,7 +777,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 return Win32Native.WritePrivateProfileString(
                     section,
                     key,
-                    value.Replace("\\r", "\r").Replace("\\n", "\n"),
+                    value.Replace("\r", "\\r").Replace("\n", "\\n"),
                     FileName);
             }
 
