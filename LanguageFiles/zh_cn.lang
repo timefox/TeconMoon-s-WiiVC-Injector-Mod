@@ -1,8 +1,8 @@
 [TeconMoon-s-WiiVC-Injector-Mod-Language]
-language=简体中文(zh-cn)
-verion=3.0.1mod12
+language=English(en-us)
+verion=3.0.1.0 mod 12
 author=robin
-date=4/30/2020
+date=5/29/2020
 [WiiVC_Injector]
 @Title=TeconMoon's WiiVC 注入器
 WiiRetail=Wii 游戏注入
@@ -36,7 +36,10 @@ BootSoundPreviewButton=播放声音
 MetaTab=GamePad/其他选项
 LRPatch=交换 L && R 与 ZL && ZR
 TutorialLink=说明
-AdvancedLabel5=*Wii 直柄模拟不支持红外指向与动作检测.\r\n\r\n**强制性选项仅应在游戏无法正确检测你的手柄时勾选。(例如, 生化危机4 Wii 版支持经典控制器, 但不打补丁它就无法被识别)\r\n**当使用强制性选项时, Wii 注入器会自动打入补丁. 对于vWii NAND游戏, 你可能也需要为你的WAD打上补丁，在你将它安装到NAND之前:
+AdvancedLabel5=*Wii 直柄模拟不支持红外指向与动作检测.
+
+**强制性选项仅应在游戏无法正确检测你的手柄时勾选。(例如, 生化危机4 Wii 版支持经典控制器, 但不打补丁它就无法被识别)
+**当使用强制性选项时, Wii 注入器会自动打入补丁. 对于vWii NAND游戏, 你可能也需要为你的WAD打上补丁，在你将它安装到NAND之前:
 ForceCC=**强制将经典控制器的状态设置为已连接
 NoGamePadEmu=无GamePad手柄模拟, 仅使用Wii的原生控制器
 CCEmu=模拟经典控制器
@@ -93,6 +96,13 @@ BuildOutputTab=生成输出（详细的转换过程信息）
 LogLevelLabel=日志级别
 ClearBuildOuput=全部清除
 AutoScrollBuildOutput=自动滚动
+TemporaryDirectory=C:\temp
+OutputDirectory=C:\Users\Lenovo\Desktop\buildenv
+TitleKey=04EACEF7657422E61606FA7FC7DCD73D
+WiiUCommonKey=D7B00402659BA2ABD2CB0DB27FA2B656
+BuildOutputToolStrip=toolStrip1
+=详细
+LogLevelBox=详细
 [SDCardMenu]
 @Title=Nintendont SD卡菜单
 Format=推荐的SD卡格式化工具
@@ -205,7 +215,7 @@ String94=Nintendont Forwarder (*.dol)|*.dol
 String97=指定游戏的第二张光盘镜像
 String96=GameCube游戏的第二张光盘镜像 (*.gcm,*.iso)|*.gcm;*.iso
 String98=无法创建指定的输出目录，转换过程无法继续。\n详细的错误信息：
-String99=所有转换都已完成。\n成功: {0}。\n失败: {1}。\n不正确的镜像：{2}。
+String99=所有转换都已完成。\n成功: {0}。\n失败: {1}。\n跳过：{2}。\n无效的镜像：{3}。
 String100=生成
 String101=停止
 String102=您确定要停止当前的生成过程吗？
@@ -255,8 +265,12 @@ String145=正在检查剩余磁盘空间
 String146=正在检查输出目录的设定
 String147=正在检查基础文件的完整性
 String148=时意外中止：
-String149=。
+String149=剩余[{0}]。
 String150=详细
 String151=简要
 String152=不正确的镜像：{0}
 String153=没有正常退出。
+String154=从GameTDB.com下载背景图片
+String155=使用默认的背景图片（内置）
+String156=从GameTDB.com下载图片失败。
+String157=正在处理 [{0}] [{1}]...

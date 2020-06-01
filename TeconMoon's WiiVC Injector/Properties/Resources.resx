@@ -593,7 +593,7 @@ Additional error information: </value>
     <value> terminated unexpectedly: </value>
   </data>
   <data name="String149" xml:space="preserve">
-    <value>.</value>
+    <value>Left [{0}].</value>
   </data>
   <data name="ids" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ids.csv;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -624,5 +624,8 @@ Additional error information: </value>
   </data>
   <data name="String156" xml:space="preserve">
     <value>Fail to download images from GameTDB.com.</value>
+  </data>
+  <data name="String157" xml:space="preserve">
+    <value>Processing [{0}] [{1}]...</value>
   </data>
 </root>

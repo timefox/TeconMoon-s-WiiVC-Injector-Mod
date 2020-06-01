@@ -88,6 +88,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="LogLevels.cs" />
     <Compile Include="SplitButton.cs">
       <SubType>Component</SubType>

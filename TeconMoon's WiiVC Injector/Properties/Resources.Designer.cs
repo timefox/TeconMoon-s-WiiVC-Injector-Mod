@@ -590,7 +590,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ..
+        ///   Looks up a localized string similar to Left [{0}]..
         /// </summary>
         internal static string String149 {
             get {
@@ -667,6 +667,15 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         internal static string String156 {
             get {
                 return ResourceManager.GetString("String156", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing [{0}] [{1}]....
+        /// </summary>
+        internal static string String157 {
+            get {
+                return ResourceManager.GetString("String157", resourceCulture);
             }
         }
         

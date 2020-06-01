@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Globalization;
 using System.IO;
@@ -116,7 +117,7 @@ namespace TeconMoon_s_WiiVC_Injector
             // Get a adjusted font which is fit to specified width and height.
             // Using Graphics's method.
             // Modified from MSDN: https://msdn.microsoft.com/en-us/library/bb986765.aspx
-            static public Font GetGraphicAdjustedFont(
+            public static Font GetGraphicAdjustedFont(
                 Graphics g,
                 string graphicString,
                 Font originalFont,
@@ -163,7 +164,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
             // Get a adjusted font which is fit to specified width and height.
             // Using TextRenderer's method.
-            static public Font GetTextRendererAdjustedFont(
+            public static Font GetTextRendererAdjustedFont(
                 Graphics g,
                 string text,
                 Font originalFont,
@@ -212,7 +213,7 @@ namespace TeconMoon_s_WiiVC_Injector
             // Draw a string in a specified rectangle with
             // a specified font with max font size that can
             // fit to the rectangle.
-            static public void ImageDrawString(
+            public static void ImageDrawString(
                 ref Bitmap bitmap,
                 string s,
                 Rectangle rectangle,
@@ -301,6 +302,45 @@ namespace TeconMoon_s_WiiVC_Injector
                             flags);
                     }
                 }
+            }
+
+            public static void SetGraphicsBestQuility(ref Graphics gfx)
+            {
+                gfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                gfx.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                gfx.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+            }
+
+            public static Image ResizeAndFitImage(Image image, Size newSize)
+            {
+                return ResizeAndFitImage(image, newSize, newSize);
+            }
+
+            public static Image ResizeAndFitImage(Image image, Size newSize, Size fillSize)
+            {
+                Bitmap result = new Bitmap(fillSize.Width, fillSize.Height);
+                result.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+                Graphics gfx = Graphics.FromImage(result);
+                SetGraphicsBestQuility(ref gfx);
+                gfx.FillRectangle(Brushes.White, 0, 0, fillSize.Width, fillSize.Height);
+
+                using (ImageAttributes wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
+
+                    int y = (fillSize.Height / 2) - newSize.Height / 2;
+                    int x = (fillSize.Width / 2) - newSize.Width / 2;
+
+                    Rectangle destRect = new Rectangle(x, y, newSize.Width, newSize.Height);
+                    gfx.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+
+                gfx.Dispose();
+                image.Dispose();
+                return result;
             }
         }
 
@@ -871,6 +911,27 @@ namespace TeconMoon_s_WiiVC_Injector
                 }
 
                 return result;
+            }
+        }
+
+        class Misc
+        {
+            public static string NormalizePath(string path)
+            {
+                return Path.GetFullPath(new Uri(path).LocalPath)
+                           .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            }
+
+            public static bool PathEquals(string path1, string path2, bool fsCaseInsensitive = true)
+            {
+                string canonicalName1 = NormalizePath(path1);
+                string canonicalName2 = NormalizePath(path2);
+
+                return canonicalName1.Equals(
+                    canonicalName2,
+                    fsCaseInsensitive
+                    ? StringComparison.OrdinalIgnoreCase
+                    : StringComparison.Ordinal);
             }
         }
     }
