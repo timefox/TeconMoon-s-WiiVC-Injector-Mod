@@ -16,9 +16,9 @@ namespace TeconMoon_s_WiiVC_Injector
         public static string Version => System.Reflection.Assembly.GetExecutingAssembly()
                     .GetName().Version.ToString() + " mod " + ModVersion;
 
-        public static List<string> AutoBuildList { get; } = new List<string>();
+        public static List<string> BatchBuildList { get; } = new List<string>();
 
-        public static bool AppendAutoBuildList(string item)
+        public static bool AppendBatchBuildList(string item)
         {
             if (File.Exists(item))
             {
@@ -27,7 +27,7 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (fileExtension.Equals(".iso", StringComparison.OrdinalIgnoreCase)
                     || fileExtension.Equals(".wbfs", StringComparison.OrdinalIgnoreCase))
                 {
-                    AutoBuildList.Add(item);
+                    BatchBuildList.Add(item);
                     return true;
                 }
             }
@@ -76,7 +76,7 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 if (!arg.StartsWith("-") && !arg.StartsWith("/"))
                 {
-                    AppendAutoBuildList(arg);
+                    AppendBatchBuildList(arg);
                     continue;
                 }
 

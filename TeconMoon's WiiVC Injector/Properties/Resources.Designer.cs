@@ -680,11 +680,94 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Title output folder already exists: {0}
+        ///Skipping: {1}.
+        ///.
+        /// </summary>
+        internal static string String158 {
+            get {
+                return ResourceManager.GetString("String158", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Injector version: {0}.
+        /// </summary>
+        internal static string String159 {
+            get {
+                return ResourceManager.GetString("String159", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to XXXX.
         /// </summary>
         internal static string String16 {
             get {
                 return ResourceManager.GetString("String16", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Build type: {0}.
+        /// </summary>
+        internal static string String160 {
+            get {
+                return ResourceManager.GetString("String160", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Batch build: {0}.
+        /// </summary>
+        internal static string String161 {
+            get {
+                return ResourceManager.GetString("String161", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        internal static string String162 {
+            get {
+                return ResourceManager.GetString("String162", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string String163 {
+            get {
+                return ResourceManager.GetString("String163", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Build options:.
+        /// </summary>
+        internal static string String164 {
+            get {
+                return ResourceManager.GetString("String164", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Build time(UTC): {0}.
+        /// </summary>
+        internal static string String165 {
+            get {
+                return ResourceManager.GetString("String165", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}(Available free space: {1}).
+        /// </summary>
+        internal static string String166 {
+            get {
+                return ResourceManager.GetString("String166", resourceCulture);
             }
         }
         

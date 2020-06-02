@@ -933,6 +933,29 @@ namespace TeconMoon_s_WiiVC_Injector
                     ? StringComparison.OrdinalIgnoreCase
                     : StringComparison.Ordinal);
             }
+
+            public static string GetLengthString(long length)
+            {
+                // >= 1GB
+                if (length >= 1024 * 1024 * 1024)
+                {
+                    return $"{length / 1024.0 / 1024.0 / 1024.0:0.##} GB";
+                }
+
+                // >= 1MB
+                if (length >= 1024 * 1024)
+                {
+                    return $"{length / 1024.0 / 1024.0:0.##} MB";
+                }
+
+                // >= 1KB
+                if (length >= 1024)
+                {
+                    return $"{length / 1024.0:0.##} KB";
+                }
+
+                return $"{length} Bytes";
+            }
         }
     }
 }

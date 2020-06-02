@@ -1,5 +1,4 @@
 ﻿using ImageUtils;
-using LogLevels;
 using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
 using System;
@@ -8,6 +7,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using TeconMoon_s_WiiVC_Injector.Utils;
@@ -19,7 +20,8 @@ namespace TeconMoon_s_WiiVC_Injector
     {
         private delegate bool BuildAction();
 
-        private event EventHandler<bool> BuildCompletedEx;
+        private event EventHandler PreBuild;
+        private event EventHandler<bool> PostBuild;
 
         private Thread BuilderThread;
 
@@ -249,6 +251,13 @@ namespace TeconMoon_s_WiiVC_Injector
             }
             else
             {
+                PreBuild = (s, e) =>
+                {
+                    PromptForSucceed = true;
+                    BuildOutput.ResetText();
+                    PrintBuildOverview();
+                };
+
                 BuildAnsync();
             }
         }
@@ -294,12 +303,9 @@ namespace TeconMoon_s_WiiVC_Injector
             BuildStatus.ForeColor = Color.Black;
 
             //
-            // Reset build output.
+            // Fire 'PreBuild' event.
             //
-            if (currentLogLevel <= LogLevel.Debug)
-            {
-                BuildOutput.ResetText();
-            }
+            PreBuild?.Invoke(this, new EventArgs());
 
             //
             // Reset user cancellation flag.
@@ -335,7 +341,7 @@ namespace TeconMoon_s_WiiVC_Injector
         {
             BuildStopwatch.Stop();
 
-            if (succeed && PropmtForSucceed && !InClosing)
+            if (succeed && PromptForSucceed && !InClosing)
             {
                 MessageBox.Show(Trt.Tr("Conversion Complete! Your packed game can be found here: ")
                     + GetOutputFolder()
@@ -363,7 +369,7 @@ namespace TeconMoon_s_WiiVC_Injector
             BuildStatus.Text = "";
             BuildProgress.Value = 0;
 
-            BuildCompletedEx?.Invoke(this, succeed);
+            PostBuild?.Invoke(this, succeed);
 
             if (!InClosing)
             {
@@ -375,9 +381,9 @@ namespace TeconMoon_s_WiiVC_Injector
                 if (succeed)
                 {
                     buildResult.Output += Trt.Tr("Build succeed.");
-                    if (Program.AutoBuildList.Count > 1)
+                    if (Program.BatchBuildList.Count > 1)
                         buildResult.Output += string.Format(Trt.Tr("Left [{0}]."), 
-                            Program.AutoBuildList.Count);
+                            Program.BatchBuildList.Count);
                     buildResult.OutputType = BuildOutputType.Succeed;
                 }
                 else
@@ -400,6 +406,356 @@ namespace TeconMoon_s_WiiVC_Injector
                 AppendBuildOutput(buildResult);
             }
         }
+
+        private string GetCurrentBuildTypeString()
+        {
+            RadioButton[] typeButtons = new RadioButton[]
+            {
+                WiiRetail,
+                WiiHomebrew,
+                GCRetail,
+                WiiNAND,
+            };
+
+            return (from rb in typeButtons
+                    where rb.Checked
+                    select rb.Text).First();
+        }
+
+        private string GetBatchBuildListString()
+        {
+            StringBuilder stringBuilder = new StringBuilder(4096);
+
+            for (int i = 0; i < Program.BatchBuildList.Count(); ++i)
+            {
+                stringBuilder.AppendLine();
+                stringBuilder.AppendFormat("{0}.{1}", 
+                    i + 1, Program.BatchBuildList[i]);
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        private class BuildValue
+        {
+            public string Name { get; set; }
+            public string Value { get; set; }
+        };
+
+        private void PrintBuildValues(StringBuilder stringBuilder, BuildValue[] buildValues)
+        {
+            foreach (BuildValue buildValue in buildValues)
+            {
+                stringBuilder.AppendFormat("{0}: {1}{2}",
+                    buildValue.Name.TrimEnd(new char[] { '.' }),
+                    buildValue.Value,
+                    Environment.NewLine);
+            }
+        }
+
+        private void PrintBuildInputFiles(StringBuilder stringBuilder)
+        {
+            BuildValue[] buildInputFiles = new BuildValue[]
+            {
+                new BuildValue()
+                {
+                    Name = GameSourceButton.Text,
+                    Value = Program.BatchBuildList.Any() 
+                        ? GetBatchBuildListString() 
+                        : GameSourceDirectory.Text
+                },
+                new BuildValue()
+                {
+                    Name = IconSourceButton.Text,
+                    Value = IconSourceDirectory.Text
+                },
+                new BuildValue()
+                {
+                    Name = BannerSourceButton.Text,
+                    Value = BannerSourceDirectory.Text
+                },
+                new BuildValue()
+                {
+                    Name = GC2SourceButton.Text,
+                    Value = Program.BatchBuildList.Any() 
+                        ? string.Empty 
+                        : GC2SourceDirectory.Text
+                },
+                new BuildValue()
+                {
+                    Name = DrcSourceButton.Text,
+                    Value = DrcSourceDirectory.Text
+                },
+                new BuildValue()
+                {
+                    Name = LogoSourceButton.Text,
+                    Value = LogoSourceDirectory.Text
+                },
+                new BuildValue()
+                {
+                    Name = BootSoundButton.Text,
+                    Value = BootSoundDirectory.Text
+                },
+            };
+
+            PrintBuildValues(stringBuilder, buildInputFiles);
+        }
+
+        private void PrintBuildOptions(StringBuilder stringBuilder, Control control)
+        {
+            if (control is CheckBox checkBox && checkBox.Checked)
+            {
+                stringBuilder.AppendFormat("'{0}', ", checkBox.Text);
+            }
+
+            if (control is RadioButton radioButton && radioButton.Checked)
+            {
+                stringBuilder.AppendFormat("'{0}', ", radioButton.Text);
+            }
+
+            foreach (Control subControl in control.Controls)
+            {
+                PrintBuildOptions(stringBuilder, subControl);
+            }
+        }
+
+        private void PrintBuildOptions(StringBuilder stringBuilder)
+        {
+            foreach (Control control in Controls)
+            {
+                PrintBuildOptions(stringBuilder, control);
+            }
+
+            //
+            // TrimEnd ', '.
+            //
+            stringBuilder.Remove(stringBuilder.Length - 2, 2);
+        }
+
+        private void PrintSpaceInformation(StringBuilder stringBuilder)
+        {
+            BuildValue[] spaceValues = new BuildValue[]
+            {
+                new BuildValue()
+                {
+                    Name = OutputDirLabel.Text,
+                    Value = string.Format(Trt.Tr("{0}(Available free space: {1})"), 
+                    OutputDirectory.Text,
+                    String.IsNullOrEmpty(OutputDirectory.Text) 
+                        ? "0" 
+                        : Misc.GetLengthString(
+                            new DriveInfo(OutputDirectory.Text)
+                            .AvailableFreeSpace))
+                },
+                new BuildValue()
+                {
+                    Name = TempDirLabel.Text,
+                    Value = string.Format(Trt.Tr("{0}(Available free space: {1})"),
+                    TemporaryDirectory.Text,
+                    String.IsNullOrEmpty(TemporaryDirectory.Text)
+                        ? "0"
+                        : Misc.GetLengthString(
+                            new DriveInfo(OutputDirectory.Text)
+                            .AvailableFreeSpace))
+                },
+            };
+
+            PrintBuildValues(stringBuilder, spaceValues);
+        }
+
+        private void PrintBuildOverview()
+        {
+            StringBuilder overview = new StringBuilder(4096);
+
+            //
+            // Add generic information.
+            //
+            overview.AppendFormat(Trt.Tr("Injector version: {0}"), Program.Version);
+            overview.AppendLine();
+            overview.AppendFormat(Trt.Tr("Build type: {0}"), GetCurrentBuildTypeString());
+            overview.AppendLine();
+            overview.AppendFormat(
+                Trt.Tr("Batch build: {0}"), 
+                Program.BatchBuildList.Any() 
+                ? Trt.Tr("Yes") : Trt.Tr("No"));
+            overview.AppendLine();
+
+            //
+            // Add input files information.
+            //
+            PrintBuildInputFiles(overview);
+
+            //
+            // Add space report.
+            //
+            PrintSpaceInformation(overview);
+
+            //
+            // Add selected options information.
+            //
+            overview.Append(Trt.Tr("Build options:"));
+            overview.AppendLine();
+            PrintBuildOptions(overview);
+            overview.AppendLine();
+
+            //
+            // Add timestamp.
+            //
+            overview.AppendFormat(
+                Trt.Tr("Build time(UTC): {0}"), 
+                DateTime.Now.ToUniversalTime());
+            overview.AppendLine();
+
+            //
+            // Add a newline for next output.
+            //
+            overview.AppendLine();
+
+            AppendBuildOutput(overview.ToString(), BuildOutputType.Step);
+        }
+
+        #region BatchBuild
+
+        private void BatchBuild()
+        {
+            if (!Program.BatchBuildList.Any())
+            {
+                return;
+            }
+
+            if (IsBuilding)
+            {
+                Program.BatchBuildList.Clear();
+                return;
+            }
+
+            BuildOutput.ResetText();
+
+            BatchBuildSucceedList.Clear();
+            BatchBuildFailedList.Clear();
+            BatchBuildInvalidList.Clear();
+            BatchBuildSkippedList.Clear();
+
+            PreBuild = (s, e) =>
+            {
+                BuildOutput.ResetText();
+                PrintBuildOverview();
+            };
+
+            PostBuild += WiiVC_Injector_PostBuild;
+
+            PromptForSucceed = false;
+            BatchBuildNext();
+        }
+
+        private bool BatchBuildCurrent()
+        {
+            // Switch to Source Files Tab.
+            MainTabs.SelectedIndex = MainTabs.TabPages.IndexOfKey("SourceFilesTab");
+
+            // Auto generate images.
+            GenerateImage.PerformClick();
+
+            // Switch to Build Tab.
+            MainTabs.SelectedIndex = MainTabs.TabPages.IndexOfKey("BuildTab");
+
+            // Check if everything is ready.
+            if (TheBigOneTM.Enabled && !IsBuilding)
+            {
+                // Ready to rumble. :)
+                return BuildAnsync();
+            }
+
+            return false;
+        }
+
+        private void BatchBuildNext()
+        {
+            while (Program.BatchBuildList.Any())
+            {
+                string game = Program.BatchBuildList[0];
+
+                // Search for second disc
+                if (GCRetail.Checked)
+                {
+                    string[] discs = SearchGCDiscs(game);
+                    game = discs[0];
+                    if (discs.Length > 1)
+                    {
+                        OpenGC2.FileName = discs[1];
+                        SelectGC2Source(discs[1]);
+                    }
+                }
+
+                if (SelectGameSource(game, true))
+                {
+                    if (Directory.Exists(GetOutputFolder()))
+                    {
+                        AppendBuildOutput(
+                            string.Format(
+                                Trt.Tr("Title output folder already exists: {0}\nSkipping: {1}.\n"),
+                                GetOutputFolder(), game),
+                            BuildOutputType.Error);
+
+                        BatchBuildSkippedList.Add(game);
+                        Program.BatchBuildList.RemoveAt(0);
+                        continue;
+                    }
+                    else
+                    {
+                        BatchBuildCurrent();
+                        PreBuild = null;
+                        break;
+                    }
+                }
+
+                AppendBuildOutput(
+                    string.Format(Trt.Tr("Invalid Title: {0}.\n"), game),
+                    BuildOutputType.Error);
+
+                BatchBuildInvalidList.Add(game);
+                Program.BatchBuildList.RemoveAt(0);
+            }
+
+            if (!Program.BatchBuildList.Any())
+            {
+                PostBuild -= WiiVC_Injector_PostBuild;
+
+                if (!InClosing)
+                {
+                    MessageBox.Show(string.Format(
+                        Trt.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}.\nSkipped: {2}.\nInvalid: {3}."),
+                        BatchBuildSucceedList.Count,
+                        BatchBuildFailedList.Count,
+                        BatchBuildSkippedList.Count,
+                        BatchBuildInvalidList.Count));
+                }
+            }
+        }
+
+        private void WiiVC_Injector_PostBuild(object sender, bool e)
+        {
+            if (e)
+            {
+                BatchBuildSucceedList.Add(Program.BatchBuildList[0]);
+            }
+            else
+            {
+                BatchBuildFailedList.Add(Program.BatchBuildList[0]);
+            }
+
+            Program.BatchBuildList.RemoveAt(0);
+
+            if (LastBuildCancelled)
+            {
+                BatchBuildSkippedList.AddRange(Program.BatchBuildList);
+                Program.BatchBuildList.Clear();
+            }
+
+            BatchBuildNext();
+        }
+
+        #endregion
 
         #region BuildSteps
 
@@ -464,10 +820,9 @@ namespace TeconMoon_s_WiiVC_Injector
             requiredFreespace.Add("wiiware", 6000000000);
             requiredFreespace.Add("gcn", gamesize * 2 + 6000000000);
 
-            var drive = new DriveInfo(TempRootPath);
-            long freeSpaceInBytes = drive.AvailableFreeSpace;
+            DriveInfo drive = new DriveInfo(TempRootPath);
 
-            if (freeSpaceInBytes < requiredFreespace[SystemType])
+            if (drive.AvailableFreeSpace < requiredFreespace[SystemType])
             {
                 DialogResult dialogResult = MessageBox.Show(
                     Trt.Tr("Your hard drive may be low on space. The conversion process involves temporary files that can amount to more than double the size of your game. If you continue without clearing some hard drive space, the conversion may fail. Do you want to continue anyways?"),

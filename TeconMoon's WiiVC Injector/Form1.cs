@@ -77,7 +77,7 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             // Process any pending build requests.
             //
-            AutoBuild();
+            BatchBuild();
         }
 
         private bool ExtractToolChainsToTemp()
@@ -398,116 +398,6 @@ namespace TeconMoon_s_WiiVC_Injector
             }
         }
 
-        private void AutoBuild()
-        {
-            if (Program.AutoBuildList.Count == 0)
-            {
-                return;
-            }
-
-            if (IsBuilding)
-            {
-                Program.AutoBuildList.Clear();
-                return;
-            }
-
-            AutoBuildSucceedList.Clear();
-            AutoBuildFailedList.Clear();
-            AutoBuildInvalidList.Clear();
-            AutoBuildSkippedList.Clear();
-
-            BuildCompletedEx += WiiVC_Injector_BuildCompletedEx;
-
-            PropmtForSucceed = false;
-            AutoBuildNext();
-        }
-
-        private void AutoBuildNext()
-        {
-            while (Program.AutoBuildList.Any())
-            {
-                string game = Program.AutoBuildList[0];
-
-                // Search for second disc
-                if (GCRetail.Checked)
-                {
-                    string[] discs = SearchGCDiscs(game);
-                    game = discs[0];
-                    if (discs.Length > 1)
-                    {
-                        OpenGC2.FileName = discs[1];
-                        SelectGC2Source(discs[1]);
-                    }
-                }
-
-                if (SelectGameSource(game, true))
-                {
-                    if (Directory.Exists(GetOutputFolder()))
-                    {
-                        AppendBuildOutput(new BuildOutputItem()
-                        {
-                            Output = String.Format(Trt.Tr("Title output folder already exists: {0}\nSkipping: {1}.\n"), GetOutputFolder(), game),
-                            OutputType = BuildOutputType.Error
-                        });
-                        AutoBuildSkippedList.Add(game);
-                        Program.AutoBuildList.RemoveAt(0);
-                        continue;
-                    } else
-                    {
-                        BuildCurrent();
-                        break;
-                    }
-                }
-
-                AppendBuildOutput(new BuildOutputItem(){
-                    Output = String.Format(Trt.Tr("Invalid Title: {0}.\n"), game),
-                    OutputType = BuildOutputType.Error
-                    }
-                );
-                AutoBuildInvalidList.Add(game);
-                Program.AutoBuildList.RemoveAt(0);
-            }
-
-            if(!Program.AutoBuildList.Any())
-            {
-                BuildCompletedEx -= WiiVC_Injector_BuildCompletedEx;
-
-                if (!InClosing)
-                {
-                    string s = String.Format(
-                        Trt.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}.\nSkipped: {2}.\nInvalid: {3}."),
-                        AutoBuildSucceedList.Count,
-                        AutoBuildFailedList.Count,
-                        AutoBuildSkippedList.Count,
-                        AutoBuildInvalidList.Count);
-
-                    MessageBox.Show(s);
-                }
-            }
-        }
-
-        private void WiiVC_Injector_BuildCompletedEx(object sender, bool e)
-        {
-            if (e)
-            {
-                AutoBuildSucceedList.Add(Program.AutoBuildList[0]);
-            }
-            else
-            {
-                AutoBuildFailedList.Add(Program.AutoBuildList[0]);
-            }
-
-            Program.AutoBuildList.RemoveAt(0);
-
-            if (LastBuildCancelled)
-            {
-                AutoBuildSkippedList.AddRange(Program.AutoBuildList);
-                Program.AutoBuildList.Clear();
-            }
-
-            AutoBuildNext();
-        }
-
         private bool EndsWithDiscSuffix(string name, int discNumber)
         {
             string[] discSuffixes = new string[] { "-", "-dvd", "-disc", "-d" };
@@ -547,15 +437,15 @@ namespace TeconMoon_s_WiiVC_Injector
 
             string selectedGameDirectory = Path.GetDirectoryName(selectedGame);
 
-            if (Program.AutoBuildList.Count() != 0)
+            if (Program.BatchBuildList.Count() != 0)
             {
-                foreach (string game in Program.AutoBuildList)
+                foreach (string game in Program.BatchBuildList)
                 {
                     string gameDir = Path.GetDirectoryName(game);
                     if (selectedGameDirectory == gameDir && EndsWithDiscSuffix(Path.GetFileNameWithoutExtension(game), searchFor))
                     {
                         result[searchFor - 1] = game;
-                        Program.AutoBuildList.Remove(game);
+                        Program.BatchBuildList.Remove(game);
                         return result;
                     }
 
@@ -575,30 +465,18 @@ namespace TeconMoon_s_WiiVC_Injector
             return result;
         }
 
-        private bool BuildCurrent()
-        {
-            // Switch to Source Files Tab.
-            MainTabs.SelectedIndex = MainTabs.TabPages.IndexOfKey("SourceFilesTab");
-
-            // Auto generate images.
-            GenerateImage.PerformClick();
-
-            // Switch to Build Tab.
-            MainTabs.SelectedIndex = MainTabs.TabPages.IndexOfKey("BuildTab");
-
-            // Check if everything is ready.
-            if (TheBigOneTM.Enabled && !IsBuilding)
-            {
-                // Ready to rumble. :)
-                return BuildAnsync();
-            }
-
-            return false;
-        }
-
         private string NormalizeCmdlineArg(string arg)
         {
             return String.Format("\"{0}\"", arg);
+        }
+
+        private void AppendBuildOutput(string output, BuildOutputType outputType)
+        {
+            AppendBuildOutput(new BuildOutputItem()
+            {
+                Output = output,
+                OutputType = outputType
+            });
         }
 
         private void AppendBuildOutput(BuildOutputItem item)
@@ -663,7 +541,7 @@ namespace TeconMoon_s_WiiVC_Injector
         bool ThrowProcessException = false;
         bool LastBuildCancelled = false;
         bool InClosing = false;
-        bool PropmtForSucceed = true;
+        bool PromptForSucceed = true;
         int TitleIDInt;
         long GameType;
         string CucholixRepoID = "";
@@ -703,10 +581,10 @@ namespace TeconMoon_s_WiiVC_Injector
         Dictionary<string, string[]> idMap = TitleIdMap.BuildIdMap();
 
         string GameIso;
-        List<string> AutoBuildSucceedList = new List<string>();
-        List<string> AutoBuildFailedList = new List<string>();
-        List<string> AutoBuildInvalidList = new List<string>();
-        List<string> AutoBuildSkippedList = new List<string>();
+        List<string> BatchBuildSucceedList = new List<string>();
+        List<string> BatchBuildFailedList = new List<string>();
+        List<string> BatchBuildInvalidList = new List<string>();
+        List<string> BatchBuildSkippedList = new List<string>();
         Dictionary<String, bool> ControlEnabledStatus = new Dictionary<String, bool>();
 
         private enum GenerateImageBackgndSource
@@ -991,8 +869,8 @@ namespace TeconMoon_s_WiiVC_Injector
 
                 if (IsBuilding)
                 {
-                    BuildCompletedEx = null;
-                    BuildCompletedEx += ((s, a) =>
+                    PostBuild = null;
+                    PostBuild += ((s, a) =>
                     {
                         DeleteTempDir();
                         Close();
@@ -1043,8 +921,8 @@ namespace TeconMoon_s_WiiVC_Injector
 
                     if (IsBuilding)
                     {
-                        BuildCompletedEx = null;
-                        BuildCompletedEx += ((s, a) =>
+                        PostBuild = null;
+                        PostBuild += ((s, a) =>
                         {
                             DeleteTempDir();
                             InClosing = true;
@@ -1737,15 +1615,15 @@ namespace TeconMoon_s_WiiVC_Injector
                 return;
             }
 
-            string AreaID = CucholixRepoID.Substring(0, 3);
+            string RegionID = CucholixRepoID.Substring(0, 3);
             string SubID = CucholixRepoID.Substring(4, 2);
 
             string[] RepoId =
             {
                 CucholixRepoID,
-                AreaID + "E",
-                AreaID + "P",
-                AreaID + "J",
+                RegionID + "E",
+                RegionID + "P",
+                RegionID + "J",
             };
 
             if (SystemType != "wiiware")
@@ -2665,7 +2543,7 @@ namespace TeconMoon_s_WiiVC_Injector
             FlagRepo = false;
         }
 
-        private void AutoBuildDragDrop(DragEventArgs e)
+        private void BatchBuildDragDrop(DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -2678,27 +2556,27 @@ namespace TeconMoon_s_WiiVC_Injector
                         foreach (string file in "*.iso|*.wbfs".Split('|').SelectMany(
                             pattern => Directory.EnumerateFiles(s, pattern, System.IO.SearchOption.AllDirectories)))
                         {
-                            Program.AppendAutoBuildList(file);
+                            Program.AppendBatchBuildList(file);
                         }
                     }
                     else
                     {
-                        Program.AppendAutoBuildList(s);
+                        Program.AppendBatchBuildList(s);
                     }
                 }
             }
 
-            AutoBuild();
+            BatchBuild();
         }
 
         private void GameFile_DragDrop(object sender, DragEventArgs e)
         {
-            AutoBuildDragDrop(e);
+            BatchBuildDragDrop(e);
         }
 
         private void GameFile_DragEnter(object sender, DragEventArgs e)
         {
-            if (!IsBuilding && Program.AutoBuildList.Count == 0 && e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (!IsBuilding && Program.BatchBuildList.Count == 0 && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
             }

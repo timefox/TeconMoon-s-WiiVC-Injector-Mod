@@ -628,4 +628,33 @@ Additional error information: </value>
   <data name="String157" xml:space="preserve">
     <value>Processing [{0}] [{1}]...</value>
   </data>
+  <data name="String158" xml:space="preserve">
+    <value>Title output folder already exists: {0}
+Skipping: {1}.
+</value>
+  </data>
+  <data name="String159" xml:space="preserve">
+    <value>Injector version: {0}</value>
+  </data>
+  <data name="String160" xml:space="preserve">
+    <value>Build type: {0}</value>
+  </data>
+  <data name="String161" xml:space="preserve">
+    <value>Batch build: {0}</value>
+  </data>
+  <data name="String162" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="String163" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="String164" xml:space="preserve">
+    <value>Build options:</value>
+  </data>
+  <data name="String165" xml:space="preserve">
+    <value>Build time(UTC): {0}</value>
+  </data>
+  <data name="String166" xml:space="preserve">
+    <value>{0}(Available free space: {1})</value>
+  </data>
 </root>

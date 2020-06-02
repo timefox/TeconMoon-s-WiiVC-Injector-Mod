@@ -36,10 +36,7 @@ BootSoundPreviewButton=播放声音
 MetaTab=GamePad/其他选项
 LRPatch=交换 L && R 与 ZL && ZR
 TutorialLink=说明
-AdvancedLabel5=*Wii 直柄模拟不支持红外指向与动作检测.
-
-**强制性选项仅应在游戏无法正确检测你的手柄时勾选。(例如, 生化危机4 Wii 版支持经典控制器, 但不打补丁它就无法被识别)
-**当使用强制性选项时, Wii 注入器会自动打入补丁. 对于vWii NAND游戏, 你可能也需要为你的WAD打上补丁，在你将它安装到NAND之前:
+AdvancedLabel5=*Wii 直柄模拟不支持红外指向与动作检测.\n\n**强制性选项仅应在游戏无法正确检测你的手柄时勾选。(例如, 生化危机4 Wii 版支持经典控制器, 但不打补丁它就无法被识别)\n**当使用强制性选项时, Wii 注入器会自动打入补丁. 对于vWii NAND游戏, 你可能也需要为你的WAD打上补丁，在你将它安装到NAND之前:
 ForceCC=**强制将经典控制器的状态设置为已连接
 NoGamePadEmu=无GamePad手柄模拟, 仅使用Wii的原生控制器
 CCEmu=模拟经典控制器
@@ -101,8 +98,6 @@ OutputDirectory=C:\Users\Lenovo\Desktop\buildenv
 TitleKey=04EACEF7657422E61606FA7FC7DCD73D
 WiiUCommonKey=D7B00402659BA2ABD2CB0DB27FA2B656
 BuildOutputToolStrip=toolStrip1
-=详细
-LogLevelBox=详细
 [SDCardMenu]
 @Title=Nintendont SD卡菜单
 Format=推荐的SD卡格式化工具
@@ -274,3 +269,12 @@ String154=从GameTDB.com下载背景图片
 String155=使用默认的背景图片（内置）
 String156=从GameTDB.com下载图片失败。
 String157=正在处理 [{0}] [{1}]...
+String158=生成输出目录已存在: {0}\n跳过: {1}。\n
+String159=注入器版本: {0}
+String160=生成类型: {0}
+String161=批量生成: {0}
+String162=是
+String163=否
+String164=使用的选项:
+String165=生成开始时间(UTC时间): {0}
+String166={0}(该路径下可用的剩余空间: {1})
