@@ -1,10 +1,10 @@
-[TeconMoon-s-WiiVC-Injector-Mod-Language]
+[TeconMoon-WiiVC-Injector-Jam-Language]
 language=English(en-us)
 verion=3.0.1.0 mod 12
 author=robin
 date=5/29/2020
 [WiiVC_Injector]
-@Title=TeconMoon's WiiVC 注入器
+@Title=TeconMoon WiiVC Injector Jam
 WiiRetail=Wii 游戏注入
 SourceFilesTab=必需的源文件
 GenerateImage=根据游戏名生成图片

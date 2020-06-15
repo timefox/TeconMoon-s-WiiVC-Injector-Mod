@@ -1,4 +1,4 @@
-﻿namespace TeconMoon_s_WiiVC_Injector
+﻿namespace TeconMoon_WiiVC_Injector_Jam
 {
     partial class WiiVC_Injector
     {
@@ -34,7 +34,7 @@
             this.WiiRetail = new System.Windows.Forms.RadioButton();
             this.MainTabs = new System.Windows.Forms.TabControl();
             this.SourceFilesTab = new System.Windows.Forms.TabPage();
-            this.GenerateImage = new TeconMoon_s_WiiVC_Injector.Utils.WinForms.SplitButton();
+            this.GenerateImage = new TeconMoon_WiiVC_Injector_Jam.Utils.WinForms.SplitButton();
             this.RepoDownload = new System.Windows.Forms.Button();
             this.TitleIDLabel = new System.Windows.Forms.Label();
             this.GameNameLabel = new System.Windows.Forms.Label();
@@ -1422,7 +1422,7 @@
             // ClearBuildOuput
             // 
             this.ClearBuildOuput.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ClearBuildOuput.Image = global::TeconMoon_s_WiiVC_Injector.Properties.Resources.clearbuildoutput;
+            this.ClearBuildOuput.Image = global::TeconMoon_WiiVC_Injector_Jam.Properties.Resources.clearbuildoutput;
             this.ClearBuildOuput.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.ClearBuildOuput.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ClearBuildOuput.Name = "ClearBuildOuput";
@@ -1435,7 +1435,7 @@
             this.AutoScrollBuildOutput.Checked = true;
             this.AutoScrollBuildOutput.CheckState = System.Windows.Forms.CheckState.Checked;
             this.AutoScrollBuildOutput.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.AutoScrollBuildOutput.Image = global::TeconMoon_s_WiiVC_Injector.Properties.Resources.autoscroll;
+            this.AutoScrollBuildOutput.Image = global::TeconMoon_WiiVC_Injector_Jam.Properties.Resources.autoscroll;
             this.AutoScrollBuildOutput.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.AutoScrollBuildOutput.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.AutoScrollBuildOutput.Name = "AutoScrollBuildOutput";

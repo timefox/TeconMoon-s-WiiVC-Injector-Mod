@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace TeconMoon_s_WiiVC_Injector
+namespace TeconMoon_WiiVC_Injector_Jam
 {
     namespace Utils
     {

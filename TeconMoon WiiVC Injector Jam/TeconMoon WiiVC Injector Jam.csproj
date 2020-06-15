@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8228DC31-4869-4C1C-8AED-D7ED37ECF3B9}</ProjectGuid>
+    <ProjectGuid>{719000A2-42CC-4261-A7A9-F6B6A3A39088}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>TeconMoon_s_WiiVC_Injector</RootNamespace>
-    <AssemblyName>TeconMoon%27s WiiVC Injector Mod</AssemblyName>
+    <RootNamespace>TeconMoon_WiiVC_Injector_Jam</RootNamespace>
+    <AssemblyName>TeconMoon WiiVC Injector Jam</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

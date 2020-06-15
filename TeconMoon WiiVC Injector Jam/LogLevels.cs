@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TeconMoon_s_WiiVC_Injector;
+using TeconMoon_WiiVC_Injector_Jam;
 
 namespace LogLevels
 {

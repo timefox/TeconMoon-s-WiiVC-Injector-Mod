@@ -11,10 +11,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using TeconMoon_s_WiiVC_Injector.Utils;
-using TeconMoon_s_WiiVC_Injector.Utils.Build;
+using TeconMoon_WiiVC_Injector_Jam.Utils;
+using TeconMoon_WiiVC_Injector_Jam.Utils.Build;
 
-namespace TeconMoon_s_WiiVC_Injector
+namespace TeconMoon_WiiVC_Injector_Jam
 {
     partial class WiiVC_Injector
     {

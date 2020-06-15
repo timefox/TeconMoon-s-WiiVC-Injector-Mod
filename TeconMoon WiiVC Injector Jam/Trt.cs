@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
-using TeconMoon_s_WiiVC_Injector.Utils;
+using TeconMoon_WiiVC_Injector_Jam.Utils;
 
-namespace TeconMoon_s_WiiVC_Injector
+namespace TeconMoon_WiiVC_Injector_Jam
 {
     static class Trt
     {

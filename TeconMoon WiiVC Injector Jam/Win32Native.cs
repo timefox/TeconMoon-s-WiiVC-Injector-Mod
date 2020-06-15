@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace TeconMoon_s_WiiVC_Injector
+namespace TeconMoon_WiiVC_Injector_Jam
 {
     class Win32Native
     {

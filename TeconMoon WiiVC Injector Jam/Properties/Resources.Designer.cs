@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TeconMoon_s_WiiVC_Injector.Properties {
+namespace TeconMoon_WiiVC_Injector_Jam.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace TeconMoon_s_WiiVC_Injector.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TeconMoon_s_WiiVC_Injector.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TeconMoon_WiiVC_Injector_Jam.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
