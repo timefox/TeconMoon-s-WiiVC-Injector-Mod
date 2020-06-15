@@ -1067,12 +1067,12 @@ namespace TeconMoon_WiiVC_Injector_Jam
                 },
             };
 
-            LauncherExeFile = "JNUSTool.exe";
+            LauncherExeFile = "java";
 
             foreach (var downloadItem in downloadItems)
             {
                 Invoke(ActBuildStatus, downloadItem.buildStatus);
-                LauncherExeArgs = downloadItem.exeArgs;
+                LauncherExeArgs = "-jar JNUSTool.jar " + downloadItem.exeArgs;
 
                 if (LastBuildCancelled)
                 {
