@@ -49,7 +49,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>WiiU.ico</ApplicationIcon>
+    <ApplicationIcon>JamBear.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -154,7 +154,7 @@
     <EmbeddedResource Include="Resources\wiiware.png" />
     <None Include="Resources\universal_Wii_WiiWare_template_bootTvTex.png" />
     <None Include="Resources\universal_Wii_WiiWare_template_iconTex.png" />
-    <Content Include="WiiU.ico" />
+    <Content Include="JamBear.ico" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

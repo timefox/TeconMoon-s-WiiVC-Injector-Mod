@@ -11,10 +11,7 @@ namespace TeconMoon_WiiVC_Injector_Jam
 {
     static class Program
     {
-        public static int ModVersion { get; } = 12;
-
-        public static string Version => System.Reflection.Assembly.GetExecutingAssembly()
-                    .GetName().Version.ToString() + " mod " + ModVersion;
+        public static string Version => typeof(Program).Assembly.GetName().Version.ToString();
 
         public static List<string> BatchBuildList { get; } = new List<string>();
 
@@ -84,10 +81,10 @@ namespace TeconMoon_WiiVC_Injector_Jam
                 {
                     TranslationTemplate translationTemplate = TranslationTemplate.CreateTemplate(
                         Application.StartupPath + @"\language.lang",
-                        "TeconMoon-s-WiiVC-Injector-Mod-Language",
+                        "TeconMoon-WiiVC-Injector-Jam-Language",
                         "English(en-us)",
                         Version,
-                        "robin");
+                        "int");
                     translationTemplate.AppendFormTranslation(new WiiVC_Injector());
                     translationTemplate.AppendFormTranslation(new SDCardMenu());
                     translationTemplate.AppendStringResourceTranslation(
