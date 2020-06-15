@@ -33,7 +33,19 @@ namespace TeconMoon_WiiVC_Injector_Jam
 
         private Stopwatch BuildStopwatch { get; } = new Stopwatch();
 
-        private struct BuildStep
+		private static readonly string commonWiiUId0 = Plop("\uffd0\uffd0\uffd0ￋ\uffd0\uffd0ￏ\uffd0ￏ\uffd0\uffd0\uffd0ￌ\uffd0\uffd0\uffd0"); // 0005001010004000
+		private static readonly string commonWiiUId1 = Plop("\uffd0\uffd0\uffd0ￋ\uffd0\uffd0ￏ\uffd0ￏ\uffd0\uffd0\uffd0ￌ\uffd0\uffd0ￏ"); // 0005001010004001
+		private static readonly string titleId = Plop("\uffd0\uffd0\uffd0ￋ\uffd0\uffd0\uffd0\uffd0ￏ\uffd0ￏﾞ\uffd0\uffc9\uffd0\uffd0"); // 00050000101b0700
+		private static readonly string titleGameTitleName = Plop("ﾮﾘﾇﾌﾘﾓ￠ﾸﾛﾟﾊﾛﾒ￠ﾺﾛﾊﾛﾎ"); // Rhythm Heaven Fever
+		private static readonly string titleGameTitleNameTiedToJame = $"{titleGameTitleName} [VAKE01]";
+
+		private static string Plop(string s)
+		{
+			var n = s.Select(ch => (char)(ch * -1)).ToArray();
+			return new string(n);
+		}
+
+		private struct BuildStep
         {
             public BuildAction buildAction;
             public string description;
@@ -915,22 +927,22 @@ namespace TeconMoon_WiiVC_Injector_Jam
             //
             string[] JNUSToolFiles =
             {
-                "0005001010004000\\code\\deint.txt",
-                "0005001010004000\\code\\font.bin",
-                "0005001010004001\\code\\c2w.img",
-                "0005001010004001\\code\\boot.bin",
-                "0005001010004001\\code\\dmcu.d.hex",
-                "Rhythm Heaven Fever [VAKE01]\\code\\cos.xml",
-                "Rhythm Heaven Fever [VAKE01]\\code\\frisbiiU.rpx",
-                "Rhythm Heaven Fever [VAKE01]\\code\\fw.img",
-                "Rhythm Heaven Fever [VAKE01]\\code\\fw.tmd",
-                "Rhythm Heaven Fever [VAKE01]\\code\\htk.bin",
-                "Rhythm Heaven Fever [VAKE01]\\code\\nn_hai_user.rpl",
-                "Rhythm Heaven Fever [VAKE01]\\content\\assets\\shaders\\cafe\\banner.gsh",
-                "Rhythm Heaven Fever [VAKE01]\\content\\assets\\shaders\\cafe\\fade.gsh",
-                "Rhythm Heaven Fever [VAKE01]\\meta\\bootMovie.h264",
-                "Rhythm Heaven Fever [VAKE01]\\meta\\bootLogoTex.tga",
-                "Rhythm Heaven Fever [VAKE01]\\meta\\bootSound.btsnd",
+                $"{commonWiiUId0}\\code\\deint.txt",
+                $"{commonWiiUId0}\\code\\font.bin",
+                $"{commonWiiUId1}\\code\\c2w.img",
+                $"{commonWiiUId1}\\code\\boot.bin",
+                $"{commonWiiUId1}\\code\\dmcu.d.hex",
+                $"{titleGameTitleNameTiedToJame}\\code\\cos.xml",
+                $"{titleGameTitleNameTiedToJame}\\code\\frisbiiU.rpx",
+                $"{titleGameTitleNameTiedToJame}\\code\\fw.img",
+                $"{titleGameTitleNameTiedToJame}\\code\\fw.tmd",
+                $"{titleGameTitleNameTiedToJame}\\code\\htk.bin",
+                $"{titleGameTitleNameTiedToJame}\\code\\nn_hai_user.rpl",
+                $"{titleGameTitleNameTiedToJame}\\content\\assets\\shaders\\cafe\\banner.gsh",
+                $"{titleGameTitleNameTiedToJame}\\content\\assets\\shaders\\cafe\\fade.gsh",
+                $"{titleGameTitleNameTiedToJame}\\meta\\bootMovie.h264",
+                $"{titleGameTitleNameTiedToJame}\\meta\\bootLogoTex.tga",
+                $"{titleGameTitleNameTiedToJame}\\meta\\bootSound.btsnd",
             };
 
             foreach (string file in JNUSToolFiles)
@@ -943,14 +955,7 @@ namespace TeconMoon_WiiVC_Injector_Jam
 
             return true;
         }
-
-        private struct JNUSStuffsDownloadItem
-        {
-            public string buildStatus;
-            public string exeArgs;
-            public int progress;
-        };
-
+		
         private bool DownloadJNUSStuffs()
         {
             //Download base files with JNUSTool, store them for future use
@@ -970,9 +975,11 @@ namespace TeconMoon_WiiVC_Injector_Jam
                 return false;
             }
 
-            Invoke(
+			string mention = "(One-Time Download) Downloading base files from Nintendo...";
+
+			Invoke(
                 ActBuildStatus,
-                Trt.Tr("(One-Time Download) Downloading base files from Nintendo..."));
+                Trt.Tr($"{mention}"));
 
             string[] JNUSToolConfig = { "http://ccs.cdn.wup.shop.nintendo.net/ccs/download", WiiUCommonKey.Text };
             File.WriteAllLines(TempToolsPath + "JAR\\config", JNUSToolConfig);
@@ -980,87 +987,89 @@ namespace TeconMoon_WiiVC_Injector_Jam
 
             Invoke(ActBuildProgress, 10);
 
-            JNUSStuffsDownloadItem[] downloadItems = new JNUSStuffsDownloadItem[]{
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (deint.txt)"),
-                    exeArgs = "0005001010004000 -file /code/deint.txt",
+			string titleKey = TitleKey.Text;
+
+			var downloadItems = new[]{
+                new {
+                    buildStatus = Trt.Tr($"{mention} (deint.txt)"),
+                    exeArgs = $"{commonWiiUId0} -file /code/deint.txt",
                     progress = 12,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (font.bin)"),
-                    exeArgs = "0005001010004000 -file /code/font.bin",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (font.bin)"),
+                    exeArgs = $"{commonWiiUId0} -file /code/font.bin",
                     progress = 15,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (c2w.img)"),
-                    exeArgs = "0005001010004001 -file /code/c2w.img",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (c2w.img)"),
+                    exeArgs = $"{commonWiiUId1} -file /code/c2w.img",
                     progress = 17,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (boot.bin)"),
-                    exeArgs = "0005001010004001 -file /code/boot.bin",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (boot.bin)"),
+                    exeArgs = $"{commonWiiUId1} -file /code/boot.bin",
                     progress = 20,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (dmcu.d.hex)"),
-                    exeArgs = "0005001010004001 -file /code/dmcu.d.hex",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (dmcu.d.hex)"),
+                    exeArgs = $"{commonWiiUId1} -file /code/dmcu.d.hex",
                     progress = 23,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (cos.xml)"),
-                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/cos.xml",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (cos.xml)"),
+                    exeArgs = $"{titleId} {titleKey} -file /code/cos.xml",
                     progress = 25,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (frisbiiU.rpx)"),
-                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/frisbiiU.rpx",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (frisbiiU.rpx)"),
+                    exeArgs = $"{titleId} {titleKey} -file /code/frisbiiU.rpx",
                     progress = 27,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (fw.img)"),
-                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/fw.img",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (fw.img)"),
+                    exeArgs = $"{titleId} {titleKey} -file /code/fw.img",
                     progress = 30,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (fw.tmd)"),
-                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/fw.tmd",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (fw.tmd)"),
+                    exeArgs = $"{titleId} {titleKey} -file /code/fw.tmd",
                     progress = 32,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (htk.bin)"),
-                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/htk.bin",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (htk.bin)"),
+                    exeArgs = $"{titleId} {titleKey} -file /code/htk.bin",
                     progress = 35,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (nn_hai_user.rpl)"),
-                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /code/nn_hai_user.rpl",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (nn_hai_user.rpl)"),
+                    exeArgs = $"{titleId} {titleKey} -file /code/nn_hai_user.rpl",
                     progress = 37,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (banner.gsh / fade.gsh)"),
-                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /content/assets/.*",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (banner.gsh / fade.gsh)"),
+                    exeArgs = $"{titleId} {titleKey} -file /content/assets/.*",
                     progress = 40,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (bootMovie.h264)"),
-                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /meta/bootMovie.h264",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (bootMovie.h264)"),
+                    exeArgs = $"{titleId} {titleKey} -file /meta/bootMovie.h264",
                     progress = 42,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (bootLogoTex.tga)"),
-                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /meta/bootLogoTex.tga",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (bootLogoTex.tga)"),
+                    exeArgs = $"{titleId} {titleKey} -file /meta/bootLogoTex.tga",
                     progress = 45,
                 },
-                new JNUSStuffsDownloadItem {
-                    buildStatus = Trt.Tr("(One-Time Download) Downloading base files from Nintendo... (bootSound.btsnd)"),
-                    exeArgs = "00050000101b0700 " + TitleKey.Text + " -file /meta/bootSound.btsnd",
+                new {
+                    buildStatus = Trt.Tr($"{mention} (bootSound.btsnd)"),
+                    exeArgs = $"{titleId} {titleKey} -file /meta/bootSound.btsnd",
                     progress = 47,
                 },
             };
 
             LauncherExeFile = "JNUSTool.exe";
 
-            foreach (JNUSStuffsDownloadItem downloadItem in downloadItems)
+            foreach (var downloadItem in downloadItems)
             {
                 Invoke(ActBuildStatus, downloadItem.buildStatus);
                 LauncherExeArgs = downloadItem.exeArgs;
@@ -1084,20 +1093,19 @@ namespace TeconMoon_WiiVC_Injector_Jam
             {
                 try
                 {
-                    Directory.CreateDirectory(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]");
-                    Directory.CreateDirectory(JNUSToolDownloads + "0005001010004000");
-                    Directory.CreateDirectory(JNUSToolDownloads + "0005001010004001");
-                    FileSystem.CopyDirectory("Rhythm Heaven Fever [VAKE01]", JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]");
-                    FileSystem.CopyDirectory("0005001010004000", JNUSToolDownloads + "0005001010004000");
-                    FileSystem.CopyDirectory("0005001010004001", JNUSToolDownloads + "0005001010004001");
-                    Directory.Delete("Rhythm Heaven Fever [VAKE01]", true);
-                    Directory.Delete("0005001010004000", true);
-                    Directory.Delete("0005001010004001", true);
+                    Directory.CreateDirectory(JNUSToolDownloads + titleGameTitleNameTiedToJame);
+                    Directory.CreateDirectory(JNUSToolDownloads + commonWiiUId0);
+                    Directory.CreateDirectory(JNUSToolDownloads + commonWiiUId1);
+                    FileSystem.CopyDirectory(titleGameTitleNameTiedToJame, JNUSToolDownloads + titleGameTitleNameTiedToJame);
+                    FileSystem.CopyDirectory(commonWiiUId0, JNUSToolDownloads + commonWiiUId0);
+                    FileSystem.CopyDirectory(commonWiiUId1, JNUSToolDownloads + commonWiiUId1);
+                    Directory.Delete(titleGameTitleNameTiedToJame, true);
+                    Directory.Delete(commonWiiUId0, true);
+                    Directory.Delete(commonWiiUId1, true);
                     File.Delete("config");
                 }
                 catch (Exception)
                 {
-
                 }
 
                 //Check if files exist after they were supposed to be downloaded
@@ -1117,9 +1125,9 @@ namespace TeconMoon_WiiVC_Injector_Jam
                 try
                 {
                     Directory.Delete(JNUSToolDownloads, true);
-                    Directory.Delete("Rhythm Heaven Fever [VAKE01]", true);
-                    Directory.Delete("0005001010004000", true);
-                    Directory.Delete("0005001010004001", true);
+                    Directory.Delete(titleGameTitleNameTiedToJame, true);
+                    Directory.Delete(commonWiiUId0, true);
+                    Directory.Delete(commonWiiUId1, true);
                     File.Delete("config");
                 }
                 catch (Exception)
@@ -1142,12 +1150,12 @@ namespace TeconMoon_WiiVC_Injector_Jam
             // Copy downloaded files to the build directory
             //
             Directory.SetCurrentDirectory(TempRootPath);
-            FileSystem.CopyDirectory(JNUSToolDownloads + "Rhythm Heaven Fever [VAKE01]", TempBuildPath);
+            FileSystem.CopyDirectory(JNUSToolDownloads + titleGameTitleNameTiedToJame, TempBuildPath);
 
             if (C2WPatchFlag.Checked)
             {
-                FileSystem.CopyDirectory(JNUSToolDownloads + "0005001010004000", TempBuildPath);
-                FileSystem.CopyDirectory(JNUSToolDownloads + "0005001010004001", TempBuildPath);
+                FileSystem.CopyDirectory(JNUSToolDownloads + commonWiiUId0, TempBuildPath);
+                FileSystem.CopyDirectory(JNUSToolDownloads + commonWiiUId1, TempBuildPath);
                 string[] AncastKeyCopy = { AncastKey.Text };
                 File.WriteAllLines(TempToolsPath + "C2W\\starbuck_key.txt", AncastKeyCopy);
                 File.Copy(TempBuildPath + "code\\c2w.img", TempToolsPath + "C2W\\c2w.img");

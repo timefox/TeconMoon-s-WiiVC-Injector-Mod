@@ -47,10 +47,12 @@ namespace TeconMoon_WiiVC_Injector_Jam
             //
             ApplyTranslation();
 
-            //
-            // Print verion information to main window's title.
-            //
-            this.Text += String.Format(" - [{0}]", Program.Version);
+			this.RHFKeyLabel.Text = this.RHFKeyLabel.Text.Replace("<Game Title Name>", titleGameTitleName);
+
+			//
+			// Print verion information to main window's title.
+			//
+			this.Text = $"{this.Text} - [{Program.Version}]";
 
             //
             // Hide 'Debug' button for release version.
