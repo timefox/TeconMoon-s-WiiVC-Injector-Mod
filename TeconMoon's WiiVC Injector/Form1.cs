@@ -555,9 +555,6 @@ namespace TeconMoon_s_WiiVC_Injector
         string LoopString = " -noLoop";
         string nfspatchflag = "";
         string passpatch = " -passthrough";
-        ProcessStartInfo Launcher;
-        string LauncherExeFile;
-        string LauncherExeArgs;
         string JNUSToolDownloads = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\JNUSToolDownloads\\";
         static string DefaultTempRootPath = Path.GetTempPath() + "WiiVCInjector\\";
         static string TempRootPath = GetAppTempPath() + "WiiVCInjector\\";
@@ -625,121 +622,6 @@ namespace TeconMoon_s_WiiVC_Injector
         }
 
         //call options
-        private bool LaunchProgram()
-        {
-            bool exitNormally = true;
-
-            Launcher = new ProcessStartInfo(LauncherExeFile, LauncherExeArgs);
-
-            if (HideProcess)
-            {
-                Launcher.CreateNoWindow = true;
-                Launcher.WindowStyle = ProcessWindowStyle.Hidden;
-            }
-
-            Launcher.UseShellExecute = false;
-            Launcher.RedirectStandardOutput = true;
-            Launcher.RedirectStandardError = true;
-
-            BuildOutputBuffer buildOutputBuffer = new BuildOutputBuffer();
-            buildOutputBuffer.FlushBuffer += (s, e) =>
-            {
-                BeginInvoke(ActBuildOutput, e);
-            };
-
-            if (currentLogLevel <= LogLevel.Debug)
-            {
-                BeginInvoke(ActBuildOutput, new BuildOutputItem()
-                {
-                    Output = Trt.Tr("Executing:") + ' ' + LauncherExeFile + Environment.NewLine
-                           + Trt.Tr("Args:") + ' ' + LauncherExeArgs + Environment.NewLine,
-                    OutputType = BuildOutputType.Exec
-                });
-            }
-
-            try
-            {
-                Process process = Process.Start(Launcher);
-                System.Timers.Timer OutputPumpTimer = new System.Timers.Timer();
-
-                process.OutputDataReceived += (s, d) =>
-                {
-                    if (currentLogLevel <= LogLevel.Debug)
-                    {
-                        lock(buildOutputBuffer)
-                        {
-                            buildOutputBuffer.AppendOutput(d.Data, BuildOutputType.Normal);
-                        }                       
-                    }
-                };
-
-                process.ErrorDataReceived += (s, d) =>
-                {
-                    //
-                    // Whatever, the error information should be printed.
-                    //
-                    lock(buildOutputBuffer)
-                    {
-                        buildOutputBuffer.AppendOutput(d.Data, BuildOutputType.Error);
-                    }                    
-                };
-
-                OutputPumpTimer.Interval = 100;
-                OutputPumpTimer.Elapsed += (sender, e) =>
-                {
-                    lock (buildOutputBuffer)
-                    {
-                        buildOutputBuffer.Flush();
-                    }
-                };
-                OutputPumpTimer.Start();
-
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-
-                while (!process.WaitForExit(500))
-                {
-                    if (LastBuildCancelled)
-                    {
-                        process.CloseMainWindow();
-                        if (!process.WaitForExit(100))
-                        {
-                            process.Kill();
-                        }
-
-                        exitNormally = false;
-                    }
-                }
-
-                OutputPumpTimer.Stop();               
-
-                process.Close();
-
-                lock (buildOutputBuffer)
-                {
-                    buildOutputBuffer.Flush();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.Write("err(LaunchProgram): " + ex.Message);
-
-                if (ThrowProcessException)
-                {
-                    throw ex;
-                }
-
-                exitNormally = false;
-            }
-
-            if (!exitNormally && ThrowProcessException)
-            {
-                throw new Exception(NormalizeCmdlineArg(LauncherExeFile)
-                    + Trt.Tr(" does not exit normally."));
-            }
-
-            return exitNormally;
-        }
 
         public static bool CheckForInternetConnection()
         {

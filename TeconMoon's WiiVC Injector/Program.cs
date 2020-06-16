@@ -11,7 +11,7 @@ namespace TeconMoon_s_WiiVC_Injector
 {
     static class Program
     {
-        public static int ModVersion { get; } = 12;
+        public static int ModVersion { get; } = 13;
 
         public static string Version => System.Reflection.Assembly.GetExecutingAssembly()
                     .GetName().Version.ToString() + " mod " + ModVersion;

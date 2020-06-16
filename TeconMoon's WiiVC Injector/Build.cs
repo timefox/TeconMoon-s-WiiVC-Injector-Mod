@@ -18,11 +18,6 @@ namespace TeconMoon_s_WiiVC_Injector
 {
     partial class WiiVC_Injector
     {
-        private delegate bool BuildAction();
-
-        private event EventHandler PreBuild;
-        private event EventHandler<bool> PostBuild;
-
         private Thread BuilderThread;
 
         private Action<string> ActBuildStatus;
@@ -32,13 +27,6 @@ namespace TeconMoon_s_WiiVC_Injector
         private bool IsBuilding => BuilderThread != null;
 
         private Stopwatch BuildStopwatch { get; } = new Stopwatch();
-
-        private struct BuildStep
-        {
-            public BuildAction buildAction;
-            public string description;
-            public int progressWeight;
-        };
 
         private void InitializeBuildActions()
         {
@@ -65,69 +53,69 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 new BuildStep
                 {
-                    buildAction = PrepareTemporaryDirectory,
-                    description = Trt.Tr("Checking temporary directory"),
-                    progressWeight = 1,
+                    Action = PrepareTemporaryDirectory,
+                    Description = Trt.Tr("Checking temporary directory"),
+                    ProgressWeight = 1,
                 },
                 new BuildStep
                 {
-                    buildAction = CheckFreeDiskSpaceForPack,
-                    description = Trt.Tr("Checking free disk space"),
-                    progressWeight = 1,
+                    Action = CheckFreeDiskSpaceForPack,
+                    Description = Trt.Tr("Checking free disk space"),
+                    ProgressWeight = 1,
                 },
                 new BuildStep
                 {
-                    buildAction = PrepareOutputDirectory,
-                    description = Trt.Tr("Checking output directory"),
-                    progressWeight = 1,
+                    Action = PrepareOutputDirectory,
+                    Description = Trt.Tr("Checking output directory"),
+                    ProgressWeight = 1,
                 },
                 new BuildStep
                 {
-                    buildAction = PrepareJNUSStuffs,
-                    description = Trt.Tr("Checking JNUS stuffs"),
-                    progressWeight = 3,
+                    Action = PrepareJNUSStuffs,
+                    Description = Trt.Tr("Checking JNUS stuffs"),
+                    ProgressWeight = 3,
                 },
                 new BuildStep
                 {
-                    buildAction = PrepareBasicFilesForPack,
-                    description = Trt.Tr("Copying base files to temporary build directory"),
-                    progressWeight = 1,
+                    Action = PrepareBasicFilesForPack,
+                    Description = Trt.Tr("Copying base files to temporary build directory"),
+                    ProgressWeight = 1,
                 },
                 new BuildStep
                 {
-                    buildAction = GeneratePackXmls,
-                    description = Trt.Tr("Generating app.xml and meta.xml"),
-                    progressWeight = 1,
+                    Action = GeneratePackXmls,
+                    Description = Trt.Tr("Generating app.xml and meta.xml"),
+                    ProgressWeight = 1,
                 },
                 new BuildStep
                 {
-                    buildAction = PrepareImages,
-                    description = Trt.Tr("Converting all image sources to expected TGA specification"),
-                    progressWeight = 1,
+                    Action = PrepareImages,
+                    Description = Trt.Tr("Converting all image sources to expected TGA specification"),
+                    ProgressWeight = 1,
                 },
                 new BuildStep
                 {
-                    buildAction = ConvertBootSoundFormat,
-                    description = Trt.Tr("Converting user provided sound to btsnd format"),
-                    progressWeight = 1,
+                    Action = ConvertBootSoundFormat,
+                    Description = Trt.Tr("Converting user provided sound to btsnd format"),
+                    ProgressWeight = 1,
                 },
                 new BuildStep
                 {
-                    buildAction = BuildIso,
-                    description = Trt.Tr("Processing game for NFS Conversion"),
-                    progressWeight = 30,
+                    Action = BuildIso,
+                    Description = Trt.Tr("Processing game for NFS Conversion"),
+                    ProgressWeight = 30,
                 },
                 new BuildStep
                 {
-                    buildAction = ConvertIsoToNFS,
-                    description = Trt.Tr("Converting processed game to NFS format"),
-                    progressWeight = 15,
+                    Action = ConvertIsoToNFS,
+                    Description = Trt.Tr("Converting processed game to NFS format"),
+                    ProgressWeight = 15,
                 },
                 new BuildStep
                 {
-                    buildAction = NUSPackerEncrypt,
-                    description = Trt.Tr("Encrypting contents into installable WUP Package"),
-                    progressWeight = 30,
+                    Action = NUSPackerEncrypt,
+                    Description = Trt.Tr("Encrypting contents into installable WUP Package"),
+                    ProgressWeight = 30,
                 },
             };
 
@@ -158,7 +146,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
                 try
                 {
-                    string buildStatus = $"({i + 1}/{buildSteps.Length}){buildStep.description}...";
+                    string buildStatus = $"({i + 1}/{buildSteps.Length}){buildStep.Description}...";
 
                     BeginInvoke(ActBuildStatus, buildStatus);
 
@@ -170,11 +158,11 @@ namespace TeconMoon_s_WiiVC_Injector
 
                     stepStopwatch.Restart();
 
-                    if (!buildStep.buildAction())
+                    if (!buildStep.Execute())
                     {
                         BeginInvoke(ActBuildOutput, new BuildOutputItem()
                         {
-                            Output = buildStep.description + Trt.Tr("failed.") + Environment.NewLine + Environment.NewLine,
+                            Output = buildStep.Description + Trt.Tr("failed.") + Environment.NewLine + Environment.NewLine,
                             OutputType = BuildOutputType.Error,
                         });
                         break;
@@ -184,7 +172,7 @@ namespace TeconMoon_s_WiiVC_Injector
 
                     BeginInvoke(ActBuildOutput, new BuildOutputItem()
                     {
-                        Output = buildStep.description + "..." + Trt.Tr("done.")
+                        Output = buildStep.Description + "..." + Trt.Tr("done.")
                                + $"({stepStopwatch.Elapsed.Duration()})"
                                + Environment.NewLine + Environment.NewLine,
                         OutputType = BuildOutputType.Step,
@@ -197,7 +185,7 @@ namespace TeconMoon_s_WiiVC_Injector
                     Console.Write("buildStep throws an exception: " + ex.Message);
                     BeginInvoke(ActBuildOutput, new BuildOutputItem()
                     {
-                        Output = buildStep.description + Trt.Tr(" terminated unexpectedly: ")
+                        Output = buildStep.Description + Trt.Tr(" terminated unexpectedly: ")
                                + ex.Message + Environment.NewLine + Environment.NewLine,
                         OutputType = BuildOutputType.Error,
                     });
@@ -614,149 +602,6 @@ namespace TeconMoon_s_WiiVC_Injector
             AppendBuildOutput(overview.ToString(), BuildOutputType.Step);
         }
 
-        #region BatchBuild
-
-        private void BatchBuild()
-        {
-            if (!Program.BatchBuildList.Any())
-            {
-                return;
-            }
-
-            if (IsBuilding)
-            {
-                Program.BatchBuildList.Clear();
-                return;
-            }
-
-            BuildOutput.ResetText();
-
-            BatchBuildSucceedList.Clear();
-            BatchBuildFailedList.Clear();
-            BatchBuildInvalidList.Clear();
-            BatchBuildSkippedList.Clear();
-
-            PreBuild = (s, e) =>
-            {
-                BuildOutput.ResetText();
-                PrintBuildOverview();
-            };
-
-            PostBuild += WiiVC_Injector_PostBuild;
-
-            PromptForSucceed = false;
-            BatchBuildNext();
-        }
-
-        private bool BatchBuildCurrent()
-        {
-            // Switch to Source Files Tab.
-            MainTabs.SelectedIndex = MainTabs.TabPages.IndexOfKey("SourceFilesTab");
-
-            // Auto generate images.
-            GenerateImage.PerformClick();
-
-            // Switch to Build Tab.
-            MainTabs.SelectedIndex = MainTabs.TabPages.IndexOfKey("BuildTab");
-
-            // Check if everything is ready.
-            if (TheBigOneTM.Enabled && !IsBuilding)
-            {
-                // Ready to rumble. :)
-                return BuildAnsync();
-            }
-
-            return false;
-        }
-
-        private void BatchBuildNext()
-        {
-            while (Program.BatchBuildList.Any())
-            {
-                string game = Program.BatchBuildList[0];
-
-                // Search for second disc
-                if (GCRetail.Checked)
-                {
-                    string[] discs = SearchGCDiscs(game);
-                    game = discs[0];
-                    if (discs.Length > 1)
-                    {
-                        OpenGC2.FileName = discs[1];
-                        SelectGC2Source(discs[1]);
-                    }
-                }
-
-                if (SelectGameSource(game, true))
-                {
-                    if (Directory.Exists(GetOutputFolder()))
-                    {
-                        AppendBuildOutput(
-                            string.Format(
-                                Trt.Tr("Title output folder already exists: {0}\nSkipping: {1}.\n"),
-                                GetOutputFolder(), game),
-                            BuildOutputType.Error);
-
-                        BatchBuildSkippedList.Add(game);
-                        Program.BatchBuildList.RemoveAt(0);
-                        continue;
-                    }
-                    else
-                    {
-                        BatchBuildCurrent();
-                        PreBuild = null;
-                        break;
-                    }
-                }
-
-                AppendBuildOutput(
-                    string.Format(Trt.Tr("Invalid Title: {0}.\n"), game),
-                    BuildOutputType.Error);
-
-                BatchBuildInvalidList.Add(game);
-                Program.BatchBuildList.RemoveAt(0);
-            }
-
-            if (!Program.BatchBuildList.Any())
-            {
-                PostBuild -= WiiVC_Injector_PostBuild;
-
-                if (!InClosing)
-                {
-                    MessageBox.Show(string.Format(
-                        Trt.Tr("All conversions have been completed.\nSucceed: {0}.\nFailed: {1}.\nSkipped: {2}.\nInvalid: {3}."),
-                        BatchBuildSucceedList.Count,
-                        BatchBuildFailedList.Count,
-                        BatchBuildSkippedList.Count,
-                        BatchBuildInvalidList.Count));
-                }
-            }
-        }
-
-        private void WiiVC_Injector_PostBuild(object sender, bool e)
-        {
-            if (e)
-            {
-                BatchBuildSucceedList.Add(Program.BatchBuildList[0]);
-            }
-            else
-            {
-                BatchBuildFailedList.Add(Program.BatchBuildList[0]);
-            }
-
-            Program.BatchBuildList.RemoveAt(0);
-
-            if (LastBuildCancelled)
-            {
-                BatchBuildSkippedList.AddRange(Program.BatchBuildList);
-                Program.BatchBuildList.Clear();
-            }
-
-            BatchBuildNext();
-        }
-
-        #endregion
-
         #region BuildSteps
 
         #region BuildStep1
@@ -813,16 +658,26 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             // Check for free space
             //
-            Dictionary<string, long> requiredFreespace = new Dictionary<string, long>();
-            long gamesize = new FileInfo(GameSourceDirectory.Text).Length;
-            requiredFreespace.Add("wii", gamesize * 2 + 5000000000);
-            requiredFreespace.Add("dol", 6000000000);
-            requiredFreespace.Add("wiiware", 6000000000);
-            requiredFreespace.Add("gcn", gamesize * 2 + 6000000000);
+            long requiredFreespace = 0;
+
+            switch (Enum.Parse(typeof(BuildSystemType), SystemType))
+            {
+                case BuildSystemType.wii:
+                    requiredFreespace = new FileInfo(GameSourceDirectory.Text).Length * 2 + 5000000000;
+                    break;
+                case BuildSystemType.gcn:
+                    requiredFreespace = new FileInfo(GameSourceDirectory.Text).Length * 2 + 6000000000;
+                    break;
+                case BuildSystemType.dol:
+                case BuildSystemType.wiiware:
+                default:
+                    requiredFreespace = 6000000000;
+                    break;
+            }
 
             DriveInfo drive = new DriveInfo(TempRootPath);
 
-            if (drive.AvailableFreeSpace < requiredFreespace[SystemType])
+            if (drive.AvailableFreeSpace < requiredFreespace)
             {
                 DialogResult dialogResult = MessageBox.Show(
                     Trt.Tr("Your hard drive may be low on space. The conversion process involves temporary files that can amount to more than double the size of your game. If you continue without clearing some hard drive space, the conversion may fail. Do you want to continue anyways?"),
@@ -1058,19 +913,19 @@ namespace TeconMoon_s_WiiVC_Injector
                 },
             };
 
-            LauncherExeFile = "JNUSTool.exe";
+            SpawnFile = "JNUSTool.exe";
 
             foreach (JNUSStuffsDownloadItem downloadItem in downloadItems)
             {
                 Invoke(ActBuildStatus, downloadItem.buildStatus);
-                LauncherExeArgs = downloadItem.exeArgs;
+                SpawnArgs = downloadItem.exeArgs;
 
                 if (LastBuildCancelled)
                 {
                     break;
                 }
 
-                if (!LaunchProgram())
+                if (!BuildSpawn())
                 {
                     break;
                 }
@@ -1152,9 +1007,9 @@ namespace TeconMoon_s_WiiVC_Injector
                 File.WriteAllLines(TempToolsPath + "C2W\\starbuck_key.txt", AncastKeyCopy);
                 File.Copy(TempBuildPath + "code\\c2w.img", TempToolsPath + "C2W\\c2w.img");
                 Directory.SetCurrentDirectory(TempToolsPath + "C2W");
-                LauncherExeFile = "c2w_patcher.exe";
-                LauncherExeArgs = "-nc";
-                LaunchProgram();
+                SpawnFile = "c2w_patcher.exe";
+                SpawnArgs = "-nc";
+                BuildSpawn();
                 File.Delete(TempBuildPath + "code\\c2w.img");
                 File.Copy(TempToolsPath + "C2W\\c2p.img", TempBuildPath + "code\\c2w.img", true);
                 File.Delete(TempToolsPath + "C2W\\c2p.img");
@@ -1421,13 +1276,13 @@ namespace TeconMoon_s_WiiVC_Injector
             //
             if (FlagBootSoundSpecified)
             {
-                LauncherExeFile = TempToolsPath + "SOX\\sox.exe";
-                LauncherExeArgs = "\"" + OpenBootSound.FileName + "\" -b 16 \"" + TempSoundPath + "\" channels 2 rate 48k trim 0 6";
-                LaunchProgram();
+                SpawnFile = TempToolsPath + "SOX\\sox.exe";
+                SpawnArgs = "\"" + OpenBootSound.FileName + "\" -b 16 \"" + TempSoundPath + "\" channels 2 rate 48k trim 0 6";
+                BuildSpawn();
                 File.Delete(TempBuildPath + "meta\\bootSound.btsnd");
-                LauncherExeFile = TempToolsPath + "JAR\\wav2btsnd.exe";
-                LauncherExeArgs = "-in \"" + TempSoundPath + "\" -out \"" + TempBuildPath + "meta\\bootSound.btsnd\"" + LoopString;
-                LaunchProgram();
+                SpawnFile = TempToolsPath + "JAR\\wav2btsnd.exe";
+                SpawnArgs = "-in \"" + TempSoundPath + "\" -out \"" + TempBuildPath + "meta\\bootSound.btsnd\"" + LoopString;
+                BuildSpawn();
                 File.Delete(TempSoundPath);
             }
 
@@ -1452,24 +1307,24 @@ namespace TeconMoon_s_WiiVC_Injector
             {
                 if (FlagWBFS)
                 {
-                    LauncherExeFile = TempToolsPath + "EXE\\wbfs_file.exe";
-                    LauncherExeArgs = "\"" + GameIso + "\" convert \""
+                    SpawnFile = TempToolsPath + "EXE\\wbfs_file.exe";
+                    SpawnArgs = "\"" + GameIso + "\" convert \""
                         + TempSourcePath + "wbfsconvert.iso\"";
-                    LaunchProgram();
+                    BuildSpawn();
                     GameIso = TempSourcePath + "wbfsconvert.iso";
                 }
 
                 if (!DisableTrimming.Checked)
                 {
-                    LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                    LauncherExeArgs = "extract " + NormalizeCmdlineArg(GameIso) + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "ISOEXTRACT") + " --psel data -vv1";
-                    LaunchProgram();
+                    SpawnFile = TempToolsPath + "WIT\\wit.exe";
+                    SpawnArgs = "extract " + NormalizeCmdlineArg(GameIso) + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "ISOEXTRACT") + " --psel data -vv1";
+                    BuildSpawn();
 
                     if (ForceCC.Checked)
                     {
-                        LauncherExeFile = TempToolsPath + "EXE\\GetExtTypePatcher.exe";
-                        LauncherExeArgs = "\"" + TempSourcePath + "ISOEXTRACT\\sys\\main.dol\" -nc";
-                        LaunchProgram();
+                        SpawnFile = TempToolsPath + "EXE\\GetExtTypePatcher.exe";
+                        SpawnArgs = "\"" + TempSourcePath + "ISOEXTRACT\\sys\\main.dol\" -nc";
+                        BuildSpawn();
                     }
 
                     if (WiiVMC.Checked)
@@ -1481,16 +1336,16 @@ namespace TeconMoon_s_WiiVC_Injector
                             + "close the patcher window and nothing will be patched. \n\n"
                             + "Click OK to continue..."));
                         HideProcess = false;
-                        LauncherExeFile = TempToolsPath + "EXE\\wii-vmc.exe";
-                        LauncherExeArgs = "\"" + TempSourcePath + "ISOEXTRACT\\sys\\main.dol\"";
-                        LaunchProgram();
+                        SpawnFile = TempToolsPath + "EXE\\wii-vmc.exe";
+                        SpawnArgs = "\"" + TempSourcePath + "ISOEXTRACT\\sys\\main.dol\"";
+                        BuildSpawn();
                         HideProcess = true;
                         MessageBox.Show(Trt.Tr("Conversion will now continue..."));
                     }
 
-                    LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                    LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "ISOEXTRACT") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
-                    LaunchProgram();
+                    SpawnFile = TempToolsPath + "WIT\\wit.exe";
+                    SpawnArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "ISOEXTRACT") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                    BuildSpawn();
 
                     Directory.Delete(TempSourcePath + "ISOEXTRACT", true);
                     if (File.Exists(TempSourcePath + "wbfsconvert.iso"))
@@ -1506,9 +1361,9 @@ namespace TeconMoon_s_WiiVC_Injector
                 FileSystem.CreateDirectory(TempSourcePath + "TEMPISOBASE");
                 FileSystem.CopyDirectory(TempToolsPath + "BASE", TempSourcePath + "TEMPISOBASE");
                 File.Copy(GameIso, TempSourcePath + "TEMPISOBASE\\sys\\main.dol");
-                LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
-                LaunchProgram();
+                SpawnFile = TempToolsPath + "WIT\\wit.exe";
+                SpawnArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                BuildSpawn();
                 Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
                 GameIso = TempSourcePath + "game.iso";
             }
@@ -1528,9 +1383,9 @@ namespace TeconMoon_s_WiiVC_Injector
                 string[] TitleTXT = { GameSourceDirectory.Text };
                 File.WriteAllLines(TempSourcePath + "TEMPISOBASE\\files\\title.txt", TitleTXT);
 
-                LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
-                LaunchProgram();
+                SpawnFile = TempToolsPath + "WIT\\wit.exe";
+                SpawnArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                BuildSpawn();
 
                 Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
 
@@ -1564,18 +1419,18 @@ namespace TeconMoon_s_WiiVC_Injector
                     File.Copy(OpenGC2.FileName, TempSourcePath + "TEMPISOBASE\\files\\disc2.iso");
                 }
 
-                LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-                LauncherExeArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
-                LaunchProgram();
+                SpawnFile = TempToolsPath + "WIT\\wit.exe";
+                SpawnArgs = "copy " + NormalizeCmdlineArg(TempSourcePath + "TEMPISOBASE") + " --DEST " + NormalizeCmdlineArg(TempSourcePath + "game.iso") + " -ovv --links --iso";
+                BuildSpawn();
 
                 Directory.Delete(TempSourcePath + "TEMPISOBASE", true);
 
                 GameIso = TempSourcePath + "game.iso";
             }
 
-            LauncherExeFile = TempToolsPath + "WIT\\wit.exe";
-            LauncherExeArgs = "extract " + NormalizeCmdlineArg(GameIso) + " --psel data --files +tmd.bin --files +ticket.bin --dest " + NormalizeCmdlineArg(TempSourcePath + "TIKTEMP") + " -vv1";
-            LaunchProgram();
+            SpawnFile = TempToolsPath + "WIT\\wit.exe";
+            SpawnArgs = "extract " + NormalizeCmdlineArg(GameIso) + " --psel data --files +tmd.bin --files +ticket.bin --dest " + NormalizeCmdlineArg(TempSourcePath + "TIKTEMP") + " -vv1";
+            BuildSpawn();
 
             File.Copy(TempSourcePath + "TIKTEMP\\tmd.bin", TempBuildPath + "code\\rvlt.tmd");
             File.Copy(TempSourcePath + "TIKTEMP\\ticket.bin", TempBuildPath + "code\\rvlt.tik");
@@ -1605,27 +1460,27 @@ namespace TeconMoon_s_WiiVC_Injector
             }
             if (SystemType == "wii")
             {
-                LauncherExeFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
-                LauncherExeArgs = "-enc" + nfspatchflag + lrpatchflag + " -iso \"" + GameIso + "\"";
-                LaunchProgram();
+                SpawnFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
+                SpawnArgs = "-enc" + nfspatchflag + lrpatchflag + " -iso \"" + GameIso + "\"";
+                BuildSpawn();
             }
             if (SystemType == "dol")
             {
-                LauncherExeFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
-                LauncherExeArgs = "-enc -homebrew" + passpatch + " -iso \"" + GameIso + "\"";
-                LaunchProgram();
+                SpawnFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
+                SpawnArgs = "-enc -homebrew" + passpatch + " -iso \"" + GameIso + "\"";
+                BuildSpawn();
             }
             if (SystemType == "wiiware")
             {
-                LauncherExeFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
-                LauncherExeArgs = "-enc -homebrew" + nfspatchflag + lrpatchflag + " -iso \"" + GameIso + "\"";
-                LaunchProgram();
+                SpawnFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
+                SpawnArgs = "-enc -homebrew" + nfspatchflag + lrpatchflag + " -iso \"" + GameIso + "\"";
+                BuildSpawn();
             }
             if (SystemType == "gcn")
             {
-                LauncherExeFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
-                LauncherExeArgs = "-enc -homebrew -passthrough -iso \"" + GameIso + "\"";
-                LaunchProgram();
+                SpawnFile = TempToolsPath + "EXE\\nfs2iso2nfs.exe";
+                SpawnArgs = "-enc -homebrew -passthrough -iso \"" + GameIso + "\"";
+                BuildSpawn();
             }
 
             if (!DisableTrimming.Checked || FlagWBFS)
@@ -1649,9 +1504,9 @@ namespace TeconMoon_s_WiiVC_Injector
             // Encrypt contents with NUSPacker
             //
             Directory.SetCurrentDirectory(TempRootPath);
-            LauncherExeFile = TempToolsPath + "JAR\\NUSPacker.exe";
-            LauncherExeArgs = "-in BUILDDIR -out \"" + GetOutputFolder() + "\" -encryptKeyWith " + WiiUCommonKey.Text;
-            LaunchProgram();
+            SpawnFile = TempToolsPath + "JAR\\NUSPacker.exe";
+            SpawnArgs = "-in BUILDDIR -out \"" + GetOutputFolder() + "\" -encryptKeyWith " + WiiUCommonKey.Text;
+            BuildSpawn();
 
             Invoke(ActBuildProgress, 100);
 
